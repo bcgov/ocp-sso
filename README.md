@@ -10,13 +10,22 @@ oc process -f openshift/sso72-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFI
 oc delete secret -l part-of=rh-sso,shared=true
 
 ```
+## Building
+```
+.jenkins/pipeline-cli build --config=openshift/config.groovy --pr=9
+```
 
 ## Deploying
 ```
 #replace '1' with a valid pull-request number
-.jenkins/pipekine-cli build --config=openshift/config.groovy --pr=1
+.jenkins/pipeline-cli deploy --config=openshift/config.groovy --pr=9 --env=dev
 ```
 
+## Cleanup
+```
+#switch to the right project/namespace
+oc delete all -l !shared,github-repo=ocp-sso,env-id=pr-9
+```
 
 # Manual Installation
 If you are just looking for quickly spin up an instance of RH-SSO
@@ -32,13 +41,21 @@ oc process -f openshift/sso72-x509-postgresql-secrets.yaml -p NAME=rh-sso -p SUF
 
 oc process -f openshift/sso72-x509-postgresql.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
-3. Create Keycloak/RH-SSO
+
+3. Import Image
+The template requires an ImageStream in the same namespace
+```
+oc import-image rh-sso:1.3-7 --from=registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.3-7
+```
+
+4. Create Keycloak/RH-SSO
 ```
 oc process -f openshift/sso72-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc process -f openshift/sso72-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/sso72-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=1.3-7 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
-4. Delete everything
+
+5. Delete everything
 ```
 oc delete rc,svc,dc,route,pvc,secret -l app=rh-sso-sandbox
 ```

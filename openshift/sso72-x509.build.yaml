@@ -88,7 +88,7 @@ parameters:
 - name: VERSION
   decription: The output tag name created by the build config
   required: true
-  value: 1.3-7
+  value: latest
 - name: SOURCE_GIT_URL
   required: true
   value: https://github.com/bcgov/ocp-sso.git
@@ -96,4 +96,4 @@ parameters:
   required: false
   value: add-docker-file
 - name: SOURCE_CONTEXT_DIR
-  value: ""
+  value: "docker"

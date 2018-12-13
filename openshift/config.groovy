@@ -36,13 +36,13 @@ app {
         timeoutInSeconds = 60*20 // 20 minutes
         templates = [
                 [
-                    'file':'openshift/sso.bc.json',
+                    'file':'openshift/sso72-x509.build.yaml',
                     'params':[
                         'NAME': "${app.build.name}",
                         'SUFFIX': app.build.suffix,
                         'VERSION': app.build.version,
-                        'GIT_REPO_URL': "${app.git.uri}",
-                        'GIT_REF': "${app.git.ref}"
+                        'SOURCE_GIT_URL': "${app.git.uri}",
+                        'SOURCE_GIT_REF': "${app.git.ref}"
                     ]
                 ]
         ]
@@ -88,7 +88,8 @@ app {
                     'file':'openshift/sso72-x509.yaml',
                     'params':[
                         'NAME': "${app.deployment.name}",
-                        'SUFFIX': "${app.deployment.suffix}"
+                        'SUFFIX': "${app.deployment.suffix}",
+                        'VERSION': "${app.deployment.version}"
                     ]
                 ]
         ]
