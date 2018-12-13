@@ -1,0 +1,614 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "jenkins",
+        "creationTimestamp": null
+    },
+    "parameters":[
+        {
+            "name": "NAME",
+            "displayName": "Name",
+            "description": "A name used for all objects",
+            "required": true
+        },{
+            "name": "BC_NAME",
+            "displayName": "Name",
+            "description": "A name used for all objects",
+            "value": "jenkins",
+            "required": true
+        },{
+            "name": "SUFFIX",
+            "displayName": "Suffix",
+            "description": "A name suffix used for all objects",
+            "required": false,
+            "value": ""
+        },{
+            "name": "VERSION",
+            "displayName": "version",
+            "description": "A version used for the image tags",
+            "value": "v1.0.0",
+            "required": true
+        },{
+            "name": "GITHUB_USERNAME",
+            "displayName": "GITHUB_USERNAME",
+            "description": "GITHUB_USERNAME",
+            "value": "cvarjao",
+            "required": true
+        },{
+            "name": "ROUTE_HOST",
+            "displayName": "ROUTE_HOST",
+            "description": "ROUTE_HOST",
+            "required": true
+        },{
+            "name": "ROUTE_PATH",
+            "displayName": "ROUTE_PATH",
+            "description": "ROUTE_PATH",
+            "value": "/",
+            "required": true
+        },{
+            "name": "ENV_NAME",
+            "displayName": "ENV_NAME",
+            "description": "Environment Name",
+            "value": "prod",
+            "required": true
+        },{
+            "name": "ENV_ID",
+            "displayName": "ENV_ID",
+            "description": "Environment ID",
+            "value": "prod",
+            "required": true
+        },{
+            "name": "SLAVE_USER_PASSWORD",
+            "displayName": "SLAVE_USER_PASSWORD",
+            "description": "SLAVE_USER_PASSWORD",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{16}"
+        },{
+            "name": "GITHUB_USERNAME",
+            "displayName": "GITHUB_USERNAME",
+            "description": "GITHUB_USERNAME",
+            "required": false,
+            "value": ""
+        },{
+            "name": "GITHUB_TOKEN",
+            "displayName": "GITHUB_USERNAME",
+            "description": "GitHub Personal Access Token",
+            "required": false,
+            "value": ""
+        }
+    ],
+    "objects": [
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${BC_NAME}",
+                "creationTimestamp": null,
+                "labels": {
+                    "shared": "true"
+                }
+            },
+            "spec": {
+                "lookupPolicy": {
+                    "local": false
+                }
+            }
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}-slave-user",
+                "annotations": {
+                    "as-copy-of": "template.${NAME}-slave-user",
+                    "as-copy-of/preserve": "password"
+                }
+            },
+            "stringData": {
+                "metadata.name": "${NAME}${SUFFIX}-slave-user",
+                "username": "jenkins-slave",
+                "password": "${SLAVE_USER_PASSWORD}"
+            },
+            "type": "kubernetes.io/basic-auth"
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}-github",
+                "annotations":{
+                    "as-copy-of": "template.${NAME}-github"
+                }
+            },
+            "stringData": {
+                "metadata.name": "${NAME}${SUFFIX}-github",
+                "username": "${GITHUB_USERNAME}",
+                "password": "${GITHUB_TOKEN}"
+            },
+            "type": "kubernetes.io/basic-auth"
+        },
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}",
+                "annotations": {
+                    "volume.beta.kubernetes.io/storage-class": "gluster-file",
+                    "volume.beta.kubernetes.io/storage-provisioner": "kubernetes.io/glusterfs"
+                }
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "1Gi"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "ServiceAccount",
+            "metadata": {
+                "annotations": {
+                    "serviceaccounts.openshift.io/oauth-redirectreference.jenkins": "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"${NAME}${SUFFIX}\"}}"
+                },
+                "name": "${NAME}${SUFFIX}"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "groupNames": null,
+            "kind": "RoleBinding",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}_edit"
+            },
+            "roleRef": {
+                "name": "edit"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "${NAME}${SUFFIX}"
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1",
+            "groupNames": null,
+            "kind": "RoleBinding",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}_admin"
+            },
+            "roleRef": {
+                "name": "admin"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "${NAME}${SUFFIX}"
+                }
+            ]
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}",
+                "creationTimestamp": null,
+                "annotations": {
+                    "template.alpha.openshift.io/wait-for-ready": "true"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate",
+                    "recreateParams": {
+                        "timeoutSeconds": 600
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": ["jenkins"],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${BC_NAME}:${VERSION}"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "test": false,
+                "selector": {
+                    "deploymentconfig": "${NAME}${SUFFIX}"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "deploymentconfig": "${NAME}${SUFFIX}"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "jenkins-jobs",
+                                "persistentVolumeClaim": {
+                                    "claimName": "${NAME}${SUFFIX}"
+                                }
+                            },
+                            {
+                                "name": "pod-metadata",
+                                "downwardAPI":{
+                                    "items":[
+                                        {"name": "name", "fieldRef": {"fieldPath": "metadata.name"}, "path": "name"},
+                                        {"name": "namespace", "fieldRef": {"fieldPath": "metadata.namespace"}, "path": "namespace"},
+                                        {"name": "labels", "fieldRef": {"fieldPath": "metadata.labels"}, "path": "labels"},
+                                        {"name": "annotations", "fieldRef": {"fieldPath": "metadata.annotations"}, "path": "annotations"}
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "jenkins-slave-user",
+                                "secret": {
+                                    "secretName": "${NAME}${SUFFIX}-slave-user",
+                                    "defaultMode": 420
+                                }
+                            },
+                            {
+                                "name": "github",
+                                "secret": {
+                                    "secretName": "${NAME}${SUFFIX}-github",
+                                    "defaultMode": 420
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "jenkins",
+                                "image": " ",
+                                "readinessProbe": {
+                                    "timeoutSeconds": 240,
+                                    "initialDelaySeconds": 3,
+                                    "httpGet": {
+                                    "path": "/login",
+                                    "port": 8080
+                                    }
+                                },
+                                "livenessProbe": {
+                                    "timeoutSeconds": 240,
+                                    "periodSeconds": 360,
+                                    "initialDelaySeconds": 420,
+                                    "failureThreshold" : 3,
+                                    "httpGet": {
+                                        "path": "/login",
+                                        "port": 8080
+                                    }
+                                },
+                                "command":[
+                                    "/usr/local/bin/container-entrypoint",
+                                    "/usr/local/bin/jenkins-run"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 50000,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "USE_JAVA_DIAGNOSTICS",
+                                        "value": "true"
+                                    },{
+                                        "name": "JENKINS_URL",
+                                        "value": "https://${ROUTE_HOST}${ROUTE_PATH}"
+                                    },{
+                                        "name": "ENV_NAME",
+                                        "value": "${ENV_NAME}"
+                                    },{
+                                        "name": "ENV_ID",
+                                        "value": "${ENV_ID}"
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "jenkins-jobs",
+                                        "readOnly": false,
+                                        "mountPath": "/var/lib/jenkins/jobs"
+                                    },
+                                    {
+                                        "name": "pod-metadata",
+                                        "mountPath": "/var/run/pod"
+                                    },
+                                    {
+                                        "name": "jenkins-slave-user",
+                                        "readOnly": true,
+                                        "mountPath": "/run/secrets/jenkins-slave-user"
+                                    },
+                                    {
+                                        "name": "github",
+                                        "readOnly": true,
+                                        "mountPath": "/run/secrets/github"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "2Gi"
+                                    },
+                                    "requests": {
+                                        "cpu": "300m",
+                                        "memory": "2Gi"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler",
+                        "serviceAccountName": "${NAME}${SUFFIX}",
+                        "serviceAccount": "${NAME}${SUFFIX}"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}-slave-build",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate",
+                    "recreateParams": {
+                        "timeoutSeconds": 600
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": ["jenkins"],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${BC_NAME}:${VERSION}"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "test": false,
+                "selector": {
+                    "deploymentconfig": "${NAME}${SUFFIX}-slave-build"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "deploymentconfig": "${NAME}${SUFFIX}-slave-build"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "jenkins-home",
+                                "persistentVolumeClaim": {
+                                    "claimName": "${NAME}${SUFFIX}"
+                                }
+                            },
+                            {
+                                "name": "pod-metadata",
+                                "downwardAPI":{
+                                    "items":[
+                                        {"name": "name", "fieldRef": {"fieldPath": "metadata.name"}, "path": "name"},
+                                        {"name": "namespace", "fieldRef": {"fieldPath": "metadata.namespace"}, "path": "namespace"},
+                                        {"name": "labels", "fieldRef": {"fieldPath": "metadata.labels"}, "path": "labels"},
+                                        {"name": "annotations", "fieldRef": {"fieldPath": "metadata.annotations"}, "path": "annotations"}
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "jenkins-slave-user",
+                                "secret": {
+                                    "secretName": "${NAME}${SUFFIX}-slave-user",
+                                    "defaultMode": 420
+                                }
+                            },
+                            {
+                                "name": "github",
+                                "secret": {
+                                    "secretName": "${NAME}${SUFFIX}-github",
+                                    "defaultMode": 420
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "jenkins",
+                                "image": " ",
+                                "livenessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "curl",
+                                            "-sSf",
+                                            "http://${NAME}${SUFFIX}:8080/login"
+                                        ]
+                                    },
+                                    "failureThreshold": 3,
+                                    "initialDelaySeconds": 420,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 360
+                                },
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "curl",
+                                            "-sSf",
+                                            "http://${NAME}${SUFFIX}:8080/login"
+                                        ]
+                                    },
+                                    "failureThreshold": 3,
+                                    "initialDelaySeconds": 3,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 240
+                                },
+                                "command":[
+                                    "bash",
+                                    "-c",
+                                    "cd $HOME && java -XshowSettings:vm -version && exec java -jar /usr/lib/jenkins/swarm-client.jar -name \"$(cat /etc/hostname)\" -deleteExistingClients -fsroot \"$JENKINS_HOME/$(cat /etc/hostname)\" -master http://$JENKINS_MASTER_SERVICE:8080 -disableSslVerification -username  \"$(cat /var/run/secrets/jenkins-slave-user/username)\" -passwordFile /var/run/secrets/jenkins-slave-user/password -description \"$(cat /etc/hostname)\" -executors 3 -labels 'Linux rhel rhel7 build test deploy light' -mode 'normal' -retry 10 -tunnel $JENKINS_MASTER_SERVICE:50000 -disableClientsUniqueId"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 50000,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "JENKINS_MASTER_SERVICE",
+                                        "value": "${NAME}${SUFFIX}"
+                                    },
+                                    {
+                                        "name": "JAVA_TOOL_OPTIONS",
+                                        "value": "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=5 -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:+UseParallelGC -XX:ParallelGCThreads=2"
+                                    },{
+                                        "name": "ENV_NAME",
+                                        "value": "${ENV_NAME}"
+                                    },{
+                                        "name": "ENV_ID",
+                                        "value": "${ENV_ID}"
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "pod-metadata",
+                                        "mountPath": "/var/run/pod"
+                                    },
+                                    {
+                                        "name": "jenkins-slave-user",
+                                        "readOnly": true,
+                                        "mountPath": "/run/secrets/jenkins-slave-user"
+                                    },
+                                    {
+                                        "name": "github",
+                                        "readOnly": true,
+                                        "mountPath": "/run/secrets/github"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "500m",
+                                        "memory": "2Gi"
+                                    },
+                                    "requests": {
+                                        "cpu": "300m",
+                                        "memory": "2Gi"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler",
+                        "serviceAccountName": "${NAME}${SUFFIX}",
+                        "serviceAccount": "${NAME}${SUFFIX}"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8080-tcp",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    },
+                    {
+                        "name": "50000-tcp",
+                        "protocol": "TCP",
+                        "port": 50000,
+                        "targetPort": 50000
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "${NAME}${SUFFIX}"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "host": "${ROUTE_HOST}",
+                "path": "${ROUTE_PATH}",
+                "to": {
+                    "kind": "Service",
+                    "name": "${NAME}${SUFFIX}",
+                    "weight": 100
+                },
+                "port": {
+                    "targetPort": "8080-tcp"
+                },
+                "tls": {
+                    "termination": "edge"
+                },
+                "wildcardPolicy": "None"
+            }
+        }
+    ]
+}

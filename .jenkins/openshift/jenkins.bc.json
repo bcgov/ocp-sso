@@ -1,0 +1,119 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+      "name": "jenkins",
+      "creationTimestamp": null
+  },
+  "parameters":[
+      {
+          "name": "NAME",
+          "displayName": "Name",
+          "description": "A name used for all objects",
+          "required": true,
+          "value": "jenkins"
+      },{
+          "name": "SUFFIX",
+          "displayName": "Suffix",
+          "description": "A name suffix used for all objects",
+          "required": false,
+          "value": ""
+      },{
+          "name": "VERSION",
+          "displayName": "version",
+          "description": "A version used for the image tags",
+          "required": true,
+          "value": "v1.0.0"
+      },{
+          "name": "SOURCE_IMAGE_STREAM_NAMESPACE",
+          "required": true,
+          "value": "bcgov"
+      },{
+          "name": "SOURCE_IMAGE_STREAM_TAG",
+          "required": true,
+          "value": "jenkins-basic:v2-latest"
+      },{
+          "name": "SOURCE_REPOSITORY_URL",
+          "required": true
+      },{
+          "name": "SOURCE_REPOSITORY_REF",
+          "required": false,
+          "value": "tools"
+      }
+  ],
+  "objects": [
+      {
+          "kind": "ImageStream",
+          "apiVersion": "v1",
+          "metadata": {
+              "name": "${NAME}",
+              "creationTimestamp": null,
+              "labels":{
+                  "shared": "true"
+              }
+          },
+          "spec": {
+              "lookupPolicy": {
+                  "local": false
+              }
+          }
+      },
+      {
+          "kind": "BuildConfig",
+          "apiVersion": "v1",
+          "metadata": {
+              "name": "${NAME}${SUFFIX}",
+              "creationTimestamp": null
+          },
+          "spec": {
+              "triggers": [
+                  {
+                      "type": "ConfigChange"
+                  },
+                  {
+                      "type": "ImageChange",
+                      "imageChange": {}
+                  }
+              ],
+              "source": {
+                  "type": "Git",
+                  "git": {
+                      "uri": "${SOURCE_REPOSITORY_URL}",
+                      "ref": "${SOURCE_REPOSITORY_REF}"
+                  },
+                  "contextDir": ".jenkins/docker"
+              },
+              "strategy": {
+                  "type": "Docker",
+                  "dockerStrategy": {
+                      "from": {
+                          "kind": "ImageStreamTag",
+                          "name": "${SOURCE_IMAGE_STREAM_TAG}",
+                          "namespace": "${SOURCE_IMAGE_STREAM_NAMESPACE}"
+                      }
+                  }
+              },
+              "output": {
+                  "to": {
+                      "kind": "ImageStreamTag",
+                      "name": "${NAME}:${VERSION}"
+                  }
+              },
+              "resources": {
+                  "limits": {
+                      "cpu": "1",
+                      "memory": "1Gi"
+                  },
+                  "requests": {
+                      "cpu": "1",
+                      "memory": "1Gi"
+                  }
+              },
+              "postCommit": {},
+              "runPolicy": "SerialLatestOnly",
+              "successfulBuildsHistoryLimit": 2,
+              "failedBuildsHistoryLimit": 2
+          }
+      }
+  ]
+}
