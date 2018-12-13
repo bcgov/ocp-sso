@@ -9,6 +9,12 @@ oc process -f openshift/sso72-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFI
 oc delete secret -l part-of=rh-sso,shared=true
 
 ```
+
+## Deploying
+```
+#replace '1' with a valid pull-request number
+.jenkins/pipekine-cli build --config=openshift/config.groovy --pr=1
+```
 # Manual Installation
 
 1. Switch to project
