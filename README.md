@@ -14,12 +14,13 @@ oc delete secret -l part-of=rh-sso,shared=true
 ```
 .jenkins/pipeline-cli build --config=openshift/config.groovy --pr=9
 ```
+note: replace '9' with a valid pull-request number
 
 ## Deploying
 ```
-#replace '1' with a valid pull-request number
 .jenkins/pipeline-cli deploy --config=openshift/config.groovy --pr=9 --env=dev
 ```
+note: replace '9' with a valid pull-request number
 
 ## Cleanup
 ```
