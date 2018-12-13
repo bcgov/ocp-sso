@@ -34,7 +34,7 @@ oc process -f openshift/sso72-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l
 
 oc process -f openshift/sso72-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
-4 Delete everything
+4. Delete everything
 ```
 oc delete rc,svc,dc,route,pvc,secret -l app=rh-sso-sandbox
 ```
