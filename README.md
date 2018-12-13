@@ -1,6 +1,7 @@
 # Scripted Installation
 
 ## Prerequisites
+Secrets needs to manually created as "templates". The name has to match each secret respective `as-copy-of` annotation.
 ```
 oc process -f openshift/sso72-x509-postgresql-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
 oc process -f openshift/sso72-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
@@ -15,7 +16,10 @@ oc delete secret -l part-of=rh-sso,shared=true
 #replace '1' with a valid pull-request number
 .jenkins/pipekine-cli build --config=openshift/config.groovy --pr=1
 ```
+
+
 # Manual Installation
+If you are just looking for quickly spin up an instance of RH-SSO
 
 1. Switch to project
 ```
