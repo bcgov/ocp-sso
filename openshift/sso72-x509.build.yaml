@@ -24,6 +24,37 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
+    annotations: {}
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: openjdk18-openshift
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6
+      importPolicy: {}
+      name: '1.6'
+      referencePolicy:
+        type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: ${NAME}-extensions
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
     annotations: null
     creationTimestamp: null
     labels:
@@ -38,7 +69,7 @@ objects:
     annotations: {}
     creationTimestamp: null
     labels: {}
-    name: ${NAME}${SUFFIX}
+    name: ${NAME}-extensions${SUFFIX}
   spec:
     completionDeadlineSeconds: 1440
     failedBuildsHistoryLimit: 3
@@ -46,7 +77,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: ${NAME}:${VERSION}
+        name: ${NAME}-extensions:${VERSION}
     postCommit: {}
     resources:
       limits:
@@ -61,16 +92,87 @@ objects:
         ref: ${SOURCE_GIT_REF}
         uri: ${SOURCE_GIT_URL}
       type: Git
-      contextDir: "${SOURCE_CONTEXT_DIR}"
+      contextDir: "extensions"
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'openjdk18-openshift:1.6'
+        env:
+          - name: BUILD_LOGLEVEL
+            value: '0'
+          - name: S2I_SOURCE_DEPLOYMENTS_FILTER
+            value: '*.jar *.zip *.tar.gz'
+          - name: MAVEN_S2I_ARTIFACT_DIRS
+            value: 'services/target/dist,themes/target'
+      type: Source
+    successfulBuildsHistoryLimit: 3
+    triggers:
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: 'openjdk18-openshift:1.6'
+      type: ImageChange
+    - type: ConfigChange
+#Chainned build
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      build: ${NAME}${SUFFIX}
+    name: ${NAME}${SUFFIX}
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:${VERSION}
+    postCommit: {}
+    resources:
+      requests:
+        cpu: 1
+      limits:
+        cpu: 2
+    source:
+      dockerfile: |-
+        FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6
+        #COPY deployments/ /tmp/deployments
+        #COPY theme/ /tmp/themes
+        #RUN ls -la /tmp/deployments/ && find /tmp/deployments/ -type f -ls
+        #RUN ls -la /tmp/themes/ && find /tmp/themes/ -type f -ls
+        #ADD deployments/bcgov-themes-1.0.0.tar.gz /opt/jboss/keycloak/themes/
+        #RUN echo 'BEFORE COPY:' && ls -la /opt/eap/themes/
+        COPY theme/ /opt/eap/themes/
+        #RUN echo 'AFTER COPY:' && ls -la /opt/eap/themes/
+        COPY deployments/bcgov-services-1.0.0.jar /opt/eap/standalone/deployments/
+        #RUN ls -la /opt/eap/standalone/deployments/
+      images:
+        - from:
+            kind: ImageStreamTag
+            name: '${NAME}-extensions:${VERSION}'
+          paths:
+            - destinationDir: '.'
+              sourcePath: /deployments/
+            - destinationDir: '.'
+              sourcePath: /tmp/src/themes/src/main/resources/theme/
+      type: Dockerfile
     strategy:
       dockerStrategy:
         from:
           kind: ImageStreamTag
           name: sso72-openshift:${RH_SSO_IMAGE_TAG}
       type: Docker
-    successfulBuildsHistoryLimit: 3
     triggers:
-    - imageChange: {}
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: ${NAME}-extensions:${VERSION}
+      type: ImageChange
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
       type: ImageChange
     - type: ConfigChange
 parameters:

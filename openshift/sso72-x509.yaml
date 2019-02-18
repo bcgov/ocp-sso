@@ -3,6 +3,13 @@ kind: Template
 labels:
   template: sso72-x509-postgresql-persistent
   xpaas: 1.4.14
+  app.kubernetes.io/version: "${VERSION}"
+  app.kubernetes.io/name: "rh-sso"
+  app.kubernetes.io/instance: "${NAME}${SUFFIX}"
+  app.kubernetes.io/component: "server"
+  app.kubernetes.io/part-of: "rh-sso"
+  app.kubernetes.io/managed-by: template
+  app.kubernetes.io/phase: "dev"
 message: A new persistent RH-SSO service (using PostgreSQL) has been created in your
   project. The admin username/password for accessing the master realm via the RH-SSO
   console is ${SSO_ADMIN_USERNAME}/${SSO_ADMIN_PASSWORD}. The username/password for
@@ -102,7 +109,7 @@ objects:
         containers:
         - env:
           - name: DB_POSTGRESQL_SERVICE_HOST
-            value: ${NAME}-postgresql${SUFFIX}
+            value: ${DB_SERVICE_HOST}
           - name: DB_POSTGRESQL_SERVICE_PORT
             value: "5432"
           - name: DB_SERVICE_PREFIX_MAPPING
@@ -112,23 +119,23 @@ objects:
           - name: DB_USERNAME
             valueFrom:
               secretKeyRef:
-                  name: "${NAME}-postgresql${SUFFIX}"
-                  key: "username"
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_USERNAME_KEY}"
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                  name: "${NAME}-postgresql${SUFFIX}"
-                  key: "password"
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_PASSWORD_KEY}"
           - name: DB_DATABASE
             valueFrom:
               secretKeyRef:
-                  name: "${NAME}-postgresql${SUFFIX}"
-                  key: "database"
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_DATABASE_KEY}"
           - name: TX_DATABASE_PREFIX_MAPPING
             value: db-postgresql=DB
-          - name: DB_MIN_POOL_SIZE
+          - name: DB_TX_MIN_POOL_SIZE
             value: ${DB_MIN_POOL_SIZE}
-          - name: DB_MAX_POOL_SIZE
+          - name: DB_TX_MAX_POOL_SIZE
             value: ${DB_MAX_POOL_SIZE}
           - name: DB_TX_ISOLATION
             value: ${DB_TX_ISOLATION}
@@ -161,6 +168,11 @@ objects:
             value: ""
           - name: SSO_SERVICE_PASSWORD
             value: ""
+# Debug configuration for remote debugging
+#          - name: DEBUG
+#            value: 'true'
+#          - name: DEBUG_PORT
+#            value: '0.0.0.0:8787'
           image: " "
           imagePullPolicy: Always
           livenessProbe:
@@ -221,6 +233,22 @@ objects:
           name: "${NAME}:${VERSION}"
       type: ImageChange
     - type: ConfigChange
+- apiVersion: policy/v1beta1
+  kind: PodDisruptionBudget
+  metadata:
+    creationTimestamp: null
+    name: ${NAME}${SUFFIX}
+  spec:
+    minAvailable: 2
+    selector:
+      matchLabels:
+        deploymentconfig: ${NAME}${SUFFIX}
+  status:
+    currentHealthy: 0
+    desiredHealthy: 0
+    disruptedPods: null
+    disruptionsAllowed: 0
+    expectedPods: 0
 parameters:
 - description: The name for the application.
   displayName: Application Name
@@ -238,6 +266,11 @@ parameters:
   displayName: Database JNDI Name
   name: DB_JNDI
   value: java:jboss/datasources/KeycloakDS
+- name: DB_SERVICE_HOST
+- name: DB_SECRET_NAME
+- name: DB_SECRET_DATABASE_KEY
+- name: DB_SECRET_USERNAME_KEY
+- name: DB_SECRET_PASSWORD_KEY
 - description: Sets xa-pool/min-pool-size for the configured datasource.
   displayName: Datasource Minimum Pool Size
   name: DB_MIN_POOL_SIZE

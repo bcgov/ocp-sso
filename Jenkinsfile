@@ -12,14 +12,14 @@ pipeline {
                     abortAllPreviousBuildInProgress(currentBuild)
                 }
                 echo "Building ..."
-                sh ".jenkins/pipekine-cli build --config=openshift/config.groovy --pr=${CHANGE_ID}"
+                sh ".pipeline/npmw build -- --pr=${CHANGE_ID}"
             }
         }
         stage('Deploy (DEV)') {
             agent { label 'deploy' }
             steps {
                 echo "Deploying ..."
-                sh ".jenkins/pipekine-cli deploy --config=openshift/config.groovy --pr=${CHANGE_ID} --env=dev"
+                sh ".pipeline/npmw deploy -- --pr=${CHANGE_ID} --env=dev"
             }
         }
     }

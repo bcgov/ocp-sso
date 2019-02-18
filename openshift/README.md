@@ -9,7 +9,7 @@ oc create -f https://raw.githubusercontent.com/jboss-container-images/redhat-sso
 oc create -f sso72-x509-postgresql-persistent.json --dry-run=true -o yaml > sso72-x509-postgresql-persistent.yaml
 ```
 
-2. Split the template in two: app/keycloak and database/postgresql
+2. Split the template in two:
     * `sso72-x509-postgresql.json`: only the database (postgresql) objects
     ```
     #reference filter script
@@ -33,3 +33,24 @@ oc create -f sso72-x509-postgresql-secrets.json --dry-run=true -o yaml > sso72-x
 oc create -f sso72-x509.json --dry-run=true -o yaml > sso72-x509.yaml
 oc create -f sso72-x509-secrets.json --dry-run=true -o yaml > sso72-x509-secrets.yaml
 ```
+## Project setup
+```
+printf "tools\ndev\ntest\nprod" | xargs -I {} oc new-project 'devops-sso-{}' > /dev/null
+
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-group system:image-puller 'system:serviceaccounts:devops-sso-{}' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:devops-sso-{}:default' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:devops-sso-{}:builder' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+
+```
+
+# Source Templates
+- https://github.com/jboss-container-images/redhat-sso-7-openshift-image/blob/sso72-dev/templates/sso72-x509-postgresql-persistent.json
+- https://github.com/BCDevOps/platform-services/blob/master/apps/pgsql/patroni/openshift-example/templates/template_patroni_persistent.yml
+
+
+# References
+- https://github.com/jboss-openshift/cct_module/blob/master/jboss/container/maven/s2i/bash/artifacts/usr/local/s2i/assemble
+- https://github.com/jboss-openshift/cct_module/blob/master/jboss/container/maven/s2i/bash/artifacts/opt/jboss/container/maven/s2i/maven-s2i
+- https://github.com/jboss-openshift/cct_module/blob/master/jboss/container/s2i/core/bash/artifacts/opt/jboss/container/s2i/core/s2i-core
