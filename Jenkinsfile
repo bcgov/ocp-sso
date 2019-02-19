@@ -15,8 +15,19 @@ pipeline {
                 sh ".pipeline/npmw build -- --pr=${CHANGE_ID}"
             }
         }
+        stage('Deploy (SANDBOX)') {
+            agent { label 'deploy' }
+            steps {
+                echo "Deploying ..."
+                sh ".pipeline/npmw deploy -- --pr=${CHANGE_ID} --env=sbox"
+            }
+        }
         stage('Deploy (DEV)') {
             agent { label 'deploy' }
+            input {
+                message "Should we continue with deployment to DEV?"
+                ok "Yes!"
+            }
             steps {
                 echo "Deploying ..."
                 sh ".pipeline/npmw deploy -- --pr=${CHANGE_ID} --env=dev"
