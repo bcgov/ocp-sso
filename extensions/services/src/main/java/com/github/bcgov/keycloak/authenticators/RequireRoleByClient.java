@@ -87,9 +87,9 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     			uriBuilder = UriBuilder.fromUri(sessionClient.getBaseUrl());
     			uriBuilder.queryParam("error", "Access Denied (Missing Required Role)");
     		}else {
-    			uriBuilder = UriBuilder.fromUri(errorUrl);
     			errorUrl=errorUrl.replace("${idp_alias}", brokerContext.getIdpConfig().getAlias());
     			errorUrl=errorUrl.replace("${client_id}", sessionClient.getClientId());
+    			uriBuilder = UriBuilder.fromUri(errorUrl);
     		}
 	        
 	        ResponseBuilder responseBuilder = Response.temporaryRedirect(uriBuilder.build());
