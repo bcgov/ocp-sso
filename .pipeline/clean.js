@@ -1,4 +1,6 @@
 'use strict';
-const build = require('./lib/clean.js')
+const options= require('pipeline-cli').Util.parseArguments()
+const phases = require('./lib/config.js')
+const clean = require('./lib/clean.js')
 
-build()
+clean({phases:phases, options:options})

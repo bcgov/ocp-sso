@@ -1,14 +1,15 @@
 'use strict';
 const {OpenShiftClientX} = require('pipeline-cli')
 const path = require('path');
-const phases = require('./config')
 
 module.exports = (settings)=>{
+  const phases = settings.phases
   const oc=new OpenShiftClientX({'namespace':phases.build.namespace});
   const phase='build'
-  var objects = []
+  let objects = []
+  const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
 
-  objects = objects.concat(oc.processDeploymentTemplate(oc.toFileUrl(path.resolve(__dirname, '../../openshift/sso72-x509.build.yaml')), {
+  objects = objects.concat(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509.build.yaml`, {
     'param':{
       'NAME': phases[phase].name,
       'SUFFIX': phases[phase].suffix,
