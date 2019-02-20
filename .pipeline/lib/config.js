@@ -2,7 +2,7 @@
 const options= require('pipeline-cli').Util.parseArguments()
 const changeId = options.pr //aka pull-request
 const version = '1.1.0'
-const name = 'rhsso'
+const name = 'sso'
 
 const phases = {
   build: {namespace:'devops-sso-tools'  , name: `${name}`, phase: 'build', changeId:changeId, suffix: `-build-${changeId}`, instance: `${name}-build-${changeId}`, version:`${version}-${changeId}`, tag:`${version}-${changeId}`},

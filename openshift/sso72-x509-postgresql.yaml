@@ -172,6 +172,10 @@ objects:
                 name: ${NAME}${SUFFIX}
           - name: PATRONI_SCOPE
             value: ${INSTANCE}
+          - name: POSTGRESQL_MAX_CONNECTIONS
+            value: '500'
+          - name: POSTGRESQL_MAX_PREPARED_TRANSACTIONS
+            value: '500'
           - name: PATRONI_NAME
             valueFrom:
               fieldRef:
