@@ -17,6 +17,13 @@
 
 package com.github.bcgov.keycloak.authenticators;
 
+import java.io.ByteArrayInputStream;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
+import javax.json.JsonStructure;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
@@ -53,11 +60,15 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	
         AuthenticationSessionModel authSession = context.getAuthenticationSession();
 
-        SerializedBrokeredIdentityContext serializedCtx = SerializedBrokeredIdentityContext.readFromAuthenticationSession(authSession, AbstractIdpAuthenticator.BROKERED_CONTEXT_NOTE);
-        if (serializedCtx == null) {
-            throw new AuthenticationFlowException("Not found serialized context in clientSession", AuthenticationFlowError.IDENTITY_PROVIDER_ERROR);
-        }
-        BrokeredIdentityContext brokerContext = serializedCtx.deserialize(context.getSession(), authSession);
+        	
+        JsonReader reader = Json.createReader(new ByteArrayInputStream(authSession.getAuthNote("PBL_BROKERED_IDENTITY_CONTEXT").getBytes()));
+        JsonObject jsonst = (JsonObject)reader.read();
+        
+        
+        //logger.infof("jsonst '%s'", jsonst);
+        
+        String identityProviderId = ((JsonString)jsonst.get("identityProviderId")).getString();
+        
         
         //brokerContext.getIdpConfig().getAlias()
         
@@ -84,12 +95,12 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		logger.infof("User does not have required role '%s'", role, client);
     		UriBuilder uriBuilder = null;
     		if (errorUrl !=null && errorUrl.length()>0) {
-    			uriBuilder = UriBuilder.fromUri(sessionClient.getBaseUrl());
-    			uriBuilder.queryParam("error", "Access Denied (Missing Required Role)");
-    		}else {
-    			errorUrl=errorUrl.replace("${idp_alias}", brokerContext.getIdpConfig().getAlias());
-    			errorUrl=errorUrl.replace("${client_id}", sessionClient.getClientId());
+    			errorUrl=errorUrl.replace("${idp_alias}", identityProviderId);
+    			//errorUrl=errorUrl.replace("${client_id}", sessionClient.getClientId());
     			uriBuilder = UriBuilder.fromUri(errorUrl);
+    		}else {
+    			uriBuilder = UriBuilder.fromUri(sessionClient.getBaseUrl());
+    			//uriBuilder.queryParam("error", "Access Denied (Missing Required Role)");
     		}
 	        
 	        ResponseBuilder responseBuilder = Response.temporaryRedirect(uriBuilder.build());
