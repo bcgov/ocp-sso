@@ -17,6 +17,9 @@
 
 package com.github.bcgov.keycloak.authenticators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.keycloak.Config;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.authentication.AuthenticatorFactory;
@@ -24,11 +27,6 @@ import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.provider.ProviderConfigProperty;
-
-import com.github.bcgov.keycloak.IdpCreateUserIfUniqueAuthenticator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -38,6 +36,7 @@ public class RequireRoleByClientFactory implements AuthenticatorFactory {
     public static final String PROVIDER_ID = "bcgov-required-role-by-client";
     public static final String CLIENT_NAME = PROVIDER_ID+".client";
     public static final String ROLE_NAME = PROVIDER_ID+".role";
+    public static final String ERROR_URL = PROVIDER_ID+".error-url";
     
     static RequireRoleByClient SINGLETON = new RequireRoleByClient();
 
@@ -57,7 +56,13 @@ public class RequireRoleByClientFactory implements AuthenticatorFactory {
         property.setLabel("Required Role");
         property.setType(ProviderConfigProperty.ROLE_TYPE);
         property.setHelpText("Select a role a user must have when requested by the defined client");
+        configProperties.add(property);
         
+        property = new ProviderConfigProperty();
+        property.setName(ERROR_URL);
+        property.setLabel("Error URL");
+        property.setType(ProviderConfigProperty.STRING_TYPE);
+        property.setHelpText("Error URL to redirect user when role is missing. (Defaults to client base URL)");
         configProperties.add(property);
     }
     

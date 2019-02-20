@@ -17,9 +17,6 @@
 
 package com.github.bcgov.keycloak.authenticators;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
@@ -27,15 +24,17 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
-import org.keycloak.authentication.authenticators.resetcred.AbstractSetRequiredActionAuthenticator;
-import org.keycloak.models.AuthenticationExecutionModel;
+import org.keycloak.authentication.AuthenticationFlowException;
+import org.keycloak.authentication.authenticators.broker.AbstractIdpAuthenticator;
+import org.keycloak.authentication.authenticators.broker.util.SerializedBrokeredIdentityContext;
+import org.keycloak.broker.provider.BrokeredIdentityContext;
 import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.services.messages.Messages;
+import org.keycloak.sessions.AuthenticationSessionModel;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -50,7 +49,18 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	AuthenticatorConfigModel config = context.getAuthenticatorConfig();
     	String client = config.getConfig().get(RequireRoleByClientFactory.CLIENT_NAME);
     	String role = config.getConfig().get(RequireRoleByClientFactory.ROLE_NAME);
+    	String errorUrl = config.getConfig().get(RequireRoleByClientFactory.ERROR_URL);
     	
+        AuthenticationSessionModel authSession = context.getAuthenticationSession();
+
+        SerializedBrokeredIdentityContext serializedCtx = SerializedBrokeredIdentityContext.readFromAuthenticationSession(authSession, AbstractIdpAuthenticator.BROKERED_CONTEXT_NOTE);
+        if (serializedCtx == null) {
+            throw new AuthenticationFlowException("Not found serialized context in clientSession", AuthenticationFlowError.IDENTITY_PROVIDER_ERROR);
+        }
+        BrokeredIdentityContext brokerContext = serializedCtx.deserialize(context.getSession(), authSession);
+        
+        //brokerContext.getIdpConfig().getAlias()
+        
     	ClientModel sessionClient = context.getAuthenticationSession().getClient();
     	boolean authShouldFail = false;
     	
@@ -72,8 +82,16 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	
     	if (authShouldFail) {
     		logger.infof("User does not have required role '%s'", role, client);
-	        UriBuilder uriBuilder = UriBuilder.fromUri(sessionClient.getBaseUrl());
-	        uriBuilder.queryParam("error", "Access Denied (Missing Required Role)");
+    		UriBuilder uriBuilder = null;
+    		if (errorUrl !=null && errorUrl.length()>0) {
+    			uriBuilder = UriBuilder.fromUri(sessionClient.getBaseUrl());
+    			uriBuilder.queryParam("error", "Access Denied (Missing Required Role)");
+    		}else {
+    			uriBuilder = UriBuilder.fromUri(errorUrl);
+    			errorUrl=errorUrl.replace("${idp_alias}", brokerContext.getIdpConfig().getAlias());
+    			errorUrl=errorUrl.replace("${client_id}", sessionClient.getClientId());
+    		}
+	        
 	        ResponseBuilder responseBuilder = Response.temporaryRedirect(uriBuilder.build());
 	        context.failure(AuthenticationFlowError.INVALID_USER, responseBuilder.build());
 	        return;
