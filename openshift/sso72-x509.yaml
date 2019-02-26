@@ -176,6 +176,8 @@ objects:
             value: ""
           - name: SSO_SERVICE_PASSWORD
             value: ""
+          - name: JAVA_OPTS_APPEND
+            value: "-Dkeycloak.profile.feature.authorization=enabled"
 # Debug configuration for remote debugging
 #          - name: DEBUG
 #            value: 'true'
@@ -282,9 +284,11 @@ parameters:
 - description: Sets xa-pool/min-pool-size for the configured datasource.
   displayName: Datasource Minimum Pool Size
   name: DB_MIN_POOL_SIZE
+  value: "5"
 - description: Sets xa-pool/max-pool-size for the configured datasource.
   displayName: Datasource Maximum Pool Size
   name: DB_MAX_POOL_SIZE
+  value: "20"
 - description: Sets transaction-isolation for the configured datasource.
   displayName: Datasource Transaction Isolation
   name: DB_TX_ISOLATION
