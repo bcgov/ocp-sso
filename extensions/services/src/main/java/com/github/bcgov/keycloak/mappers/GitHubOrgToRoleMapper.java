@@ -16,6 +16,7 @@ import org.keycloak.models.GroupModel;
 import org.keycloak.models.IdentityProviderMapperModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
+import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
 import org.keycloak.provider.ProviderConfigProperty;
@@ -29,11 +30,12 @@ import com.fasterxml.jackson.databind.JsonNode;
  * GitHub IdP MUST request 'org:read' scope
  * User's MUST grant 'org:read' permission to private organizations (https://github.com/settings/applications)
  */
-public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
-	private static final String GROUP_PREFIX = "group-prefix";
+public class GitHubOrgToRoleMapper extends AbstractIdentityProviderMapper {
+	private static final String ROLE_PREFIX = "role-prefix";
+	private static final String DEFAULT_ROLE_PREFIX = "org:";
 	private static final String[] cp = new String[] { GitHubIdentityProviderFactory.PROVIDER_ID };
-    public static final String PROVIDER_ID = "github-org-to-group-mapper";
-    private static final Logger logger = Logger.getLogger(GitHubOrgToGroupMapper.class);
+    public static final String PROVIDER_ID = "github-org-to-role-mapper";
+    private static final Logger logger = Logger.getLogger(GitHubOrgToRoleMapper.class);
     private static final List<ProviderConfigProperty> configProperties = new ArrayList<ProviderConfigProperty>();
 
     private static final String USER_ORGS_URL="https://api.github.com/user/orgs";
@@ -41,10 +43,10 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
     static {
         ProviderConfigProperty property;
         property = new ProviderConfigProperty();
-        property.setName(GROUP_PREFIX);
+        property.setName(ROLE_PREFIX);
         property.setLabel("Prefix of groups");
-        property.setHelpText("A prefix used by the groups that will be used to map organization membership. Example: if prefix is 'org:', a use who is member of 'github' organization will me mapped to a group named 'org:github'");
-        property.setDefaultValue("org:");
+        property.setHelpText("A prefix used by the roles that will be used to map organization membership. Example: if prefix is 'org:', a use who is member of 'github' organization will me mapped to a role named 'org:github'");
+        property.setDefaultValue(DEFAULT_ROLE_PREFIX);
         property.setType(ProviderConfigProperty.STRING_TYPE);
         configProperties.add(property);
     }
@@ -61,12 +63,12 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
 
     @Override
     public String getDisplayCategory() {
-        return "Group Mapper";
+        return "Role Importer";
     }
 
     @Override
     public String getDisplayType() {
-        return "GitHub Organization to Group";
+        return "GitHub Organization to Roles";
     }
 
     @Override
@@ -82,24 +84,24 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
     	
     	Map<String, Boolean> effectiveMembership=new Hashtable<String, Boolean>();
     	
-    	String groupPrefix = mapperModel.getConfig().get(GROUP_PREFIX);
-    	if (groupPrefix==null) groupPrefix= "org:";
+    	String groupPrefix = mapperModel.getConfig().get(ROLE_PREFIX);
+    	if (groupPrefix==null) groupPrefix= DEFAULT_ROLE_PREFIX;
     			
     	// Make sure user is a member of all GitHub org groups
     	for(JsonNode org: userOrgs) {
     		String orgName = org.get("login").asText();
     		String groupName = groupPrefix+orgName;
-    		GroupModel group = KeycloakModelUtils.findGroupByPath(realm, groupName);
-    		if (group != null) {
-    			user.joinGroup(group);
+    		RoleModel role = realm.getRole(groupName);
+    		if (role != null) {
+    			user.grantRole(role);
     			effectiveMembership.put(groupName, true);
     		}
     	}
     	
     	//Leave all github org groups which the user is no longer a member
-    	for (GroupModel group:user.getGroups()) {
-    		if (group.getName().startsWith(groupPrefix) && effectiveMembership.getOrDefault(group.getName(), false) != true) {
-    			user.leaveGroup(group);
+    	for (RoleModel role:user.getRoleMappings()) {
+    		if (role.getName().startsWith(groupPrefix) && effectiveMembership.getOrDefault(role.getName(), false) != true) {
+    			user.deleteRoleMapping(role);
     		}
     	}
     	
@@ -113,12 +115,12 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
 
     @Override
     public String getHelpText() {
-        return "Map user's organization membership to groups in keycloak";
+        return "Map user's organization membership to roles in keycloak";
     }
 
     @Override
-    public GitHubOrgToGroupMapper create(KeycloakSession session) {
-        return new GitHubOrgToGroupMapper();
+    public GitHubOrgToRoleMapper create(KeycloakSession session) {
+        return new GitHubOrgToRoleMapper();
     }
 
 	@Override

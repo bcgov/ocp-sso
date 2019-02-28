@@ -1,1 +1,2 @@
 com.github.bcgov.keycloak.mappers.GitHubOrgToGroupMapper
+com.github.bcgov.keycloak.mappers.GitHubOrgToRolepMapper
