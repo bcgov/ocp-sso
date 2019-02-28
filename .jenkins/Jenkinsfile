@@ -22,14 +22,14 @@ pipeline {
                 }
                 echo "BRANCH_NAME:${env.BRANCH_NAME}\nCHANGE_ID:${env.CHANGE_ID}\nCHANGE_TARGET:${env.CHANGE_TARGET}"
                 echo "Building ..."
-                sh ".jenkins/pipeline-cli build --pr=${CHANGE_ID} --config=.jenkins/openshift/config.groovy"
+                sh "cd .jenkins/.pipeline && ./npmw build -- --pr=${CHANGE_ID}"
             }
         }
         stage('Deploy (DEV)') {
             agent { label 'deploy' }
             steps {
                 echo "Deploying ..."
-                sh ".jenkins/pipeline-cli deploy --pr=${CHANGE_ID} --config=.jenkins/openshift/config.groovy --env=dev"
+                sh "cd .jenkins/.pipeline && ./npmw deploy -- --pr=${CHANGE_ID} --env=dev"
             }
         }
         stage('Deploy (PROD)') {
@@ -40,7 +40,7 @@ pipeline {
             }
             steps {
                 echo "Deploying ..."
-                sh ".jenkins/pipeline-cli deploy --pr=${CHANGE_ID} --config=.jenkins/openshift/config.groovy --env=prod"
+                sh "cd .jenkins/.pipeline && ./npmw deploy -- --pr=${CHANGE_ID} --env=prod"
             }
         }
         stage('Acceptance') {
@@ -51,7 +51,8 @@ pipeline {
             }
             steps {
                 echo "Cleaning ..."
-                sh ".jenkins/pipeline-cli cleanup --pr=${CHANGE_ID} --config=.jenkins/openshift/config.groovy"
+                sh "cd .jenkins/.pipeline && ./npmw clean -- --pr=${CHANGE_ID} --env=build"
+                sh "cd .jenkins/.pipeline && ./npmw clean -- --pr=${CHANGE_ID} --env=dev"
             }
         }
     }
