@@ -84,6 +84,7 @@ objects:
       description: Route for application's https service.
     name: ${NAME}${SUFFIX}
   spec:
+    host: ${HOST}
     tls:
       termination: reencrypt
     to:
@@ -296,3 +297,7 @@ parameters:
   displayName: Container Memory Limit
   name: MEMORY_LIMIT
   value: 1Gi
+- description: Set route with specific host.
+  displayName: Host route
+  name: HOST
+  value: ''

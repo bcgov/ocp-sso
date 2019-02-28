@@ -70,7 +70,8 @@ module.exports = (settings)=>{
       'DB_SECRET_DATABASE_KEY':'app-db-name',
       'DB_SECRET_USERNAME_KEY':'app-db-username',
       'DB_SECRET_PASSWORD_KEY':'app-db-password',
-      'DB_SERVICE_HOST': `${phases[phase].name}-pgsql-master${phases[phase].suffix}`
+      'DB_SERVICE_HOST': `${phases[phase].name}-pgsql-master${phases[phase].suffix}`,
+      'HOST': phases[phase].host
     }
   }))
 
