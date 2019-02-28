@@ -45,7 +45,7 @@ public class GitHubOrgToRoleMapper extends AbstractIdentityProviderMapper {
         property = new ProviderConfigProperty();
         property.setName(ROLE_PREFIX);
         property.setLabel("Prefix of groups");
-        property.setHelpText("A prefix used by the roles that will be used to map organization membership. Example: if prefix is 'org:', a use who is member of 'github' organization will me mapped to a role named 'org:github'");
+        property.setHelpText("A prefix used by the roles that will be used to map organization membership. Example: if prefix is 'org:', a user who is member of 'github' organization will be mapped to a role named 'org:github'");
         property.setDefaultValue(DEFAULT_ROLE_PREFIX);
         property.setType(ProviderConfigProperty.STRING_TYPE);
         configProperties.add(property);

@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
 	private static final String GROUP_PREFIX = "group-prefix";
+	private static final String DEFAULT_GROUP_PREFIX = "org:";
 	private static final String[] cp = new String[] { GitHubIdentityProviderFactory.PROVIDER_ID };
     public static final String PROVIDER_ID = "github-org-to-group-mapper";
     private static final Logger logger = Logger.getLogger(GitHubOrgToGroupMapper.class);
@@ -43,8 +44,8 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
         property = new ProviderConfigProperty();
         property.setName(GROUP_PREFIX);
         property.setLabel("Prefix of groups");
-        property.setHelpText("A prefix used by the groups that will be used to map organization membership. Example: if prefix is 'org:', a use who is member of 'github' organization will me mapped to a group named 'org:github'");
-        property.setDefaultValue("org:");
+        property.setHelpText("A prefix used by the groups that will be used to map organization membership. Example: if prefix is 'org:', a user who is member of 'github' organization will be mapped to a group named 'org:github'");
+        property.setDefaultValue(DEFAULT_GROUP_PREFIX);
         property.setType(ProviderConfigProperty.STRING_TYPE);
         configProperties.add(property);
     }
@@ -74,11 +75,11 @@ public class GitHubOrgToGroupMapper extends AbstractIdentityProviderMapper {
     	String accessToken = (String) context.getContextData().get(IdentityProvider.FEDERATED_ACCESS_TOKEN);
     	
     	JsonNode userOrgs;
-		try {
-			userOrgs = SimpleHttp.doGet(USER_ORGS_URL, session).header("Authorization", "Bearer " + accessToken).asJson();
-		} catch (IOException e) {
-			throw new IdentityBrokerException("Unable to find user organization membership", e);
-		}
+      try {
+        userOrgs = SimpleHttp.doGet(USER_ORGS_URL, session).header("Authorization", "Bearer " + accessToken).asJson();
+      } catch (IOException e) {
+        throw new IdentityBrokerException("Unable to find user organization membership", e);
+      }
     	
     	Map<String, Boolean> effectiveMembership=new Hashtable<String, Boolean>();
     	
