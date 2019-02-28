@@ -33,5 +33,27 @@ pipeline {
                 sh "cd .pipeline && ./npmw deploy -- --pr=${CHANGE_ID} --env=dev"
             }
         }
+        stage('Deploy (TEST)') {
+            agent { label 'deploy' }
+            input {
+                message "Should we continue with deployment to TEST?"
+                ok "Yes!"
+            }
+            steps {
+                echo "Deploying ..."
+                sh "cd .pipeline && ./npmw deploy -- --pr=${CHANGE_ID} --env=test"
+            }
+        }
+        stage('Deploy (PROD)') {
+            agent { label 'deploy' }
+            input {
+                message "Should we continue with deployment to PROD? Have you notified the community?"
+                ok "Yes!"
+            }
+            steps {
+                echo "Deploying ..."
+                sh "cd .pipeline && ./npmw deploy -- --pr=${CHANGE_ID} --env=prod"
+            }
+        }
     }
 }
