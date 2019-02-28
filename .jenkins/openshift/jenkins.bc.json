@@ -37,8 +37,7 @@
           "required": true
       },{
           "name": "SOURCE_REPOSITORY_REF",
-          "required": false,
-          "value": "tools"
+          "required": true
       }
   ],
   "objects": [

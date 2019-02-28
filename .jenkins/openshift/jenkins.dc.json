@@ -12,12 +12,6 @@
             "description": "A name used for all objects",
             "required": true
         },{
-            "name": "BC_NAME",
-            "displayName": "Name",
-            "description": "A name used for all objects",
-            "value": "jenkins",
-            "required": true
-        },{
             "name": "SUFFIX",
             "displayName": "Suffix",
             "description": "A name suffix used for all objects",
@@ -28,12 +22,6 @@
             "displayName": "version",
             "description": "A version used for the image tags",
             "value": "v1.0.0",
-            "required": true
-        },{
-            "name": "GITHUB_USERNAME",
-            "displayName": "GITHUB_USERNAME",
-            "description": "GITHUB_USERNAME",
-            "value": "cvarjao",
             "required": true
         },{
             "name": "ROUTE_HOST",
@@ -58,24 +46,6 @@
             "description": "Environment ID",
             "value": "prod",
             "required": true
-        },{
-            "name": "SLAVE_USER_PASSWORD",
-            "displayName": "SLAVE_USER_PASSWORD",
-            "description": "SLAVE_USER_PASSWORD",
-            "generate": "expression",
-            "from": "[a-zA-Z0-9]{16}"
-        },{
-            "name": "GITHUB_USERNAME",
-            "displayName": "GITHUB_USERNAME",
-            "description": "GITHUB_USERNAME",
-            "required": false,
-            "value": ""
-        },{
-            "name": "GITHUB_TOKEN",
-            "displayName": "GITHUB_USERNAME",
-            "description": "GitHub Personal Access Token",
-            "required": false,
-            "value": ""
         }
     ],
     "objects": [
@@ -83,7 +53,7 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${BC_NAME}",
+                "name": "${NAME}",
                 "creationTimestamp": null,
                 "labels": {
                     "shared": "true"
@@ -106,9 +76,7 @@
                 }
             },
             "stringData": {
-                "metadata.name": "${NAME}${SUFFIX}-slave-user",
-                "username": "jenkins-slave",
-                "password": "${SLAVE_USER_PASSWORD}"
+                "metadata.name": ""
             },
             "type": "kubernetes.io/basic-auth"
         },
@@ -122,9 +90,7 @@
                 }
             },
             "stringData": {
-                "metadata.name": "${NAME}${SUFFIX}-github",
-                "username": "${GITHUB_USERNAME}",
-                "password": "${GITHUB_TOKEN}"
+                "metadata.name": ""
             },
             "type": "kubernetes.io/basic-auth"
         },
@@ -220,7 +186,7 @@
                             "containerNames": ["jenkins"],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "${BC_NAME}:${VERSION}"
+                                "name": "${NAME}:${VERSION}"
                             }
                         }
                     },
@@ -397,7 +363,7 @@
                             "containerNames": ["jenkins"],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "${BC_NAME}:${VERSION}"
+                                "name": "${NAME}:${VERSION}"
                             }
                         }
                     },

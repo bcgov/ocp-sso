@@ -16,6 +16,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Deploy (jenkins-0)",
+      "program": "${workspaceFolder}/.jenkins/.pipeline/deploy.js",
+      "cwd": "${workspaceFolder}/.jenkins/.pipeline",
+      "args": ["--pr=0", "--env=dev", "--dev-mode=true"],
+      "env": {"DEBUG":"*"}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Mocha Current File",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "args": [
