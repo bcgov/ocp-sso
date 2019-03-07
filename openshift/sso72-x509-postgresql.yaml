@@ -196,7 +196,7 @@ objects:
           # Because we are using image reference to a tag, we need to always pull the image otherwise
           #   we end up with outdated/out-of-sync image depending on the node where it is running
           imagePullPolicy: Always
-          name: ${NAME}${SUFFIX}
+          name: postgresql
           ports:
           - containerPort: 8008
             protocol: TCP
@@ -214,7 +214,7 @@ objects:
                 - /usr/share/scripts/patroni/health_check.sh
           volumeMounts:
           - mountPath: /home/postgres/pgdata
-            name: ${NAME}${SUFFIX}
+            name: postgresql
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -222,10 +222,10 @@ objects:
         serviceAccountName: ${NAME}${SUFFIX}
         terminationGracePeriodSeconds: 0
         volumes:
-        - name: ${NAME}${SUFFIX}
+        - name: postgresql
 #          emptyDir: {}
           persistentVolumeClaim:
-            claimName: ${NAME}${SUFFIX}
+            claimName: postgresql
     updateStrategy:
       type: RollingUpdate
     volumeClaimTemplates:
@@ -234,7 +234,7 @@ objects:
           volume.beta.kubernetes.io/storage-class: ${STORAGE_CLASS}
         labels:
           app: ${NAME}${SUFFIX}
-        name: ${NAME}${SUFFIX}
+        name: postgresql
       spec:
         storageClassName: ${STORAGE_CLASS}
         accessModes:
