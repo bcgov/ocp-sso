@@ -79,7 +79,7 @@ module.exports = (settings)=>{
   
   objects.forEach((item)=>{
     if (item.kind == 'StatefulSet' && item.metadata.labels["app.kubernetes.io/name"] === "patroni"){
-      oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
+      // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels)
 
       item.spec.template.spec.containers.forEach((container)=>{
