@@ -82,15 +82,15 @@ module.exports = (settings)=>{
       // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels)
 
-      item.spec.template.spec.containers.forEach((container)=>{
-        container.env.forEach((env)=>{
-          if (env.name === "PATRONI_KUBERNETES_LABELS"){
-            var labels = JSON.parse(env.value)
-            oc.copyRecommendedLabels(item.metadata.labels, labels)
-            env.value = JSON.stringify(labels)
-          }
-        })
-      })
+      // item.spec.template.spec.containers.forEach((container)=>{
+      //   container.env.forEach((env)=>{
+      //     if (env.name === "PATRONI_KUBERNETES_LABELS"){
+      //       var labels = JSON.parse(env.value)
+      //       oc.copyRecommendedLabels(item.metadata.labels, labels)
+      //       env.value = JSON.stringify(labels)
+      //     }
+      //   })
+      // })
     } else if (item.kind == 'DeploymentConfig'){
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels)
     }
