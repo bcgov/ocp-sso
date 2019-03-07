@@ -27,6 +27,7 @@ pipeline {
             input {
                 message "Should we continue with deployment to DEV?"
                 ok "Yes!"
+                submitter "authenticated"
             }
             steps {
                 echo "Deploying ..."
@@ -38,6 +39,7 @@ pipeline {
             input {
                 message "Should we continue with deployment to TEST?"
                 ok "Yes!"
+                submitter "authenticated"
             }
             steps {
                 echo "Deploying ..."
@@ -49,6 +51,7 @@ pipeline {
             input {
                 message "Should we continue with deployment to PROD? Have you notified the community?"
                 ok "Yes!"
+                submitter "authenticated"
             }
             steps {
                 echo "Deploying ..."
