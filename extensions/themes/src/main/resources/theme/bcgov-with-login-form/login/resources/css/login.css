@@ -1,0 +1,139 @@
+@font-face {
+    font-family: "MyriadWebPro";
+    src: url("../font/MyriadWebPro.ttf") format("truetype");
+}
+  
+.login-pf body {
+    background: #003366;
+}
+
+#kc-logo {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1em;
+    padding-right: 3em;
+}
+
+#kc-logo-wrapper {
+    background-image: url("../img/bcgovlogo.svg");
+    background-repeat: no-repeat;
+    height: 8em;
+    width: 8em;
+}
+
+#kc-header {
+    padding-top: 10em;
+    padding-left: 8.5em;
+}
+
+#kc-header-wrapper {
+    text-transform: uppercase;
+    line-height: 1.1em;
+    margin-bottom: 15px;
+    color: white;
+    font-family: "MyriadWebPro";
+    font-size: 1.2em;
+}
+
+#kc-content-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+#kc-feedback-text {
+    padding-left: 10em;
+    color: white;
+    font-family: "MyriadWebPro";
+}
+
+#kc-form {
+    display: flex;
+    flex-direction: column;
+    /* background-color: limegreen; */
+    padding-left: 0em;
+    width: 40%;
+}
+
+#kc-form-login {
+    line-height: 1em;
+    color: white;
+    font-family: "MyriadWebPro";
+    font-size: 1em;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10%;
+}
+
+.formLabel {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    width: 30%;
+    padding-right: 1em;
+    /* background-color:pink; */
+    line-height: 2em;
+    font-family: "MyriadWebPro";
+}
+
+.formInput {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    /* background-color:greenyellow; */
+}
+
+#kc-form-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#kc-login {
+    list-style-type: none;
+    width: 5em;
+    height: 1.66em;
+    text-align: center;
+    border: 1px solid #FFFFFF;
+    border-radius: 3px;
+    background: rgb(19, 117, 163);
+    font-family: "MyriadWebPro";
+    font-size: 1em;
+    color: white;
+    padding: 0.2em 0 0 0;
+}
+
+#kc-info {
+    border-left: 1px solid lightslategray;
+    /* background-color: orange; */
+    width: 20%;
+}
+
+#kc-social-providers li {
+    /* display: inline-block; */
+    list-style-type: none;
+    width: 45%;
+    height: 1.25em;
+    text-align: center;
+    border: 1px solid #FFFFFF;
+    border-radius: 3px;
+    background: rgb(19, 117, 163);
+    font-family: "MyriadWebPro";
+    font-size: 1em;
+    color: white;
+    padding: 0.5em 0 0 0;
+}
+
+#kc-social-providers a:hover, a:visited, a:link, a:active {
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
