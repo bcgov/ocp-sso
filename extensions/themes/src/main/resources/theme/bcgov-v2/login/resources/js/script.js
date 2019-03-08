@@ -4,13 +4,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // kc-info element:
     const kcInfo = document.getElementById('kc-info');
 
-    doSwap(kcForm, kcInfo);
+    swapElements(kcForm, kcInfo);
 
 });
-
-function doSwap(a, b) {
-  swapElements(document.getElementById(a), document.getElementById(b));
-}
 
 function swapElements(obj1, obj2) {
   // save the location of obj2

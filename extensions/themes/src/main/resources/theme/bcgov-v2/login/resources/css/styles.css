@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "MyriadWebPro";
+  src: url("../font/MyriadWebPro.ttf") format("truetype");
+}
+
+.login-pf body {
+  background: none;
+  background-color: #036;
+}
+
 #kc-logo-wrapper {
   background-image: url(../img/bcgovlogoH.svg);
   height: 90px;
@@ -8,9 +18,8 @@
   margin-top: 50px;
 }
 
-.login-pf body {
-  background: none;
-  background-color: #036;
+#kc-header-wrapper {
+  color: white;
 }
 
 .zocial a {
