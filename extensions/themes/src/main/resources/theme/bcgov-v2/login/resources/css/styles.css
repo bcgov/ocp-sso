@@ -1,5 +1,5 @@
 #kc-logo-wrapper {
-  background-image: url(../img/bcgovlogo.svg);
+  background-image: url(../img/bcgovlogoH.svg);
   height: 90px;
   width: 300px;
 }
@@ -11,6 +11,11 @@
 .login-pf body {
   background: none;
   background-color: #036;
+}
+
+/* Hide keycloak local account login */
+.hidden {
+  display: none;
 }
 
 @media (min-width: 768px) {
