@@ -37,7 +37,7 @@
   text-decoration: underline;
 }
 
-.btn a {
+.btn {
   background-color: white;
   color: #003366;
   letter-spacing: 1px;
@@ -48,7 +48,7 @@
   font-size: 15px;
 }
 
-.btn a:hover {
+.btn:hover {
   text-decoration: underline;
 }
 

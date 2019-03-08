@@ -4,8 +4,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // kc-info element:
     const kcInfo = document.getElementById('kc-info');
 
-    swapElements(kcForm, kcInfo);
-
+    if (kcForm && kcInfo) {
+      swapElements(kcForm, kcInfo);
+    }
 });
 
 function swapElements(obj1, obj2) {
