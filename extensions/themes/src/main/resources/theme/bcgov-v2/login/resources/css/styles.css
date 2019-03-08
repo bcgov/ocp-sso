@@ -13,6 +13,36 @@
   background-color: #036;
 }
 
+.zocial a {
+  background-color: white;
+  color: #003366;
+  letter-spacing: 1px;
+  /* Overwrite keycloak theme: */
+  border: none !important;
+  padding: 0 !important;
+  text-shadow: none !important;
+  font-size: 15px;
+}
+
+.zocial a:hover {
+  text-decoration: underline;
+}
+
+.btn a {
+  background-color: white;
+  color: #003366;
+  letter-spacing: 1px;
+  /* Overwrite keycloak theme: */
+  border: none !important;
+  padding: 0 !important;
+  text-shadow: none !important;
+  font-size: 15px;
+}
+
+.btn a:hover {
+  text-decoration: underline;
+}
+
 /* Hide keycloak local account login */
 .hidden {
   display: none;
