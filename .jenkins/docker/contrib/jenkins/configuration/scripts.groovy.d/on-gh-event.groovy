@@ -64,7 +64,8 @@ static Map exec(List args, File workingDirectory=null, Appendable stdout=null, A
                     println "Checkout Branch:${sourceBranch}"
 
                     String selector = "env-id=${payload.number},env-name!=prod,github-owner=${repoOwner},github-repo=${repoName},!shared"
-                    ['devops-sso-tools', 'devops-sso-sandbox', 'devops-sso-dev'].each({ namespace ->
+                    // removed dev clean up:
+                    ['devops-sso-tools', 'devops-sso-sandbox'].each({ namespace ->
                         //BuildConfig Output Images
                         def ocGetBcRet = exec(['oc',"--namespace=${namespace}",'get','bc','-l',selector, '-o', 'jsonpath={range .items[*]}{.spec.output.to.namespace}/{.spec.output.to.name}{"\\n"}{end}'])
                         println ocGetBcRet
