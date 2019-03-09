@@ -19,14 +19,19 @@
 }
 
 #kc-header-wrapper {
+  text-align: center;
   color: white;
 }
 
-#kc-info {
+#kc-info, #kc-info-wrapper {
   border: none !important;
 }
 
-.zocial, a.zocial {
+#kc-social-providers {
+  text-align: right;
+}
+
+a.zocial, .btn {
   background-color: white;
   color: #003366;
   letter-spacing: 1px;
@@ -34,26 +39,12 @@
   border: none !important;
   padding: 0 !important;
   text-shadow: none !important;
-  font-size: 15px;
+  font-size: 15px !important;
 }
 
-.zocial, a.zocial:hover {
-  text-decoration: underline;
-}
-
-.btn {
-  background-color: white;
-  color: #003366;
-  letter-spacing: 1px;
-  /* Overwrite keycloak theme: */
-  border: none !important;
-  padding: 0 !important;
-  text-shadow: none !important;
-  font-size: 15px;
-}
-
-.btn:hover {
-  text-decoration: underline;
+a.zocial:hover, .btn:hover {
+  text-decoration: underline !important;
+  color: #003366 !important;
 }
 
 /* Hide keycloak local account login */
@@ -65,5 +56,11 @@
   #kc-logo-wrapper {
     right: 0;
     left: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  #kc-social-providers {
+    text-align: center;
   }
 }
