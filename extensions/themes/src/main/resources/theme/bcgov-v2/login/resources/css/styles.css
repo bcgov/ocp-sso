@@ -22,7 +22,11 @@
   color: white;
 }
 
-.zocial a {
+#kc-info {
+  border: none !important;
+}
+
+.zocial, a.zocial {
   background-color: white;
   color: #003366;
   letter-spacing: 1px;
@@ -33,7 +37,7 @@
   font-size: 15px;
 }
 
-.zocial a:hover {
+.zocial, a.zocial:hover {
   text-decoration: underline;
 }
 
