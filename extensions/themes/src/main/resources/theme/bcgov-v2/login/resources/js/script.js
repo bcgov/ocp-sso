@@ -1,13 +1,30 @@
 document.addEventListener("DOMContentLoaded", function(event) {
+    updateFavIcon();
     // kc-form element:
     const kcForm = document.getElementById('kc-form');
     // kc-info element:
     const kcInfo = document.getElementById('kc-info');
 
+    // Hide kc login form:
+    // kc-form -> kc-form-wrapper -> kc-form-login(hide) & kc-update-profile-form(keep)
+    const kcLoginForm = document.getElementById('kc-form-login');
+    if (kcLoginForm != null) {
+      kcForm.classList.add('hidden');
+    }
+
+    // swap the order of form:
     if (kcForm && kcInfo) {
       swapElements(kcForm, kcInfo);
     }
 });
+
+function updateFavIcon() {
+  var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+  link.type = 'image/x-icon';
+  link.rel = 'shortcut icon';
+  link.href = 'https://portal.nrs.gov.bc.ca/nrs-portal-theme/images/favicon.ico';
+  document.getElementsByTagName('head')[0].appendChild(link);
+};
 
 function swapElements(obj1, obj2) {
   // save the location of obj2
