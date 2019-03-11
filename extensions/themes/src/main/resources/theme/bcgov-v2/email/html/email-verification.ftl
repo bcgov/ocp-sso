@@ -1,5 +1,5 @@
 <html>
 <body>
-${msg("emailVerificationBodyHtml", link, linkExpiration, realm.displayName, user.firstName)?no_esc}
+${msg("emailVerificationBodyHtml",link, linkExpiration, realm.displayName)?no_esc}
 </body>
 </html>
