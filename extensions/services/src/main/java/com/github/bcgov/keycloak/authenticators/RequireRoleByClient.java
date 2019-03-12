@@ -40,8 +40,10 @@ import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.RoleModel;
 import org.keycloak.services.messages.Messages;
 import org.keycloak.sessions.AuthenticationSessionModel;
+import org.keycloak.models.utils.KeycloakModelUtils;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -55,7 +57,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     public void authenticate(AuthenticationFlowContext context) {
     	AuthenticatorConfigModel config = context.getAuthenticatorConfig();
     	String client = config.getConfig().get(RequireRoleByClientFactory.CLIENT_NAME);
-    	String role = config.getConfig().get(RequireRoleByClientFactory.ROLE_NAME);
+    	String roleName = config.getConfig().get(RequireRoleByClientFactory.ROLE_NAME);
     	String errorUrl = config.getConfig().get(RequireRoleByClientFactory.ERROR_URL);
     	
         AuthenticationSessionModel authSession = context.getAuthenticationSession();
@@ -75,15 +77,17 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	ClientModel sessionClient = context.getAuthenticationSession().getClient();
     	boolean authShouldFail = false;
     	
-    	if (hasAuthenticatorConfig(context) && client!=null && role!=null && client.length()>0 && role.length()>0){
-    		logger.infof("Validating if user has role '%s' when coming from client '%s'", role, client);
+    	if (hasAuthenticatorConfig(context) && client!=null && roleName!=null && client.length()>0 && roleName.length()>0){
+    		logger.infof("Validating if user has role '%s' when coming from client '%s'", roleName, client);
     		logger.infof("Expected client '%s', found client '%s'", client, sessionClient.getClientId());
     		if ((client.equalsIgnoreCase(sessionClient.getClientId()))) {
-    			if (!context.getUser().hasRole(context.getRealm().getRole(role))) {
+          RoleModel role = KeycloakModelUtils.getRoleFromString(context.getRealm(), roleName);
+
+    			if (role == null || !context.getUser().hasRole(role)) {
     				authShouldFail=true;
     			}
     		}
-    	}else {
+    	} else {
 	        Response challengeResponse = context.form()
 	                .setError(Messages.INTERNAL_SERVER_ERROR)
 	                .createErrorPage(Response.Status.INTERNAL_SERVER_ERROR);
@@ -92,7 +96,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	}
     	
     	if (authShouldFail) {
-    		logger.infof("User does not have required role '%s'", role, client);
+    		logger.infof("User does not have required role '%s'", roleName, client);
     		UriBuilder uriBuilder = null;
     		if (errorUrl !=null && errorUrl.length()>0) {
     			errorUrl=errorUrl.replace("${idp_alias}", identityProviderId);
