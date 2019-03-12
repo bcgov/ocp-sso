@@ -31,13 +31,25 @@
   text-align: right;
 }
 
-a.zocial, .btn {
+a.zocial {
   background-color: white;
   color: #003366;
   letter-spacing: 1px;
   /* Overwrite keycloak theme: */
   border: none !important;
   padding: 0 !important;
+  text-shadow: none !important;
+  font-size: 15px !important;
+}
+
+.btn {
+  background-color: white;
+  background-image: none;
+  color: #003366;
+  letter-spacing: 1px;
+  border-radius: 5px;
+  /* Overwrite keycloak theme: */
+  border: none !important;
   text-shadow: none !important;
   font-size: 15px !important;
 }
