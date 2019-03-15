@@ -12,7 +12,6 @@ import org.keycloak.broker.provider.BrokeredIdentityContext;
 import org.keycloak.broker.provider.IdentityBrokerException;
 import org.keycloak.broker.provider.IdentityProvider;
 import org.keycloak.broker.provider.util.SimpleHttp;
-import org.keycloak.models.GroupModel;
 import org.keycloak.models.IdentityProviderMapperModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
@@ -21,6 +20,7 @@ import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.social.github.GitHubIdentityProviderFactory;
+import org.keycloak.models.utils.KeycloakModelUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -44,7 +44,7 @@ public class GitHubOrgToRoleMapper extends AbstractIdentityProviderMapper {
         ProviderConfigProperty property;
         property = new ProviderConfigProperty();
         property.setName(ROLE_PREFIX);
-        property.setLabel("Prefix of groups");
+        property.setLabel("Prefix of Roles");
         property.setHelpText("A prefix used by the roles that will be used to map organization membership. Example: if prefix is 'org:', a user who is member of 'github' organization will be mapped to a role named 'org:github'");
         property.setDefaultValue(DEFAULT_ROLE_PREFIX);
         property.setType(ProviderConfigProperty.STRING_TYPE);
@@ -84,23 +84,23 @@ public class GitHubOrgToRoleMapper extends AbstractIdentityProviderMapper {
     	
     	Map<String, Boolean> effectiveMembership=new Hashtable<String, Boolean>();
     	
-    	String groupPrefix = mapperModel.getConfig().get(ROLE_PREFIX);
-    	if (groupPrefix==null) groupPrefix= DEFAULT_ROLE_PREFIX;
+    	String rolePrefix = mapperModel.getConfig().get(ROLE_PREFIX);
+    	if (rolePrefix==null) rolePrefix= DEFAULT_ROLE_PREFIX;
     			
-    	// Make sure user is a member of all GitHub org groups
+    	// Make sure user is assigned with all GitHub org roles
     	for(JsonNode org: userOrgs) {
     		String orgName = org.get("login").asText();
-    		String groupName = groupPrefix+orgName;
-    		RoleModel role = realm.getRole(groupName);
+    		String roleName = rolePrefix+orgName;
+    		RoleModel role = KeycloakModelUtils.getRoleFromString(realm, roleName);
     		if (role != null) {
     			user.grantRole(role);
-    			effectiveMembership.put(groupName, true);
+    			effectiveMembership.put(roleName, true);
     		}
     	}
     	
-    	//Leave all github org groups which the user is no longer a member
+    	//Delete all github org roles which the user is no longer a member
     	for (RoleModel role:user.getRoleMappings()) {
-    		if (role.getName().startsWith(groupPrefix) && effectiveMembership.getOrDefault(role.getName(), false) != true) {
+    		if (role.getName().startsWith(rolePrefix) && effectiveMembership.getOrDefault(role.getName(), false) != true) {
     			user.deleteRoleMapping(role);
     		}
     	}
