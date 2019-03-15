@@ -7,7 +7,7 @@
     <#elseif section = "form">
         <form id="kc-update-profile-form" class="${properties.kcFormClass!}" action="${url.loginAction}" method="post">
           <#if !realm.editUsernameAllowed>
-            <input type="text" id="username" name="username" value="${(user.username!'')}" class="${properties.kcInputClass!}"/>
+            <input type="hidden" id="username" name="username" value="${(user.username!'')}" class="${properties.kcInputClass!}"/>
           <#else>
             <div class="${properties.kcFormGroupClass!} ${messagesPerField.printIfExists('username',properties.kcFormGroupErrorClass!)}">
                 <div class="${properties.kcLabelWrapperClass!}">
