@@ -6,16 +6,14 @@
         ${msg("loginProfileTitle")}
     <#elseif section = "form">
         <form id="kc-update-profile-form" class="${properties.kcFormClass!}" action="${url.loginAction}" method="post">
-            <#if realm.editUsernameAllowed>
-                <div class="${properties.kcFormGroupClass!} ${messagesPerField.printIfExists('username',properties.kcFormGroupErrorClass!)}">
-                    <div class="${properties.kcLabelWrapperClass!}">
-                        <label for="username" class="${properties.kcLabelClass!}">${msg("username")}</label>
-                    </div>
-                    <div class="${properties.kcInputWrapperClass!}">
-                        <input type="text" id="username" name="username" value="${(user.username!'')}" class="${properties.kcInputClass!}"/>
-                    </div>
+            <div class="${properties.kcFormGroupClass!} ${messagesPerField.printIfExists('username',properties.kcFormGroupErrorClass!)}">
+                <div class="${properties.kcLabelWrapperClass!}">
+                    <label for="username" class="${properties.kcLabelClass!}">${msg("username")}</label>
                 </div>
-            </#if>
+                <div class="${properties.kcInputWrapperClass!}">
+                    <input type="text" id="username" name="username" <#if !realm.editUsernameAllowed>disabled="disabled"</#if> value="${(user.username!'')}" class="${properties.kcInputClass!}"/>
+                </div>
+            </div>
             <div class="${properties.kcFormGroupClass!} ${messagesPerField.printIfExists('email',properties.kcFormGroupErrorClass!)}">
                 <div class="${properties.kcLabelWrapperClass!}">
                     <label for="email" class="${properties.kcLabelClass!}">${msg("email")}</label>
