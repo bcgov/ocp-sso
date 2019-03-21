@@ -181,7 +181,7 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
+          name: "sso73-openshift:1.0-7"
       type: Docker
     triggers:
     - imageChange:
