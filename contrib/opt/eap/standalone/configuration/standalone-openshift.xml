@@ -218,12 +218,12 @@
                 <local-cache name="users">
                     <eviction max-entries="10000" strategy="LRU"/>
                 </local-cache>
-                <distributed-cache name="sessions" mode="SYNC" owners="1"/>
-                <distributed-cache name="authenticationSessions" mode="SYNC" owners="1"/>
-                <distributed-cache name="offlineSessions" mode="SYNC" owners="1"/>
-                <distributed-cache name="clientSessions" mode="SYNC" owners="1"/>
-                <distributed-cache name="offlineClientSessions" mode="SYNC" owners="1"/>
-                <distributed-cache name="loginFailures" mode="SYNC" owners="1"/>
+                <distributed-cache name="sessions" mode="SYNC" owners="3"/>
+                <distributed-cache name="authenticationSessions" mode="SYNC" owners="3"/>
+                <distributed-cache name="offlineSessions" mode="SYNC" owners="3"/>
+                <distributed-cache name="clientSessions" mode="SYNC" owners="3"/>
+                <distributed-cache name="offlineClientSessions" mode="SYNC" owners="3"/>
+                <distributed-cache name="loginFailures" mode="SYNC" owners="3"/>
                 <local-cache name="authorization">
                     <eviction max-entries="10000" strategy="LRU"/>
                 </local-cache>
@@ -232,7 +232,7 @@
                     <eviction max-entries="1000" strategy="LRU"/>
                     <expiration max-idle="3600000"/>
                 </local-cache>
-                <distributed-cache name="actionTokens" mode="SYNC" owners="2">
+                <distributed-cache name="actionTokens" mode="SYNC" owners="3">
                     <eviction max-entries="-1" strategy="NONE"/>
                     <expiration max-idle="-1" interval="300000"/>
                 </distributed-cache>
