@@ -101,6 +101,8 @@ public class IdpCreateUserIfUniqueAuthenticator extends AbstractIdpAuthenticator
             context.getAuthenticationSession().setAuthNote(BROKER_REGISTERED_NEW_USER, "true");
             context.success();
         } else if (userIdAttrName.equalsIgnoreCase(duplication.getDuplicateAttributeName()) || usernameAttrName.equalsIgnoreCase(duplication.getDuplicateAttributeName())){
+            logger.debugf("Duplication detected. There is already existing user with %s '%s'. Linking to existing account.",
+                    duplication.getDuplicateAttributeName(), duplication.getDuplicateAttributeValue());
         	UserModel existingUser = context.getSession().users().getUserById(duplication.getExistingUserId(), realm);
         	if (usernameAttrName.equalsIgnoreCase(duplication.getDuplicateAttributeName())) {
         		existingUser.removeAttribute(usernameAttrName);
@@ -151,18 +153,6 @@ public class IdpCreateUserIfUniqueAuthenticator extends AbstractIdpAuthenticator
     	if (existingUserByAttr.size() == 1) {
     		return new ExistingUserInfo(existingUserByAttr.get(0).getId(), usernameAttrName, username);
     	}
-    	
-        if (brokerContext.getEmail() != null && !context.getRealm().isDuplicateEmailsAllowed()) {
-            UserModel existingUser = context.getSession().users().getUserByEmail(brokerContext.getEmail(), context.getRealm());
-            if (existingUser != null) {
-                return new ExistingUserInfo(existingUser.getId(), UserModel.EMAIL, existingUser.getEmail());
-            }
-        }
-
-        UserModel existingUser = context.getSession().users().getUserByUsername(username, context.getRealm());
-        if (existingUser != null) {
-            return new ExistingUserInfo(existingUser.getId(), UserModel.USERNAME, existingUser.getUsername());
-        }
 
         return null;
     }
