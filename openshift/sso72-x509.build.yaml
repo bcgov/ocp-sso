@@ -59,6 +59,17 @@ objects:
     creationTimestamp: null
     labels:
       shared: "true"
+    name: ${NAME}-base
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
     name: ${NAME}
   spec:
     lookupPolicy:
@@ -120,9 +131,49 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
+      build: ${NAME}-base${SUFFIX}
+    name: ${NAME}-base${SUFFIX}
+  spec:
+    completionDeadlineSeconds: 1440
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}-base:${VERSION}
+    postCommit: {}
+    resources:
+      requests:
+        cpu: 1
+      limits:
+        cpu: 2
+    source:
+      git:
+        ref: ${SOURCE_GIT_REF}
+        uri: ${SOURCE_GIT_URL}
+      type: Git
+      contextDir: "docker"
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
+      type: Docker
+    triggers:
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
       build: ${NAME}${SUFFIX}
     name: ${NAME}${SUFFIX}
   spec:
+    completionDeadlineSeconds: 1440
     nodeSelector: null
     output:
       to:
@@ -135,6 +186,7 @@ objects:
       limits:
         cpu: 2
     source:
+      type: Dockerfile
       dockerfile: |-
         FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6
         #COPY deployments/ /tmp/deployments
@@ -156,12 +208,11 @@ objects:
               sourcePath: /deployments/
             - destinationDir: '.'
               sourcePath: /tmp/src/themes/src/main/resources/theme/
-      type: Dockerfile
     strategy:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
+          name: '${NAME}-base:${VERSION}'
       type: Docker
     triggers:
     - imageChange:
@@ -172,7 +223,7 @@ objects:
     - imageChange:
         from:
           kind: ImageStreamTag
-          name: sso72-openshift:${RH_SSO_IMAGE_TAG}
+          name: ${NAME}-base:${VERSION}
       type: ImageChange
     - type: ConfigChange
 parameters:
