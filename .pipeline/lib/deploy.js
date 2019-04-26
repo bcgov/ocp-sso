@@ -1,5 +1,5 @@
 'use strict';
-const {OpenShiftClientX} = require('pipeline-cli')
+const {OpenShiftClientX, Util} = require('pipeline-cli')
 const path = require('path');
 
 module.exports = (settings)=>{
@@ -7,7 +7,7 @@ module.exports = (settings)=>{
   const options= settings.options
   const phase=options.env
   const changeId = phases[phase].changeId
-  const oc=new OpenShiftClientX({'namespace':phases[phase].namespace});
+  const oc=new OpenShiftClientX(Object.assign({'namespace':phases[phase].namespace}, options));
   const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
   var objects = []
 
@@ -65,7 +65,8 @@ module.exports = (settings)=>{
     'param':{
       'NAME': phases[phase].name,
       'SUFFIX': phases[phase].suffix,
-      'VERSION': phases[phase].tag,
+      'VERSION': phases[phase].version,
+      'IMAGE_TAG': phases[phase].tag,
       'DB_SECRET_NAME':`${phases[phase].name}-pgsql${phases[phase].suffix}`,
       'DB_SECRET_DATABASE_KEY':'app-db-name',
       'DB_SECRET_USERNAME_KEY':'app-db-username',
@@ -77,6 +78,9 @@ module.exports = (settings)=>{
 
   oc.applyRecommendedLabels(objects, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
   
+  const backup = [];
+  const upgraded = [];
+
   objects.forEach((item)=>{
     if (item.kind == 'StatefulSet' && item.metadata.labels["app.kubernetes.io/name"] === "patroni"){
       // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
@@ -92,12 +96,31 @@ module.exports = (settings)=>{
       //   })
       // })
     } else if (item.kind == 'DeploymentConfig'){
-      oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels)
+      oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels);
+      const existing = oc.objectOrNull(Util.name(item))
+      if (existing != null &&
+          item.metadata.labels["app.kubernetes.io/name"] === "rh-sso" && 
+          item.metadata.labels["app.kubernetes.io/component"] === "server" && 
+          existing.metadata.labels["app.kubernetes.io/version"] !== item.metadata.labels["app.kubernetes.io/version"]
+          ){
+        //backup.push(existing);
+        upgraded.push(JSON.parse(JSON.stringify(item)));
+        
+        oc.raw('scale', [Util.name(item)], {'replicas':1, 'timeout': "5m"});
+        item.spec.replicas = 1
+        item.spec.strategy.type = 'Recreate'
+        delete item.spec.strategy.rollingParams
+      }
     }
   })
 
   
   oc.importImageStreams(objects, phases[phase].tag, phases.build.namespace, phases.build.tag)
-  oc.applyAndDeploy(objects, phases[phase].instance)
+  oc.applyAndDeploy(objects, phases[phase].instance).then((result)=>{
+    upgraded.forEach(item => {
+      const patch = {spec: { replicas: item.spec.replicas, strategy:item.spec.strategy}}
+      oc.raw('patch', Util.name(item), {patch: JSON.stringify(patch)});
+    })
+  })
 
 }

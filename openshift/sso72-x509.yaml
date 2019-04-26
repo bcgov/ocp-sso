@@ -241,7 +241,7 @@ objects:
         - "rh-sso"
         from:
           kind: ImageStreamTag
-          name: "${NAME}:${VERSION}"
+          name: "${NAME}:${IMAGE_TAG}"
       type: ImageChange
     - type: ConfigChange
 - apiVersion: policy/v1beta1
@@ -271,7 +271,9 @@ parameters:
   name: SUFFIX
   value: ""
 - name: VERSION
-  value: "1.2"
+  value: "7.3"
+- name: IMAGE_TAG
+  value: "7.3-1"
 - description: Database JNDI name used by application to resolve the datasource, e.g.
     java:/jboss/datasources/postgresql
   displayName: Database JNDI Name
