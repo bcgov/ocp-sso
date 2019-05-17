@@ -101,14 +101,15 @@ objects:
       deploymentConfig: ${NAME}${SUFFIX}
     strategy:
       activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
-      type: Rolling
+# As of SSO 7.3, it doesn't support rolling deployment
+#      resources: {}
+#      rollingParams:
+#        intervalSeconds: 1
+#        maxSurge: 25%
+#        maxUnavailable: 25%
+#        timeoutSeconds: 600
+#        updatePeriodSeconds: 1
+      type: Recreate
     template:
       metadata:
         labels:
