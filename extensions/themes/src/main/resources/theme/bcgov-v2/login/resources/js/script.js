@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     updateFavIcon();
     // extent the login message:
     const errorMsg = document.getElementById('kc-error-message');
-    const titleContent = errorMsg ? 'Login Error:' : 'Authenticate with:'
+    const titleContent = errorMsg ? 'Log In Error:' : 'Log In With<br/>An Identity Provider:'
     document.getElementById('kc-page-title').innerHTML = titleContent;
 });
 
