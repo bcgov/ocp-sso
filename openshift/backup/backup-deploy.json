@@ -157,10 +157,6 @@
                     "value": "${BACKUP_PERIOD}"
                   },
                   {
-                    "name": "POSTGRESQL_DATABASE",
-                    "value": "${DATABASE_NAME}"
-                  },
-                  {
                     "name": "SSO_PGSQL_MASTER_USER",
                     "valueFrom": {
                       "secretKeyRef": {
@@ -251,13 +247,6 @@
       "description": "The TAG name for this environment, e.g., dev, test, prod",
       "required": true,
       "value": "dev"
-    },
-    {
-      "name": "DATABASE_NAME",
-      "displayName": "Database Name",
-      "description": "The name of the database.",
-      "required": true,
-      "value": "MyDatabase"
     },
     {
       "name": "DATABASE_DEPLOYMENT_NAME",
