@@ -32,6 +32,7 @@
   padding-top: 20px;
   margin-bottom: 50px;
   text-align: center;
+  position: relative;
 }
 
 header.login-pf-header::before {
@@ -44,6 +45,7 @@ header.login-pf-header::before {
   font-weight: 400;
   border-bottom: 1px solid #b3b1b3;
   color: #036;
+  padding-bottom: 5px;
 }
 
 #kc-social-providers {
@@ -53,7 +55,7 @@ header.login-pf-header::before {
 }
 
 /* local login button, github, IDIR, BCeID */
-a.zocial, #kc-login, a#zocial-github, a#zocial-bceid, a#zocial-idir, a:active {
+a.zocial, #kc-login, a.zocial.keycloak-oidc, a:active {
   background-color: #003366;
   border: none;
   border-radius: 4px;
@@ -67,6 +69,10 @@ a.zocial, #kc-login, a#zocial-github, a#zocial-bceid, a#zocial-idir, a:active {
   max-width: 150px;
   margin-left: auto;
   margin-right: auto;
+}
+
+a.zocial.keycloak-oidc:hover {
+  color: #036;
 }
 
 .zocial:hover {
