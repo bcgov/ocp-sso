@@ -55,6 +55,7 @@ header.login-pf-header::before {
 
 /* local login button, github, IDIR, BCeID */
 a.zocial, #kc-login, a.zocial.keycloak-oidc, a:active {
+  background-image: none;
   background-color: #003366;
   border: none;
   border-radius: 4px;
