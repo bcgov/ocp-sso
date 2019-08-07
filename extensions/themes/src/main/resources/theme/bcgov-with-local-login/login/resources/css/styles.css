@@ -3,6 +3,11 @@
   src: url("../font/MyriadWebPro.ttf") format("truetype");
 }
 
+.hidden {
+  /* Hide keycloak local account login */
+  display: none;
+}
+
 .login-pf body {
   background: none;
   background-color: #036;
@@ -71,13 +76,12 @@ a.zocial, #kc-login, a.zocial.keycloak-oidc, a:active {
   margin-right: auto;
 }
 
-a.zocial.keycloak-oidc:hover {
-  color: #036;
-}
-
-.zocial:hover {
+.zocial:hover, #kc-login:hover {
+  background: #ededed !important;
+  background-image: none !important;
   text-decoration: underline !important;
   opacity: 0.80 !important;
+  color: #036 !important;
 }
 
 #kc-error-message {
