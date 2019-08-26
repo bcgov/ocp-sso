@@ -13,3 +13,5 @@ const phases = {
 }
 
 module.exports = exports = phases
+
+//here is a comment
