@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bcgov/ocp-sso.git"
+    "url": "git+https://github.com/caggles/ocp-sso.git"
   },
   "author": "",
   "license": "Apache-2.0",

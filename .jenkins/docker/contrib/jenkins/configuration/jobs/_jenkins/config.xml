@@ -29,9 +29,9 @@
     <data>
       <jenkins.branch.BranchSource>
         <source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@2.3.6">
-          <id>ee75412b-b7b6-40cc-9ae1-75bacb9a2985</id>
+          <id>f7e323b0-8d89-4f18-9cc5-1dc1661a59e4</id>
           <credentialsId>github-account</credentialsId>
-          <repoOwner>bcgov</repoOwner>
+          <repoOwner>caggles</repoOwner>
           <repository>ocp-sso</repository>
           <traits>
             <org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait>
