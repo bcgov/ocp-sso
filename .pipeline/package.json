@@ -6,7 +6,7 @@
     "node": ">=8"
   },
   "scripts": {
-    "build": "node build.js",
+    "build": "DEBUG=* node build.js",
     "clean": "node clean.js",
     "deploy": "node deploy.js",
     "version": "echo \"node@$(node --version) ($(which node))\" && echo \"npm@$(npm --version) ($(which npm))\" && npm ls"
@@ -18,6 +18,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "pipeline-cli": "git+https://github.com/BCDevOps/pipeline-cli.git#v1.0"
+    "pipeline-cli": "git+https://github.com/BCDevOps/pipeline-cli.git#v1.2"
   }
 }

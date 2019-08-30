@@ -101,14 +101,15 @@ objects:
       deploymentConfig: ${NAME}${SUFFIX}
     strategy:
       activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
-      type: Rolling
+# As of SSO 7.3, it doesn't support rolling deployment
+#      resources: {}
+#      rollingParams:
+#        intervalSeconds: 1
+#        maxSurge: 25%
+#        maxUnavailable: 25%
+#        timeoutSeconds: 600
+#        updatePeriodSeconds: 1
+      type: Recreate
     template:
       metadata:
         labels:
@@ -241,7 +242,7 @@ objects:
         - "rh-sso"
         from:
           kind: ImageStreamTag
-          name: "${NAME}:${VERSION}"
+          name: "${NAME}:${IMAGE_TAG}"
       type: ImageChange
     - type: ConfigChange
 - apiVersion: policy/v1beta1
@@ -271,7 +272,9 @@ parameters:
   name: SUFFIX
   value: ""
 - name: VERSION
-  value: "1.2"
+  value: "7.3"
+- name: IMAGE_TAG
+  value: "7.3-1"
 - description: Database JNDI name used by application to resolve the datasource, e.g.
     java:/jboss/datasources/postgresql
   displayName: Database JNDI Name
