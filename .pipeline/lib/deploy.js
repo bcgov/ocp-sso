@@ -97,7 +97,7 @@ module.exports = (settings)=>{
       // })
     } else if (item.kind == 'DeploymentConfig'){
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels);
-      const existing = oc.objectOrNull(Util.name(item))
+      const existing = oc.objectOrNull(Util.name(item), {'ignore-not-found':'true'})
       if (existing != null &&
           item.metadata.labels["app.kubernetes.io/name"] === "rh-sso" && 
           item.metadata.labels["app.kubernetes.io/component"] === "server" && 
