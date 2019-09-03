@@ -60,16 +60,15 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     	String roleName = config.getConfig().get(RequireRoleByClientFactory.ROLE_NAME);
     	String errorUrl = config.getConfig().get(RequireRoleByClientFactory.ERROR_URL);
     	
-				AuthenticationSessionModel authSession = context.getAuthenticationSession();
-				String identityProviderId = null;
-				
-				String brokeredIdentityContext = authSession.getAuthNote("PBL_BROKERED_IDENTITY_CONTEXT");
-				if (brokeredIdentityContext !=null){
-					JsonReader reader = Json.createReader(new ByteArrayInputStream(authSession.getAuthNote("PBL_BROKERED_IDENTITY_CONTEXT").getBytes()));
-					JsonObject jsonst = (JsonObject)reader.read();
-					identityProviderId = ((JsonString)jsonst.get("identityProviderId")).getString();
-				}
-        
+		AuthenticationSessionModel authSession = context.getAuthenticationSession();
+		String identityProviderId = null;
+		
+		String brokeredIdentityContext = authSession.getAuthNote("PBL_BROKERED_IDENTITY_CONTEXT");
+		if (brokeredIdentityContext != null){
+			JsonReader reader = Json.createReader(new ByteArrayInputStream(authSession.getAuthNote("PBL_BROKERED_IDENTITY_CONTEXT").getBytes()));
+			JsonObject jsonst = (JsonObject)reader.read();
+			identityProviderId = ((JsonString)jsonst.get("identityProviderId")).getString();
+		}
         
         //brokerContext.getIdpConfig().getAlias()
         
@@ -80,7 +79,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		logger.infof("Validating if user has role '%s' when coming from client '%s'", roleName, client);
     		logger.infof("Expected client '%s', found client '%s'", client, sessionClient.getClientId());
     		if ((client.equalsIgnoreCase(sessionClient.getClientId()))) {
-          RoleModel role = KeycloakModelUtils.getRoleFromString(context.getRealm(), roleName);
+          		RoleModel role = KeycloakModelUtils.getRoleFromString(context.getRealm(), roleName);
 
     			if (role == null || !context.getUser().hasRole(role)) {
     				authShouldFail=true;
@@ -98,11 +97,11 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		logger.infof("User does not have required role '%s'", roleName, client);
     		UriBuilder uriBuilder = null;
     		if (errorUrl !=null && errorUrl.length()>0) {
-					if (identityProviderId != null){
-						errorUrl=errorUrl.replace("${idp_alias}", identityProviderId);
-					}else{
-						errorUrl=errorUrl.replace("${idp_alias}", "null");
-					}
+				if (identityProviderId != null){
+					errorUrl=errorUrl.replace("${idp_alias}", identityProviderId);
+				}else{
+					errorUrl=errorUrl.replace("${idp_alias}", "null");
+				}
     			//errorUrl=errorUrl.replace("${client_id}", sessionClient.getClientId());
     			uriBuilder = UriBuilder.fromUri(errorUrl);
     		}else {
