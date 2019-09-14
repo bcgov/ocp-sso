@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: sso72-x509-postgresql-persistent
+  template: sso73-x509-postgresql-persistent
   xpaas: 1.4.14
   app.kubernetes.io/version: "${VERSION}"
   app.kubernetes.io/name: "rh-sso"
@@ -23,18 +23,18 @@ metadata:
     description: An example RH-SSO 7 application with a PostgreSQL database. For more
       information about using this template, see https://github.com/jboss-openshift/application-templates.
     iconClass: icon-sso
-    openshift.io/display-name: Red Hat Single Sign-On 7.2 + PostgreSQL (Persistent)
+    openshift.io/display-name: Red Hat Single Sign-On 7.3 + PostgreSQL (Persistent)
     openshift.io/provider-display-name: Red Hat, Inc.
     tags: sso,keycloak,jboss
     template.openshift.io/documentation-url: https://access.redhat.com/documentation/en/red-hat-single-sign-on/
     template.openshift.io/long-description: This template defines resources needed
-      to develop Red Hat Single Sign-On 7.2 server based deployment, deployment configuration
+      to develop Red Hat Single Sign-On 7.3 server based deployment, deployment configuration
       for PostgreSQL using persistence, and securing RH-SSO communication using re-encrypt
       TLS.
     template.openshift.io/support-url: https://access.redhat.com
     version: 1.4.14
-  creationTimestamp: 2018-09-24T23:43:24Z
-  name: sso72-x509-postgresql-persistent
+  creationTimestamp: null
+  name: sso73-x509-postgresql-persistent
 objects:
 - apiVersion: image.openshift.io/v1
   kind: ImageStream

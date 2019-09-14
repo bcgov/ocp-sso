@@ -13,7 +13,7 @@ module.exports = (settings)=>{
 
   //Secrets for PGSQL/Patroni
   //First call will create/generate default values and a template
-  oc.createIfMissing(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509-postgresql-secrets.yaml`, {
+  oc.createIfMissing(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509-postgresql-secrets.yaml`, {
     'param':{
       'NAME': `template.${phases[phase].name}-pgsql-patroni`,
       'SUFFIX': '',
@@ -23,7 +23,7 @@ module.exports = (settings)=>{
   }))
 
   //Second call will create the required object using their respective template (default ones generated above)
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509-postgresql-secrets.yaml`, {
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509-postgresql-secrets.yaml`, {
     'param':{
       'NAME': `${phases[phase].name}-pgsql`,
       'SUFFIX': phases[phase].suffix,
@@ -34,7 +34,7 @@ module.exports = (settings)=>{
 
   //Secrets for RHSSO
   //First call will create/generate default values and a template
-  oc.createIfMissing(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509-secrets.yaml`, {
+  oc.createIfMissing(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509-secrets.yaml`, {
     'param':{
       'NAME': `template.${phases[phase].name}`,
       'SUFFIX': ''
@@ -42,7 +42,7 @@ module.exports = (settings)=>{
   }))
 
   //Second call will create the required object using their respective template (default ones generated above)
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509-secrets.yaml`, {
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509-secrets.yaml`, {
     'param':{
       'NAME': phases[phase].name,
       'SUFFIX': phases[phase].suffix
@@ -50,7 +50,7 @@ module.exports = (settings)=>{
   }))
 
   //Deployment objects for Patroni
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509-postgresql.yaml`, {
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509-postgresql.yaml`, {
     'param':{
       'NAME': `${phases[phase].name}-pgsql`,
       'SUFFIX': phases[phase].suffix,
@@ -61,7 +61,7 @@ module.exports = (settings)=>{
     }
   }))
 
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso72-x509.yaml`, {
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509.yaml`, {
     'param':{
       'NAME': phases[phase].name,
       'SUFFIX': phases[phase].suffix,
