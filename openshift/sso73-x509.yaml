@@ -194,7 +194,13 @@ objects:
               - -c
               - /opt/eap/bin/livenessProbe.sh
             initialDelaySeconds: 60
-          name: "rh-sso"
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/eap/bin/readinessProbe.sh
+          name: ${CONTAINER_NAME}
           ports:
           - containerPort: 8778
             name: jolokia
@@ -208,12 +214,6 @@ objects:
           - containerPort: 8888
             name: ping
             protocol: TCP
-          readinessProbe:
-            exec:
-              command:
-              - /bin/bash
-              - -c
-              - /opt/eap/bin/readinessProbe.sh
           resources:
             requests:
               cpu: "500m"
@@ -239,7 +239,7 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - "rh-sso"
+        - ${CONTAINER_NAME}
         from:
           kind: ImageStreamTag
           name: "${NAME}:${IMAGE_TAG}"
@@ -255,18 +255,24 @@ objects:
     selector:
       matchLabels:
         deploymentconfig: ${NAME}${SUFFIX}
-  status:
-    currentHealthy: 0
-    desiredHealthy: 0
-    disruptedPods: null
-    disruptionsAllowed: 0
-    expectedPods: 0
+  # TODO: remove status
+  # status:
+  #   currentHealthy: 0
+  #   desiredHealthy: 0
+  #   disruptedPods: null
+  #   disruptionsAllowed: 0
+  #   expectedPods: 0
 parameters:
 - description: The name for the application.
   displayName: Application Name
   name: NAME
   required: true
   value: sso
+- description: The name for container.
+  displayName: Application container Name
+  name: CONTAINER_NAME
+  required: true
+  value: rh-sso
 - description: A suffix appended to most objects
   displayName: Application Suffix
   name: SUFFIX
