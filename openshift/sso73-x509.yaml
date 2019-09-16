@@ -255,13 +255,6 @@ objects:
     selector:
       matchLabels:
         deploymentconfig: ${NAME}${SUFFIX}
-  # TODO: remove status
-  # status:
-  #   currentHealthy: 0
-  #   desiredHealthy: 0
-  #   disruptedPods: null
-  #   disruptionsAllowed: 0
-  #   expectedPods: 0
 parameters:
 - description: The name for the application.
   displayName: Application Name
