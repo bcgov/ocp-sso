@@ -54,9 +54,9 @@
                 <json-formatter name="json-formatter"/>
             </formatters>
             <handlers>
-                <file-handler name="file" formatter="json-formatter" path="audit-log.log" relative-to="jboss.server.data.dir"/>
+                <file-handler name="file" formatter="json-formatter" path="audit-log-${jboss.node.name}.log" relative-to="jboss.server.data.dir"/>
             </handlers>
-            <logger log-boot="true" log-read-only="false" enabled="false">
+            <logger log-boot="true" log-read-only="false" enabled="true">
                 <handlers>
                     <handler name="file"/>
                 </handlers>
@@ -223,12 +223,18 @@
                 <local-cache name="users">
                     <object-memory size="10000"/>
                 </local-cache>
-                <distributed-cache name="sessions" mode="SYNC" owners="3"/>
-                <distributed-cache name="authenticationSessions" mode="SYNC" owners="3"/>
-                <distributed-cache name="offlineSessions" mode="SYNC" owners="3"/>
-                <distributed-cache name="clientSessions" mode="SYNC" owners="3"/>
-                <distributed-cache name="offlineClientSessions" mode="SYNC" owners="3"/>
-                <distributed-cache name="loginFailures" mode="SYNC" owners="3"/>
+                <!-- <distributed-cache name="sessions" mode="SYNC" owners="3"/> -->
+                <replicated-cache  name="sessions" mode="SYNC"/>
+                <!-- <distributed-cache name="authenticationSessions" mode="SYNC" owners="3"/> -->
+                <replicated-cache  name="authenticationSessions" mode="SYNC"/>
+                <!-- <distributed-cache name="offlineSessions" mode="SYNC" owners="3"/> -->
+                <replicated-cache  name="offlineSessions" mode="SYNC"/>
+                <!-- <distributed-cache name="clientSessions" mode="SYNC" owners="3"/> -->
+                <replicated-cache  name="clientSessions" mode="SYNC"/>
+                <!-- <distributed-cache name="offlineClientSessions" mode="SYNC" owners="3"/> -->
+                <replicated-cache name="offlineClientSessions" mode="SYNC"/>
+                <!-- <distributed-cache name="loginFailures" mode="SYNC" owners="3"/> -->
+                <replicated-cache name="loginFailures" mode="SYNC"/>
                 <local-cache name="authorization">
                     <object-memory size="10000"/>
                 </local-cache>
