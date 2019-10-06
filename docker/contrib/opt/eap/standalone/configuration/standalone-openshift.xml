@@ -224,17 +224,17 @@
                     <object-memory size="10000"/>
                 </local-cache>
                 <!-- <distributed-cache name="sessions" mode="SYNC" owners="3"/> -->
-                <replicated-cache  name="sessions" mode="SYNC"/>
+                <replicated-cache  name="sessions"/>
                 <!-- <distributed-cache name="authenticationSessions" mode="SYNC" owners="3"/> -->
-                <replicated-cache  name="authenticationSessions" mode="SYNC"/>
+                <replicated-cache  name="authenticationSessions"/>
                 <!-- <distributed-cache name="offlineSessions" mode="SYNC" owners="3"/> -->
-                <replicated-cache  name="offlineSessions" mode="SYNC"/>
+                <replicated-cache  name="offlineSessions"/>
                 <!-- <distributed-cache name="clientSessions" mode="SYNC" owners="3"/> -->
-                <replicated-cache  name="clientSessions" mode="SYNC"/>
+                <replicated-cache  name="clientSessions"/>
                 <!-- <distributed-cache name="offlineClientSessions" mode="SYNC" owners="3"/> -->
-                <replicated-cache name="offlineClientSessions" mode="SYNC"/>
+                <replicated-cache name="offlineClientSessions"/>
                 <!-- <distributed-cache name="loginFailures" mode="SYNC" owners="3"/> -->
-                <replicated-cache name="loginFailures" mode="SYNC"/>
+                <replicated-cache name="loginFailures"/>
                 <local-cache name="authorization">
                     <object-memory size="10000"/>
                 </local-cache>
