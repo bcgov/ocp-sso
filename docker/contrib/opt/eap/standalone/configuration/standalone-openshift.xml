@@ -54,7 +54,7 @@
                 <json-formatter name="json-formatter"/>
             </formatters>
             <handlers>
-                <periodic-rotating-file-handler name="file" formatter="json-formatter" path="audit-log-${jboss.node.name}.log" relative-to="jboss.persistent.log.dir" suffix=".yyyy-MM-dd" autoflush="true"/>
+                <periodic-rotating-file-handler name="file" formatter="json-formatter" path="audit-log-${jboss.node.name}.log" relative-to="jboss.persistent.log.dir" suffix=".yyyy-MM-dd"/>
             </handlers>
             <logger log-boot="true" log-read-only="false" enabled="true">
                 <handlers>
