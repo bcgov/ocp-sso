@@ -87,7 +87,7 @@
             </console-handler>
             <periodic-rotating-file-handler name="AUDIT">
                 <file path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-keycloak.log"/>
-                <suffix value=".yyyy-MM-dd.gz"/>
+                <suffix value=".yyyy-MM-dd"/>
                 <formatter>
                     <named-formatter name="OPENSHIFT"/>
                 </formatter>
