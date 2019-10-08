@@ -54,7 +54,7 @@
                 <json-formatter name="json-formatter"/>
             </formatters>
             <handlers>
-                <periodic-rotating-file-handler name="file" formatter="json-formatter" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}.log" suffix=".yyyy-MM-dd"/>
+                <periodic-rotating-file-handler name="file" formatter="json-formatter" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-jboss.log" suffix=".yyyy-MM-dd"/>
             </handlers>
             <logger log-boot="true" log-read-only="false" enabled="true">
                 <handlers>
@@ -85,11 +85,26 @@
                     <named-formatter name="##CONSOLE-FORMATTER##"/>
                 </formatter>
             </console-handler>
+            <periodic-rotating-file-handler name="AUDIT" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-keycloak.log" suffix=".yyyy-MM-dd">
+                <formatter>
+                    <json-formatter>
+                        <metada-data>
+                            <property name="node.name" value="${jboss.node.name}"/>
+                        </metada-data>
+                    </json-formatter>
+                </formatter>
+            </periodic-rotating-file-handler>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
             <logger category="org.jboss.as.config">
                 <level name="DEBUG"/>
+            </logger>
+            <logger category="org.keycloak.events" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="AUDIT"/>
+                </handlers>
             </logger>
             <logger category="sun.rmi">
                 <level name="WARN"/>
