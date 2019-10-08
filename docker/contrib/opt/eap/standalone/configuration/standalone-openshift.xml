@@ -85,13 +85,11 @@
                     <named-formatter name="##CONSOLE-FORMATTER##"/>
                 </formatter>
             </console-handler>
-            <periodic-rotating-file-handler name="AUDIT" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-keycloak.log" suffix=".yyyy-MM-dd">
+            <periodic-rotating-file-handler name="AUDIT">
+                <file path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-keycloak.log"/>
+                <suffix value=".yyyy-MM-dd"/>
                 <formatter>
-                    <json-formatter>
-                        <metada-data>
-                            <property name="node.name" value="${jboss.node.name}"/>
-                        </metada-data>
-                    </json-formatter>
+                    <named-formatter name="OPENSHIFT"/>
                 </formatter>
             </periodic-rotating-file-handler>
             <logger category="com.arjuna">
@@ -121,6 +119,7 @@
                     <key-overrides timestamp="@timestamp"/>
                     <meta-data>
                         <property name="@version" value="1"/>
+                        <property name="node.name" value="${jboss.node.name}"/>
                     </meta-data>
                 </json-formatter>
             </formatter>
