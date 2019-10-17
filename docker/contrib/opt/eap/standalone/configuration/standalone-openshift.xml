@@ -56,7 +56,7 @@
             <handlers>
                 <periodic-rotating-file-handler name="file" formatter="json-formatter" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-jboss.log" suffix=".yyyy-MM-dd"/>
             </handlers>
-            <logger log-boot="true" log-read-only="false" enabled="true">
+            <logger log-boot="true" log-read-only="false" enabled="false">
                 <handlers>
                     <handler name="file"/>
                 </handlers>
