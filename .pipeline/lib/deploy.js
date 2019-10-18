@@ -95,6 +95,14 @@ module.exports = (settings)=>{
       //     }
       //   })
       // })
+
+      // remove label from volumeClaimTemplates:
+      if (item.spec.volumeClaimTemplates) {
+        item.spec.volumeClaimTemplates.forEach((pvc) => {
+          // eslint-disable-next-line no-param-reassign
+          pvc.metadata.labels = { statefulset: item.metadata.name };
+        });
+      }
     } else if (item.kind == 'DeploymentConfig'){
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels);
       const existing = oc.objectOrNull(Util.name(item), {'ignore-not-found':'true'})
