@@ -12,6 +12,7 @@ WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
 # Get the dates:
 LOG_DATE=$(date -v-${LOG_PERIOD} '+%Y-%m-%d')
 EXPIRY_DATE=$(date -v-${EXPIRY_LENGTH} '+%Y-%m-%d')
+echo $LOG_DATE $EXPIRY_DATE
 
 function channelNotification {
   webhookPayload='{"text":"'$1'"}'
