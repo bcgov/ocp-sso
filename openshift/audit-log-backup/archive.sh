@@ -1,23 +1,35 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-# This file should be provided/mounted:
-source "audit-log-env.sh"
-# DIRECTORY
-# EXPIRY_LENGTH
-# LOG_PERIOD
+# Setup:
+DIRECTORY="${LOG_PATH:-'/var/log/eap'}"
+# which date of logs to compress:
+LOG_PERIOD="${SSO_LOG_PERIOD:-1d}"
+# how far back to expire the logs:
+EXPIRY_LENGTH="${SSO_EXPIRY_LENGTH:-1m}"
+WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
 
-if [ ! -d "$DIRECTORY" ]; then
-  echo 'No logs created yet!'
-fi
-
+# Get the dates:
 LOG_DATE=$(date -v-${LOG_PERIOD} '+%Y-%m-%d')
 EXPIRY_DATE=$(date -v-${EXPIRY_LENGTH} '+%Y-%m-%d')
+
+function channelNotification {
+  webhookPayload='{"text":"'$1'"}'
+  curl -H "Content-Type: application/json" -X POST --data "$webhookPayload" $WEBHOOK_URL
+}
+
+# Check if log directory exists:
+if [ ! -d "$DIRECTORY" ]; then
+  echo 'No logs created yet!'
+  # send notifiation and exit:
+  webhookMsg="No logs created yet for $LOG_DATE"
+  channelNotification "$webhookMsg"
+  exit 0
+fi
 
 cd $DIRECTORY
 # Check for new log files:
 newFiles=$(shopt -s nullglob dotglob; echo *.log.${LOG_DATE})
-
 if (( ${#newFiles} ))
 then
   echo "Compressing file for $LOG_DATE"
@@ -28,6 +40,14 @@ then
   # delete expired logs, no error exit:
   rm ${EXPIRY_DATE}.tar.gz || true
   rm *.log.${EXPIRY_DATE} || true
+  # send notifiation:
+  webhookMsg="Log backup done for $LOG_DATE"
+  channelNotification "$webhookMsg"
+elif
+then
+  # send notifiation:
+  webhookMsg="No new logs for $LOG_DATE"
+  channelNotification "$webhookMsg"
 fi
 
 echo 'Done'
