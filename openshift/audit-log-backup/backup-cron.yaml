@@ -1,0 +1,116 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: "${NAME}-template"
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    annotations:
+      as-copy-of: "template.${NAME}-cron-secret"
+    name: ${NAME}-cron-secret
+  stringData:
+    webhookUrl: 'https://chat.pathfinder.gov.bc.ca/hooks/XTEaLFNoxPJXNRn8w/guGtBJQsaFfzd6zr6u8248Tqc6qBs5XukYggRrysPt9fn4Sx'
+    # TODO: webhookUrl: ' '
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: "${NAME}-cron"
+  spec:
+    schedule: ${SCHEDULE}
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              parent: "${NAME}-cron"
+          spec:
+            containers:
+            - name: backup
+              image: "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${SOURCE_IMAGE_NAME}:${TAG_NAME}"
+              env:
+                - name: NAMESPACE_NAME
+                  value: "${NAMESPACE_NAME}"
+                - name: LOG_PATH
+                  value: "${MOUNT_PATH}"
+                - name: SSO_LOG_PERIOD
+                  value: ${SSO_LOG_PERIOD}
+                - name: SSO_LOG_EXPIRY_LENGTH
+                  value: ${SSO_LOG_EXPIRY_LENGTH}
+                - name: SSO_WEBHOOK_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: "${NAME}-cron-secret"
+                      key: webhookUrl
+              command:
+                - "/bin/bash"
+                - "archive.sh"
+              volumeMounts:
+                - mountPath: ${MOUNT_PATH}
+                  name: ${NAME}-files
+            restartPolicy: OnFailure
+            volumes:
+              - name: ${NAME}-files
+                persistentVolumeClaim:
+                  claimName: ${CLAIM_NAME}
+parameters:
+- name: "NAME"
+  displayName: "Job Name"
+  description: "Name of the Scheduled Job to Create."
+  value: "audit-logs-backup"
+  required: true
+- name: "SUFFIX"
+  description: "A suffix appended to most objects"
+  displayName: "Application Suffix"
+  value: ""
+- name: "SOURCE_IMAGE_NAME"
+  displayName: "Source Image Name"
+  description: "The name of the image to use for this resource."
+  required: true
+  value: "audit-log-backup"
+- name: "IMAGE_NAMESPACE"
+  displayName: "Image Namespace"
+  description: "The namespace of the OpenShift project containing the imagestream for the application."
+  required: true
+  value: "devops-sso-tools"
+- name: "TAG_NAME"
+  displayName: "Environment TAG name"
+  description: "The TAG name for this environment, e.g., dev, test, prod"
+  required: true
+  value: "latest"
+# Update the following information based on the namespace:
+- name: "SCHEDULE"
+  displayName: "Cron Schedule"
+  description: "Cron Schedule to Execute the Job (in UTC)"
+# Currently targeting 5:00 AM Daily
+  value: "0 13 * * *"
+  required: true
+- name: "MOUNT_PATH"
+  displayName: "Mount Path"
+  description: "The path to mount the logs directory."
+  value: "/var/log/eap"
+  required: true
+- name: "CLAIM_NAME"
+  displayName: "Claim Name"
+  description: "Name of the pvc claim."
+  # TODO:
+  value: "sso-logs-prod"
+  required: true
+- name: "SSO_LOG_PERIOD"
+  displayName: "sso audit log update period"
+  description: "sso audit log update period."
+  value: yesterday
+  required: true
+- name: "SSO_LOG_EXPIRY_LENGTH"
+  displayName: "sso audit log expire period"
+  description: "sso audit log expire period."
+  value: 1 month ago
+  required: true
+- name: "NAMESPACE_NAME"
+  displayName: "the namespace"
+  description: "the namespace."
+  # TODO:
+  value: devops-sso-prod
+  required: true
