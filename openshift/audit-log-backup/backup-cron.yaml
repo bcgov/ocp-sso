@@ -11,8 +11,7 @@ objects:
       as-copy-of: "template.${NAME}-cron-secret"
     name: ${NAME}-cron-secret
   stringData:
-    webhookUrl: 'https://chat.pathfinder.gov.bc.ca/hooks/XTEaLFNoxPJXNRn8w/guGtBJQsaFfzd6zr6u8248Tqc6qBs5XukYggRrysPt9fn4Sx'
-    # TODO: webhookUrl: ' '
+    webhookUrl: ' '
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
@@ -95,8 +94,7 @@ parameters:
 - name: "CLAIM_NAME"
   displayName: "Claim Name"
   description: "Name of the pvc claim."
-  # TODO:
-  value: "sso-logs-prod"
+  value: " "
   required: true
 - name: "SSO_LOG_PERIOD"
   displayName: "sso audit log update period"
@@ -111,6 +109,5 @@ parameters:
 - name: "NAMESPACE_NAME"
   displayName: "the namespace"
   description: "the namespace."
-  # TODO:
-  value: devops-sso-prod
+  value: " "
   required: true
