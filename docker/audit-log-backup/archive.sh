@@ -10,7 +10,7 @@ EXPIRY_LENGTH="${SSO_EXPIRY_LENGTH:-1 month ago}"
 WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
 
 # Get the dates:
-LOG_DATE=$(date -d ${LOG_PERIOD} '+%Y-%m-%d')
+LOG_DATE=$(date -d "${LOG_PERIOD}" '+%Y-%m-%d')
 EXPIRY_DATE=$(date -d "${EXPIRY_LENGTH}" '+%Y-%m-%d')
 echo $LOG_DATE $EXPIRY_DATE
 
