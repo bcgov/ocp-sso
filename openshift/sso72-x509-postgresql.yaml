@@ -340,7 +340,7 @@ parameters:
     resides.
   displayName: ImageStream Namespace
   name: IMAGE_STREAM_NAMESPACE
-  value: "openshift"
+  value: "bcgov"
 - name: IMAGE_STREAM_TAG
   description: Patroni ImageTag
   value: patroni:v10-stable
