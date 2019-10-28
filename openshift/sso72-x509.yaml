@@ -242,7 +242,7 @@ objects:
         - "rh-sso"
         from:
           kind: ImageStreamTag
-          name: "${NAME}:${IMAGE_TAG}"
+          name: "${NAME}:${VERSION}"
       type: ImageChange
     - type: ConfigChange
 - apiVersion: policy/v1beta1
