@@ -24,6 +24,12 @@ pipeline {
         }
         stage('Deploy (DEV)') {
             agent { label 'deploy' }
+            when {
+                expression {
+                    return env.CHANGE_TARGET == 'master';
+                }
+                beforeInput true;
+            }
             input {
                 message "Should we continue with deployment to DEV?"
                 ok "Yes!"
@@ -36,6 +42,12 @@ pipeline {
         }
         stage('Deploy (TEST)') {
             agent { label 'deploy' }
+            when {
+                expression {
+                    return env.CHANGE_TARGET == 'master';
+                }
+                beforeInput true;
+            }
             input {
                 message "Should we continue with deployment to TEST?"
                 ok "Yes!"
@@ -48,6 +60,12 @@ pipeline {
         }
         stage('Deploy (PROD)') {
             agent { label 'deploy' }
+            when {
+                expression {
+                    return env.CHANGE_TARGET == 'master';
+                }
+                beforeInput true;
+            }
             input {
                 message "Should we continue with deployment to PROD? Have you notified the community?"
                 ok "Yes!"
