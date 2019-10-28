@@ -8,6 +8,7 @@ LOG_PERIOD="${SSO_LOG_PERIOD:-yesterday}"
 # how far back to expire the logs:
 EXPIRY_LENGTH="${SSO_EXPIRY_LENGTH:-1 month ago}"
 WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
+NAMESPACE_NAME="${NAMESPACE_NAME:-sandbox}"
 
 # Get the dates:
 LOG_DATE=$(date -d "${LOG_PERIOD}" '+%Y-%m-%d')
@@ -15,7 +16,7 @@ EXPIRY_DATE=$(date -d "${EXPIRY_LENGTH}" '+%Y-%m-%d')
 echo $LOG_DATE $EXPIRY_DATE
 
 function channelNotification {
-  webhookPayload='{"text":"'$1'"}'
+  webhookPayload='{"text":"'$NAMESPACE_NAME $1'"}'
   curl -H "Content-Type: application/json" -X POST --data "$webhookPayload" $WEBHOOK_URL
 }
 
