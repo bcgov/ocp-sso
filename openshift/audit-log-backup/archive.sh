@@ -4,14 +4,14 @@ set -Eeuo pipefail
 # Setup:
 DIRECTORY="${LOG_PATH:-'/var/log/eap'}"
 # which date of logs to compress:
-LOG_PERIOD="${SSO_LOG_PERIOD:-1d}"
+LOG_PERIOD="${SSO_LOG_PERIOD:-yesterday}"
 # how far back to expire the logs:
-EXPIRY_LENGTH="${SSO_EXPIRY_LENGTH:-1m}"
+EXPIRY_LENGTH="${SSO_EXPIRY_LENGTH:-1 month ago}"
 WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
 
 # Get the dates:
-LOG_DATE=$(date -v-${LOG_PERIOD} '+%Y-%m-%d')
-EXPIRY_DATE=$(date -v-${EXPIRY_LENGTH} '+%Y-%m-%d')
+LOG_DATE=$(date -d ${LOG_PERIOD} '+%Y-%m-%d')
+EXPIRY_DATE=$(date -d "${EXPIRY_LENGTH}" '+%Y-%m-%d')
 echo $LOG_DATE $EXPIRY_DATE
 
 function channelNotification {
@@ -44,8 +44,7 @@ then
   # send notifiation:
   webhookMsg="Log backup done for $LOG_DATE"
   channelNotification "$webhookMsg"
-elif
-then
+else
   # send notifiation:
   webhookMsg="No new logs for $LOG_DATE"
   channelNotification "$webhookMsg"

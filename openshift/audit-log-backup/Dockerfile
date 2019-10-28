@@ -1,3 +1,3 @@
 FROM alpine
-RUN apk add --no-cache bash coreutils && rm -rf /var/cache/apk/*
-copy archive.sh /
+RUN apk add --no-cache bash coreutils curl && rm -rf /var/cache/apk/*
+COPY archive.sh /
