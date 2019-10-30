@@ -16,7 +16,7 @@ EXPIRY_DATE=$(date -d "${EXPIRY_LENGTH}" '+%Y-%m-%d')
 echo $LOG_DATE $EXPIRY_DATE
 
 function channelNotification {
-  webhookPayload='{"text":"'$NAMESPACE_NAME $1'"}'
+  webhookPayload='{"text":"'$NAMESPACE_NAME' - '$1'"}'
   curl -H "Content-Type: application/json" -X POST --data "$webhookPayload" $WEBHOOK_URL
 }
 
