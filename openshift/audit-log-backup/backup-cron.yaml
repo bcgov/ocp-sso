@@ -84,7 +84,7 @@ parameters:
   displayName: "Cron Schedule"
   description: "Cron Schedule to Execute the Job (in UTC)"
 # Currently targeting 5:00 AM Daily
-  value: "0 13 * * *"
+  value: "0 5 * * *"
   required: true
 - name: "MOUNT_PATH"
   displayName: "Mount Path"
