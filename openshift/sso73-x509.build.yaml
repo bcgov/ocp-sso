@@ -212,7 +212,7 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: "sso73-openshift:1.0-7"
+          name: "${NAME}-base:${VERSION}"
       type: Docker
     triggers:
     - imageChange:
@@ -223,7 +223,7 @@ objects:
     - imageChange:
         from:
           kind: ImageStreamTag
-          name: "sso73-openshift:1.0-7"
+          name: "${NAME}-base:${VERSION}"
       type: ImageChange
     - type: ConfigChange
 parameters:

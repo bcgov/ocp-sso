@@ -36,6 +36,19 @@ metadata:
   creationTimestamp: null
   name: sso73-x509-postgresql-persistent
 objects:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      volume.beta.kubernetes.io/storage-class: gluster-file
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
+    name: ${NAME}-logs${SUFFIX}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 5Gi
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -179,7 +192,7 @@ objects:
           - name: SSO_SERVICE_PASSWORD
             value: ""
           - name: JAVA_OPTS_APPEND
-            value: "-Dkeycloak.profile.feature.authorization=enabled"
+            value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap"
 # Debug configuration for remote debugging
 #          - name: DEBUG
 #            value: 'true'
@@ -227,6 +240,8 @@ objects:
           - mountPath: /etc/x509/jgroups
             name: sso-x509-jgroups-volume
             readOnly: true
+          - mountPath: /var/log/eap
+            name: logs
         terminationGracePeriodSeconds: 75
         volumes:
         - name: sso-x509-https-volume
@@ -235,6 +250,9 @@ objects:
         - name: sso-x509-jgroups-volume
           secret:
             secretName: ${NAME}-x509-jgroups-secret${SUFFIX}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: ${NAME}-logs${SUFFIX}
     triggers:
     - imageChangeParams:
         automatic: true
