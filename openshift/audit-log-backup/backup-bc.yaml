@@ -2,7 +2,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: "${NAME}-build-template"
+  name: "backup-build-template"
 objects:
 - kind: ImageStream
   apiVersion: v1
