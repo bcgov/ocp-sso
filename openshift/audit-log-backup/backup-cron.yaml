@@ -31,7 +31,9 @@ objects:
               image: "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               env:
                 - name: NAMESPACE_NAME
-                  value: "${NAMESPACE_NAME}"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
                 - name: LOG_PATH
                   value: "${MOUNT_PATH}"
                 - name: SSO_LOG_PERIOD
@@ -105,9 +107,4 @@ parameters:
   displayName: "sso audit log expire period"
   description: "sso audit log expire period."
   value: 1 month ago
-  required: true
-- name: "NAMESPACE_NAME"
-  displayName: "the namespace"
-  description: "the namespace."
-  value: " "
   required: true
