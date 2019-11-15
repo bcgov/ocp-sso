@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: sso72-x509-postgresql-persistent
+  template: sso73-x509-postgresql-persistent
   xpaas: 1.4.14
   app.kubernetes.io/version: "${VERSION}"
   app.kubernetes.io/name: "rh-sso"
@@ -23,19 +23,32 @@ metadata:
     description: An example RH-SSO 7 application with a PostgreSQL database. For more
       information about using this template, see https://github.com/jboss-openshift/application-templates.
     iconClass: icon-sso
-    openshift.io/display-name: Red Hat Single Sign-On 7.2 + PostgreSQL (Persistent)
+    openshift.io/display-name: Red Hat Single Sign-On 7.3 + PostgreSQL (Persistent)
     openshift.io/provider-display-name: Red Hat, Inc.
     tags: sso,keycloak,jboss
     template.openshift.io/documentation-url: https://access.redhat.com/documentation/en/red-hat-single-sign-on/
     template.openshift.io/long-description: This template defines resources needed
-      to develop Red Hat Single Sign-On 7.2 server based deployment, deployment configuration
+      to develop Red Hat Single Sign-On 7.3 server based deployment, deployment configuration
       for PostgreSQL using persistence, and securing RH-SSO communication using re-encrypt
       TLS.
     template.openshift.io/support-url: https://access.redhat.com
     version: 1.4.14
-  creationTimestamp: 2018-09-24T23:43:24Z
-  name: sso72-x509-postgresql-persistent
+  creationTimestamp: null
+  name: sso73-x509-postgresql-persistent
 objects:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      volume.beta.kubernetes.io/storage-class: gluster-file
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
+    name: ${NAME}-logs${SUFFIX}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 5Gi
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -179,7 +192,7 @@ objects:
           - name: SSO_SERVICE_PASSWORD
             value: ""
           - name: JAVA_OPTS_APPEND
-            value: "-Dkeycloak.profile.feature.authorization=enabled"
+            value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap"
 # Debug configuration for remote debugging
 #          - name: DEBUG
 #            value: 'true'
@@ -194,7 +207,13 @@ objects:
               - -c
               - /opt/eap/bin/livenessProbe.sh
             initialDelaySeconds: 60
-          name: "rh-sso"
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/eap/bin/readinessProbe.sh
+          name: ${CONTAINER_NAME}
           ports:
           - containerPort: 8778
             name: jolokia
@@ -208,12 +227,6 @@ objects:
           - containerPort: 8888
             name: ping
             protocol: TCP
-          readinessProbe:
-            exec:
-              command:
-              - /bin/bash
-              - -c
-              - /opt/eap/bin/readinessProbe.sh
           resources:
             requests:
               cpu: "500m"
@@ -227,6 +240,8 @@ objects:
           - mountPath: /etc/x509/jgroups
             name: sso-x509-jgroups-volume
             readOnly: true
+          - mountPath: /var/log/eap
+            name: logs
         terminationGracePeriodSeconds: 75
         volumes:
         - name: sso-x509-https-volume
@@ -235,11 +250,14 @@ objects:
         - name: sso-x509-jgroups-volume
           secret:
             secretName: ${NAME}-x509-jgroups-secret${SUFFIX}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: ${NAME}-logs${SUFFIX}
     triggers:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - "rh-sso"
+        - ${CONTAINER_NAME}
         from:
           kind: ImageStreamTag
           name: "${NAME}:${IMAGE_TAG}"
@@ -255,18 +273,17 @@ objects:
     selector:
       matchLabels:
         deploymentconfig: ${NAME}${SUFFIX}
-  status:
-    currentHealthy: 0
-    desiredHealthy: 0
-    disruptedPods: null
-    disruptionsAllowed: 0
-    expectedPods: 0
 parameters:
 - description: The name for the application.
   displayName: Application Name
   name: NAME
   required: true
   value: sso
+- description: The name for container.
+  displayName: Application container Name
+  name: CONTAINER_NAME
+  required: true
+  value: rh-sso
 - description: A suffix appended to most objects
   displayName: Application Suffix
   name: SUFFIX

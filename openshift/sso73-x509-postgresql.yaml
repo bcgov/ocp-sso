@@ -19,24 +19,6 @@ labels:
   app.kubernetes.io/managed-by: template
   app.kubernetes.io/version: "10"
 objects:
-# It doesn't seem to be used/needed - remote it?
-#- apiVersion: v1
-#  kind: Service
-#  metadata:
-#    creationTimestamp: null
-#    labels:
-#      cluster-name: ${INSTANCE}
-#    name: ${NAME}${SUFFIX}
-#  spec:
-#    ports:
-#    - name: 'postgresql'
-#      port: 5432
-#      protocol: TCP
-#      targetPort: 5432
-#    sessionAffinity: None
-#    type: ClusterIP
-#  status:
-#    loadBalancer: {}
 - apiVersion: v1
   kind: Service
   metadata:
@@ -351,5 +333,4 @@ parameters:
 - name: STORAGE_CLASS
   value: gluster-block
 - name: IMAGE_REGISTRY
-  #docker-registry.default.svc:5000
   value: docker-registry.default.svc:5000
