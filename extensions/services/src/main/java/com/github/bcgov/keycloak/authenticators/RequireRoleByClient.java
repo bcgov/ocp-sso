@@ -81,7 +81,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		if ((client.equalsIgnoreCase(sessionClient.getClientId()))) {
           		RoleModel role = KeycloakModelUtils.getRoleFromString(context.getRealm(), roleName);
 
-    			if (role == null || !context.getUser().hasRole(role)) {
+    			if (role == null || (context.getUser()!=null && !context.getUser().hasRole(role))) {
     				authShouldFail=true;
     			}
     		}
