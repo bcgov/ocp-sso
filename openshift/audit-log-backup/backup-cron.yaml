@@ -6,12 +6,15 @@ metadata:
 objects:
 - apiVersion: v1
   kind: Secret
+  labels:
+    name: ${NAME}-cron-secret
   metadata:
+    name: ${NAME}-cron-secret
     annotations:
       as-copy-of: "template.${NAME}-cron-secret"
-    name: ${NAME}-cron-secret
+  type: Opaque
   stringData:
-    webhookUrl: ' '
+    webhookUrl: "${WEBHOOK_TOKEN}"
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
@@ -87,6 +90,12 @@ parameters:
   description: "Cron Schedule to Execute the Job (in UTC)"
 # Currently targeting 5:00 AM Daily
   value: "0 5 * * *"
+  required: true
+- name: WEBHOOK_TOKEN
+  displayName: Rocketchat webhook token
+  description: Rocketchat webhook token.
+  from: '[a-zA-Z0-9]{32}'
+  generate: expression
   required: true
 - name: "MOUNT_PATH"
   displayName: "Mount Path"

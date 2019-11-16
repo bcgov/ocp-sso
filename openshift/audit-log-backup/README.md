@@ -10,7 +10,6 @@ Find Dockerfile and log backup scripts [here](../../docker/audit-log-backup/).
 - expiry period for logs: SSO_LOG_EXPIRY_LENGTH
 - the name of the persistent volume claim containing the logs: CLAIM_NAME
 - the path to find and mount the logs: MOUNT_PATH
-- the namespace name where the keycloak instance is at: NAMESPACE_NAME
 
 ### To run the cronjob:
 ```

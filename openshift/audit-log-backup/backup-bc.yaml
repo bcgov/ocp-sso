@@ -2,7 +2,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: "backup-build-template"
+  name: "${NAME}-build-template"
 objects:
 - kind: ImageStream
   apiVersion: v1
@@ -29,7 +29,7 @@ objects:
       dockerStrategy:
         from:
           kind: DockerImage
-          name: "${SOURCE_IMAGE_NAME}"
+          name: "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
       type: Docker
     output:
       to:
