@@ -25,7 +25,7 @@ fi
 cd $DIRECTORY
 # 1) compress old log files into a daily .tar.gz file
 # NOTE: To avoid error message "file changed as we read it", we need to copy the files to a temporary location
-find . -name '*-keycloak.log.*' | grep -hoE '[0-9]+\-[0-9]+\-[0-9]+$' | sort | uniq | xargs -I {} sh -c 'DIR=$(pwd) && mkdir -p "/tmp/{}" && cp *.{} /tmp/{}/ && pushd /tmp/{}/ && tar -czf "$DIR/{}.tar.gz" * && popd && rm -rf "/tmp/{}" && find . -maxdepth 1 -type f -name "*-keycloak.log.{}" -delete'
+find . -name '*-keycloak.log.*' | grep -hoE '[0-9]+\-[0-9]+\-[0-9]+$' | sort | uniq | xargs -I {} bash -c 'DIR=$(pwd) && mkdir -p "/tmp/{}" && cp *.{} /tmp/{}/ && pushd /tmp/{}/ && tar -czf "$DIR/{}.tar.gz" * && popd && rm -rf "/tmp/{}" && find . -maxdepth 1 -type f -name "*-keycloak.log.{}" -delete'
 # e.g.: List contents -> tar -tvf 2019-11-14.tar.gz
 
 # 2) Delete files that are older than a specific time
