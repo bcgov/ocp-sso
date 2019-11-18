@@ -9,8 +9,7 @@ WEBHOOK_URL="${SSO_WEBHOOK_URL:-placeholder}"
 NAMESPACE_NAME="${NAMESPACE_NAME:-sandbox}"
 
 function channelNotification {
-  webhookPayload='{"text":"'$NAMESPACE_NAME' - '$1'"}'
-  curl -H "Content-Type: application/json" -X POST --data "$webhookPayload" $WEBHOOK_URL
+  echo '{"text":"'"$NAMESPACE_NAME-$1"'"}' | curl -H "Content-Type: application/json" -X POST $WEBHOOK_URL --data @-
 }
 
 # Check if log directory exists:
