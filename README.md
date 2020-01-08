@@ -62,5 +62,4 @@ oc delete rc,svc,dc,route,pvc,secret -l app=rh-sso-sandbox
 ```
 
 # Reference:
-
-https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_jboss_sso_for_openshift/#Example-Deploying-SSO
+https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.3/html/red_hat_single_sign-on_for_openshift/get_started#Example-Deploying-SSO
