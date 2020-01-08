@@ -1,30 +1,30 @@
 # Scripted Installation
 
 ## Prerequisites
-Secrets needs to manually created as "templates". The name has to match each secret respective `as-copy-of` annotation.
+Secrets needs to be manually created as "templates". The name has to match each secret respective `as-copy-of` annotation.
 ```
 oc process -f openshift/sso73-x509-postgresql-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
 oc process -f openshift/sso73-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
 
-#if you need to remove all, or re-create/update
+#if you need to remove all, or re-create/update, use the label
 oc delete secret -l part-of=rh-sso,shared=true
 
 ```
 ## Building
 ```
-.jenkins/pipeline-cli build --config=openshift/config.groovy --pr=9
+cd .pipeline && ./npmw build -- --pr=9
 ```
 note: replace '9' with a valid pull-request number
 
 ## Deploying
 ```
-.jenkins/pipeline-cli deploy --config=openshift/config.groovy --pr=9 --env=dev
+cd .pipeline && ./npmw deploy -- --pr=9 --env=dev
 ```
 note: replace '9' with a valid pull-request number
 
 ## Cleanup
 ```
-#switch to the right project/namespace
+#switch to the right project/namespace on OpenShift
 oc delete all -l !shared,github-repo=ocp-sso,env-id=pr-9
 ```
 
