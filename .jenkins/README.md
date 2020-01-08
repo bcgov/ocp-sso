@@ -1,57 +1,48 @@
-# Setup
-
-## 
-```
-oc run dev --image=docker-registry.default.svc:5000/bcgov/jenkins-basic:v2-latest -it --rm=true --restart=Never --command=true -- bash
-#Wait for container to startuo and a shell to be available
-
-```
-## Getting Git
-```
-git clone --single-branch --depth 1 'https://github.com/BCDevOps/openshift-components.git' -b jenkins-basic /tmp/jenkins
-```
-### From local working directory
-```
-oc rsync 
-```
-
-## oc login
-```
-#perform oc login (Copy command from web console)
-```
-
-### From Local Clone
-
-## Create the Jenkins Configuration
-- copy xxx job configuration file and modify
-  - jenkins.branch.BranchSource.id
-  - repoOwner
-  - repository
-  - scriptPath
-
-
 ## Create secrets
 Use the provided `openshift/secrets.json` as follow:
 ```
 oc -n bcgov-tools process -f 'openshift/secrets.json' -p 'GH_USERNAME=' -p 'GH_PASSWORD=' | oc  -n bcgov-tools create -f -
 ```
 
-## Grant Admin access to Jenkins Service account in each managed namespace
-```
-oc -n bcgov policy add-role-to-user 'admin' 'system:serviceaccounts:bcgov-tools:jenkins'
-oc -n bcgov-tools policy add-role-to-group 'system:image-puller' 'system:serviceaccounts:bcgov'
-```
-
 # Build
 ```
-( cd "$(git rev-parse --show-toplevel)" && .jenkins/pipeline-cli build --config=.jenkins/openshift/config.groovy --pr=19 )
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run build -- --pr=0 --dev-mode=true )
+```
+Where:
+`--pr=0` is used to set the pull request number to build from.
+`--dev-mode=true` is used to indicate that the build will actually take the files in the current working directory, as opposed to a fresh `git clone`
+
+# Deploy to DEV
+```
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run deploy -- --pr=0 --env=dev --description="deployment description" )
 ```
 
-# Deploy
+# Deploy to PROD
 ```
-( cd "$(git rev-parse --show-toplevel)" && .jenkins/pipeline-cli deploy --config=.jenkins/openshift/config.groovy --pr=19 --env=prod )
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run deploy -- --pr=0 --env=prod )
 ```
-## Undeploy/Cleanup
+
+## Grant Admin access to Jenkins Service Account in each managed namespace
 ```
-oc -n bcgov-tools delete is/jenkins
+oc -n <namespace>-<env> policy add-role-to-user 'admin' 'system:serviceaccounts:<namespace>-tools:jenkins'
+oc -n <namespace>-tools policy add-role-to-group 'system:image-puller' 'system:serviceaccounts:<namespace>-<env>'
 ```
+
+## Create the Jenkins Configuration for your application job in Jenkins
+
+- copy the folder .jenkins/docker/contrib/jenkins/configuration/jobs/_jenkins/ and name it with your app's name
+- Update the configuration in `config.xml`
+  - under the section `jenkins.branch.BranchSource`
+    - id
+    - repoOwner
+    - repository
+  - scriptPath
+
+# Clean
+The clean script can run against each persistent environment, starting from `build`.
+```
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run clean -- --pr=0 --env=build )
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run clean -- --pr=0 --env=dev )
+```
+
+*Warning*: Do *NOT* run against `test` or `prod`. It will cause *PERMANENT* deletion of all objects including `PVC`! be warned!
