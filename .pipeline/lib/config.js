@@ -1,7 +1,7 @@
 'use strict';
 const options= require('pipeline-cli').Util.parseArguments()
 const changeId = options.pr //aka pull-request
-const version = '7.3'
+const version = '7.4'
 const name = 'sso'
 
 const phases = {
