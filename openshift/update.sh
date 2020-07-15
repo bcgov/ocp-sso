@@ -9,5 +9,5 @@ PATRONI_BASE_URL="https://raw.githubusercontent.com/BCDevOps/platform-services/$
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-curl -sSk -o sso73-x509-postgresql-secrets.yaml "${PATRONI_BASE_URL}/openshift/deployment-prereq.yaml"
-curl -sSk -o sso73-x509-postgresql.yaml "${PATRONI_BASE_URL}/openshift/deployment.yaml"
+curl -sSk -o sso74-x509-postgresql-secrets.yaml "${PATRONI_BASE_URL}/openshift/deployment-prereq.yaml"
+curl -sSk -o sso74-x509-postgresql.yaml "${PATRONI_BASE_URL}/openshift/deployment.yaml"
