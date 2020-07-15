@@ -3,8 +3,8 @@
 ## Prerequisites
 Secrets needs to be manually created as "templates". The name has to match each secret respective `as-copy-of` annotation.
 ```
-oc process -f openshift/sso73-x509-postgresql-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
-oc process -f openshift/sso73-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
+oc process -f openshift/sso74-x509-postgresql-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
+oc process -f openshift/sso74-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFIX=' -l part-of=rh-sso,managed-by=template,shared=true  | oc create -f -
 
 #if you need to remove all, or re-create/update, use the label
 oc delete secret -l part-of=rh-sso,shared=true
@@ -38,22 +38,39 @@ oc project devops-sso-sandbox
 
 2. Create PostgreSQL
 ```
-oc process -f openshift/sso73-x509-postgresql-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template  | oc apply -f -
+oc process -f openshift/sso74-x509-postgresql-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc process -f openshift/sso73-x509-postgresql.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/sso74-x509-postgresql.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
 
 3. Import Image
 The template requires an ImageStream in the same namespace
-```
-oc import-image rh-sso:1.3-7 --from=registry.access.redhat.com/redhat-sso-7/sso73-openshift:1.3-7
+- check for available images here: https://catalog.redhat.com/software/containers/search
+- Please note that sso7.4 image is now on registry.redhat.io which requires auth
+
+```shell
+# login:
+docker login https://registry.redhat.io -u <username> -p <password>
+
+# make sure the image stream secret exists, otherwise we will need to import it to openshift namespace first
+oc -n devops-sso-tools get secret imagestreamsecret
+
+# if not, then import to openshift namespace first
+oc --as=<service_account> -n openshift import-image sso74-openshift-rhel8 --confirm
+oc --as=<service_account> -n openshift import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 # for a specific version
+
+# if secret exists, just import here directly
+oc -n devops-sso-tools import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 --confirm
+
+# import to current namespace
+oc tag devops-sso-tools/sso74-openshift-rhel8:7.4 sso74-openshift-rhel8:7.4
 ```
 
 4. Create Keycloak/RH-SSO
 ```
-oc process -f openshift/sso73-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
+oc process -f openshift/sso74-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc process -f openshift/sso73-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=1.3-7 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/sso74-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=1.3-7 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
 
 5. Delete everything
