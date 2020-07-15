@@ -8,7 +8,7 @@ objects:
     creationTimestamp: null
     labels:
       shared: "true"
-    name: sso74-openshift
+    name: ${RH_SSO_IMAGE_NAME}
   spec:
     lookupPolicy:
       local: false
@@ -16,7 +16,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: registry.access.redhat.com/redhat-sso-7/sso74-openshift:${RH_SSO_IMAGE_TAG}
+        name: ${RH_SSO_IMAGE_REGISTRY}/${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
       importPolicy: {}
       name: ${RH_SSO_IMAGE_TAG}
       referencePolicy:
@@ -125,7 +125,7 @@ objects:
           name: 'openjdk18-openshift:1.6'
       type: ImageChange
     - type: ConfigChange
-#Chainned build
+# Chain build
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -156,13 +156,13 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: sso74-openshift:${RH_SSO_IMAGE_TAG}
+          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
       type: Docker
     triggers:
     - imageChange:
         from:
           kind: ImageStreamTag
-          name: sso74-openshift:${RH_SSO_IMAGE_TAG}
+          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -235,9 +235,16 @@ parameters:
 - description: A suffix appended to all objects
   name: SUFFIX
   value: -build
+- name: RH_SSO_IMAGE_REGISTRY
+  description: search from https://catalog.redhat.com/software/containers/search
+  required: true
+  value: registry.redhat.io/rh-sso-7
+- name: RH_SSO_IMAGE_NAME
+  required: true
+  value: sso74-openshift-rhel8
 - name: RH_SSO_IMAGE_TAG
   required: true
-  value: 1.0-7
+  value: '7.4'
 - name: VERSION
   decription: The output tag name created by the build config
   required: true
