@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: sso73-x509-postgresql-persistent
+  template: sso74-x509-postgresql-persistent
   xpaas: 1.4.14
   app.kubernetes.io/version: "${VERSION}"
   app.kubernetes.io/name: "rh-sso"
@@ -34,7 +34,7 @@ metadata:
     template.openshift.io/support-url: https://access.redhat.com
     version: 7.4.1.GA
   creationTimestamp: null
-  name: sso73-x509-postgresql-persistent
+  name: sso74-x509-postgresql-persistent
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -292,7 +292,7 @@ parameters:
 - name: VERSION
   value: "7.4"
 - name: IMAGE_TAG
-  value: "7.4-1"
+  value: "7.4"
 - description: Database JNDI name used by application to resolve the datasource, e.g.
     java:/jboss/datasources/postgresql
   displayName: Database JNDI Name
