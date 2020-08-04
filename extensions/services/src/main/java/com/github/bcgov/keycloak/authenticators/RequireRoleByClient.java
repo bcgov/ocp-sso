@@ -24,6 +24,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
@@ -110,6 +111,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		}
 	        
 	        ResponseBuilder responseBuilder = Response.temporaryRedirect(uriBuilder.build());
+	        responseBuilder.type(MediaType.TEXT_PLAIN);
 	        context.failure(AuthenticationFlowError.INVALID_USER, responseBuilder.build());
 	        return;
     	}
