@@ -111,7 +111,7 @@ public class RequireRoleByClient implements org.keycloak.authentication.Authenti
     		}
 	        
 	        ResponseBuilder responseBuilder = Response.temporaryRedirect(uriBuilder.build());
-	        responseBuilder.type(MediaType.TEXT_PLAIN);
+	        responseBuilder.type(MediaType.TEXT_PLAIN_TYPE);
 	        context.failure(AuthenticationFlowError.INVALID_USER, responseBuilder.build());
 	        return;
     	}
