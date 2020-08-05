@@ -164,7 +164,7 @@ objects:
           - name: DB_TX_ISOLATION
             value: ${DB_TX_ISOLATION}
           - name: JGROUPS_PING_PROTOCOL
-            value: openshift.DNS_PING
+            value: dns.DNS_PING
           - name: OPENSHIFT_DNS_PING_SERVICE_NAME
             value: ${NAME}-ping${SUFFIX}
           - name: OPENSHIFT_DNS_PING_SERVICE_PORT
@@ -214,6 +214,7 @@ objects:
               - /bin/bash
               - -c
               - /opt/eap/bin/readinessProbe.sh
+            initialDelaySeconds: 30
           name: ${CONTAINER_NAME}
           ports:
           - containerPort: 8778
@@ -270,7 +271,7 @@ objects:
     creationTimestamp: null
     name: ${NAME}${SUFFIX}
   spec:
-    minAvailable: 2
+    maxUnavailable: 1
     selector:
       matchLabels:
         deploymentconfig: ${NAME}${SUFFIX}
