@@ -330,8 +330,7 @@ parameters:
   displayName: Persistent Volume Size
   name: PVC_SIZE
   value: 5Gi
-# TODO: update to netapp
 - name: STORAGE_CLASS
-  value: gluster-block
+  value: netapp-block-standard
 - name: IMAGE_REGISTRY
   value: docker-registry.default.svc:5000
