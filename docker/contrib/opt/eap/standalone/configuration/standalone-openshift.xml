@@ -96,14 +96,11 @@
                     <named-formatter name="OPENSHIFT"/>
                 </formatter>
             </periodic-rotating-file-handler>
-            <!-- TODO: reset logging level after debugging -->
             <logger category="com.arjuna">
-                <level name="TRACE"/>
-                <!-- <level name="WARN"/> -->
+                <level name="WARN"/>
             </logger>
             <logger category="org.jboss.as.config">
-                <level name="TRACE"/>
-                <!-- <level name="DEBUG"/> -->
+                <level name="DEBUG"/>
             </logger>
             <logger category="org.keycloak.events" use-parent-handlers="false">
                 <level name="DEBUG"/>
@@ -115,8 +112,7 @@
                 <level name="WARN"/>
             </logger>
             <root-logger>
-                <level name="TRACE"/>
-                <!-- <level name="INFO"/> -->
+                <level name="INFO"/>
                 <handlers>
                     <handler name="CONSOLE"/>
                 </handlers>
