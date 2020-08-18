@@ -551,6 +551,8 @@
             </core-environment>
             <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
             <!-- ##JDBC_STORE## -->
+            <!-- TODO: remove after debugging -->
+            <coordinator-environment default-timeout="1000"/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:weld:4.0"/>
         <subsystem xmlns="urn:wildfly:microprofile-config-smallrye:1.0"/>
