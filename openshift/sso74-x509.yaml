@@ -214,14 +214,14 @@ objects:
               - /bin/bash
               - -c
               - /opt/eap/bin/livenessProbe.sh
-            initialDelaySeconds: 120
+            initialDelaySeconds: 180
           readinessProbe:
             exec:
               command:
               - /bin/bash
               - -c
               - /opt/eap/bin/readinessProbe.sh
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
           name: ${CONTAINER_NAME}
           ports:
           - containerPort: 8778
