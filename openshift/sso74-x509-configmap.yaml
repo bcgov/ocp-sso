@@ -2,6 +2,16 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: sso-standalone-openshift-xml
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: NAME
+  required: true
+  value: sso
+- description: A suffix appended to most objects
+  displayName: Application Suffix
+  name: SUFFIX
+  value: ""
 objects:
 - apiVersion: v1
   kind: ConfigMap
