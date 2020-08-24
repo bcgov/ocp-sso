@@ -52,17 +52,18 @@ objects:
   spec:
     lookupPolicy:
       local: false
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    annotations: null
-    creationTimestamp: null
-    labels:
-      shared: "true"
-    name: ${NAME}-base
-  spec:
-    lookupPolicy:
-      local: false
+# SH: remove base chain build, use configmap
+# - apiVersion: v1
+#   kind: ImageStream
+#   metadata:
+#     annotations: null
+#     creationTimestamp: null
+#     labels:
+#       shared: "true"
+#     name: ${NAME}-base
+#   spec:
+#     lookupPolicy:
+#       local: false
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -125,46 +126,47 @@ objects:
           name: 'openjdk18-openshift:1.6'
       type: ImageChange
     - type: ConfigChange
+# SH: remove base chain build, use configmap
 # Chain build
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    creationTimestamp: null
-    labels:
-      build: ${NAME}-base${SUFFIX}
-    name: ${NAME}-base${SUFFIX}
-  spec:
-    completionDeadlineSeconds: 1440
-    nodeSelector: null
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${NAME}-base:${VERSION}
-    postCommit: {}
-    resources:
-      requests:
-        cpu: 1
-      limits:
-        cpu: 2
-    source:
-      git:
-        ref: ${SOURCE_GIT_REF}
-        uri: ${SOURCE_GIT_URL}
-      type: Git
-      contextDir: "docker"
-    strategy:
-      dockerStrategy:
-        from:
-          kind: ImageStreamTag
-          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
-      type: Docker
-    triggers:
-    - imageChange:
-        from:
-          kind: ImageStreamTag
-          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
-      type: ImageChange
-    - type: ConfigChange
+# - apiVersion: v1
+#   kind: BuildConfig
+#   metadata:
+#     creationTimestamp: null
+#     labels:
+#       build: ${NAME}-base${SUFFIX}
+#     name: ${NAME}-base${SUFFIX}
+#   spec:
+#     completionDeadlineSeconds: 1440
+#     nodeSelector: null
+#     output:
+#       to:
+#         kind: ImageStreamTag
+#         name: ${NAME}-base:${VERSION}
+#     postCommit: {}
+#     resources:
+#       requests:
+#         cpu: 1
+#       limits:
+#         cpu: 2
+#     source:
+#       git:
+#         ref: ${SOURCE_GIT_REF}
+#         uri: ${SOURCE_GIT_URL}
+#       type: Git
+#       contextDir: "docker"
+#     strategy:
+#       dockerStrategy:
+#         from:
+#           kind: ImageStreamTag
+#           name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
+#       type: Docker
+#     triggers:
+#     - imageChange:
+#         from:
+#           kind: ImageStreamTag
+#           name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
+#       type: ImageChange
+#     - type: ConfigChange
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -212,7 +214,9 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: "${NAME}-base:${VERSION}"
+          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
+          # SH: remove base chain build, use configmap
+          # name: "${NAME}-base:${VERSION}"
       type: Docker
     triggers:
     - imageChange:
@@ -223,7 +227,9 @@ objects:
     - imageChange:
         from:
           kind: ImageStreamTag
-          name: "${NAME}-base:${VERSION}"
+          name: ${RH_SSO_IMAGE_NAME}:${RH_SSO_IMAGE_TAG}
+          # SH: remove base chain build, use configmap
+          # name: "${NAME}-base:${VERSION}"
       type: ImageChange
     - type: ConfigChange
 parameters:
