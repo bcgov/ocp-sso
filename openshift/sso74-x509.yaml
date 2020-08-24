@@ -131,7 +131,12 @@ objects:
         name: ${NAME}${SUFFIX}
       spec:
         containers:
-        - env:
+        # SH: remove base chain build, use configmap
+        - command:
+          - /bin/sh
+          - -c
+          - cp /provisioning/standalone-openshift.xml /opt/eap/standalone/configuration/standalone-openshift.xml && /opt/eap/bin/openshift-launch.sh
+          env:
           - name: DB_POSTGRESQL_SERVICE_HOST
             value: ${DB_SERVICE_HOST}
           - name: DB_POSTGRESQL_SERVICE_PORT
@@ -193,7 +198,9 @@ objects:
           - name: SSO_SERVICE_PASSWORD
             value: ""
           - name: JAVA_OPTS_APPEND
-            value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap -Djboss.as.management.blocking.timeout=600"
+            value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap"
+            # SH: For upgrade timeout settings 
+            # value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap -Djboss.as.management.blocking.timeout=600"
 # Debug configuration for remote debugging
 #          - name: DEBUG
 #            value: 'true'
@@ -236,6 +243,10 @@ objects:
               memory: ${MEMORY_LIMIT}
               cpu: "1"
           volumeMounts:
+          # SH: remove base chain build, use configmap
+          - mountPath: /provisioning
+            name: ${NAME}-standalone-openshift-xml${SUFFIX}
+            readOnly: true
           - mountPath: /etc/x509/https
             name: sso-x509-https-volume
             readOnly: true
@@ -246,6 +257,11 @@ objects:
             name: logs
         terminationGracePeriodSeconds: 75
         volumes:
+        # SH: remove base chain build, use configmap
+        - name: ${NAME}-standalone-openshift-xml${SUFFIX}
+          configMap:
+            defaultMode: 420
+            name: ${NAME}-standalone-openshift-xml${SUFFIX}
         - name: sso-x509-https-volume
           secret:
             secretName: ${NAME}-x509-https-secret${SUFFIX}
