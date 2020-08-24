@@ -49,6 +49,24 @@ module.exports = (settings)=>{
     }
   }))
 
+
+  //Configmap for RHSSO
+  //First call will create/generate default values and a template
+  oc.createIfMissing(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso74-x509-configmap.yaml`, {
+    'param':{
+      'NAME': `template.${phases[phase].name}`,
+      'SUFFIX': ''
+    }
+  }))
+
+  //Second call will create the required object using their respective template (default ones generated above)
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso74-x509-configmap.yaml`, {
+    'param':{
+      'NAME': phases[phase].name,
+      'SUFFIX': phases[phase].suffix
+    }
+  }))
+
   //Deployment objects for Patroni
   objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso74-x509-postgresql.yaml`, {
     'param':{
