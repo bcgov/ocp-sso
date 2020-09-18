@@ -1,0 +1,73 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: "${NAME}-build-template"
+objects:
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: "${NAME}"
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: "${NAME}"
+    labels:
+      app: "${NAME}"
+  spec:
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+    runPolicy: SerialLatestOnly
+    source:
+      type: Git
+      git:
+        uri: "${GIT_REPO_URL}"
+        ref: "${GIT_REF}"
+      contextDir: "${SOURCE_CONTEXT_DIR}"
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
+      type: Docker
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "${NAME}:${OUTPUT_IMAGE_TAG}"
+parameters:
+- name: NAME
+  displayName: Name
+  description: The name assigned to all of the resources defined in this template.
+  required: true
+  value: audit-log-backup
+- name: GIT_REPO_URL
+  displayName: Git Repo URL
+  description: The URL to your GIT repo.
+  required: true
+  value: https://github.com/bcgov/ocp-sso.git
+- name: GIT_REF
+  displayName: Git Reference
+  description: The git reference or branch.
+  required: true
+  value: master
+- name: SOURCE_CONTEXT_DIR
+  displayName: Source Context Directory
+  description: The source context directory.
+  required: false
+  value: "/docker/audit-log-backup"
+- name: SOURCE_IMAGE_NAME
+  displayName: Source Image Name
+  description: The name of the source image.
+  required: true
+  value: docker-registry.default.svc:5000/openshift/alpine
+- name: SOURCE_IMAGE_TAG
+  displayName: Source Image Tag
+  description: The tag of the source image.
+  required: true
+  value: '3.7'
+- name: OUTPUT_IMAGE_TAG
+  displayName: Output Image Tag
+  description: The tag given to the built image.
+  required: true
+  value: latest
