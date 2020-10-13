@@ -20,10 +20,10 @@ function convertToJSON() {
   echo "writing $_FILE_NAME.json"
   JSON_FILENAME=$_FILE_NAME.json 
 
-  echo [ > $TEMP_DIR/$JSON_FILENAME
-  echo $ALMOST_JSON >> $TEMP_DIR/$JSON_FILENAME
-  echo ']' >> $TEMP_DIR/$JSON_FILENAME
-  echo "finished writing to $TEMP_DIR/$JSON_FILENAME"
+  echo [ > $JSON_FILENAME
+  echo $ALMOST_JSON >> $JSON_FILENAME
+  echo ']' >> $JSON_FILENAME
+  echo "finished writing to $JSON_FILENAME"
 }
 
 echo "JSON converted for files"
