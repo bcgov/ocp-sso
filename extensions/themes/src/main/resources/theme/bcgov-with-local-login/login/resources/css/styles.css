@@ -1,6 +1,8 @@
-@font-face {
-  font-family: "MyriadWebPro";
-  src: url("../font/MyriadWebPro.ttf") format("truetype");
+.login-pf body {
+  background: none;
+  background-color: #036;
+  font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+  color: #036;
 }
 
 .hidden {
@@ -8,17 +10,12 @@
   display: none;
 }
 
-.login-pf body {
-  background: none;
-  background-color: #036;
-}
-
 #kc-form-wrapper {
   width: 100%;
   margin-bottom: 20px;
   border-bottom: 1px solid #b3b1b3;
   border-right: none;
-  padding: 0 20px;
+  padding: 10px 20px;
 }
 
 #kc-header-wrapper {
@@ -34,7 +31,7 @@
 
 .login-pf-header {
   padding-top: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   text-align: center;
   position: relative;
 }
@@ -46,10 +43,15 @@ header.login-pf-header::before {
 }
 
 #kc-page-title {
+  font-size: 2em;
   font-weight: 400;
   border-bottom: 1px solid #b3b1b3;
   color: #036;
   padding-bottom: 5px;
+}
+
+#kc-info {
+  text-align: center;
 }
 
 #kc-social-providers {
@@ -58,8 +60,8 @@ header.login-pf-header::before {
   padding: 0;
 }
 
-/* local login button, github, IDIR, BCeID */
-a.zocial, #kc-login, a.zocial.keycloak-oidc, a:active {
+/* local login button, github, IDIR, BCeID, etc. */
+a.zocial, #kc-login, a.zocial.keycloak-oidc, .btn-primary {
   background-image: none;
   background-color: #003366;
   border: none;
@@ -97,7 +99,11 @@ a.zocial, #kc-login, a.zocial.keycloak-oidc, a:active {
     margin: 10px !important;
   }
 
+  #kc-page-title {
+    font-size: 5vw;
+  }
+
   #kc-header-wrapper {
-    font-size: 25px;
+    font-size: 6vw;
   }
 }

@@ -1,0 +1,78 @@
+--- standalone-openshift-73.xml	2020-07-27 11:32:22.000000000 -0700
++++ standalone-openshift.xml	2020-07-15 15:56:19.000000000 -0700
+@@ -54,7 +54,7 @@
+                 <json-formatter name="json-formatter"/>
+             </formatters>
+             <handlers>
+-                <file-handler name="file" formatter="json-formatter" path="audit-log.log" relative-to="jboss.server.data.dir"/>
++                <periodic-rotating-file-handler name="file" formatter="json-formatter" path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-jboss.log" suffix=".yyyy-MM-dd"/>
+             </handlers>
+             <logger log-boot="true" log-read-only="false" enabled="false">
+                 <handlers>
+@@ -85,12 +85,25 @@
+                     <named-formatter name="##CONSOLE-FORMATTER##"/>
+                 </formatter>
+             </console-handler>
++            <periodic-rotating-file-handler name="AUDIT">
++                <file path="${jboss.persistent.log.dir}/audit-log-${jboss.node.name}-keycloak.log"/>
++                <suffix value=".yyyy-MM-dd"/>
++                <formatter>
++                    <named-formatter name="OPENSHIFT"/>
++                </formatter>
++            </periodic-rotating-file-handler>
+             <logger category="com.arjuna">
+                 <level name="WARN"/>
+             </logger>
+             <logger category="org.jboss.as.config">
+                 <level name="DEBUG"/>
+             </logger>
++            <logger category="org.keycloak.events" use-parent-handlers="false">
++                <level name="DEBUG"/>
++                <handlers>
++                    <handler name="AUDIT"/>
++                </handlers>
++            </logger>
+             <logger category="sun.rmi">
+                 <level name="WARN"/>
+             </logger>
+@@ -223,12 +236,18 @@
+                 <local-cache name="users">
+                     <object-memory size="10000"/>
+                 </local-cache>
+-                <distributed-cache name="sessions" owners="1"/>
+-                <distributed-cache name="authenticationSessions" owners="1"/>
+-                <distributed-cache name="offlineSessions" owners="1"/>
+-                <distributed-cache name="clientSessions" owners="1"/>
+-                <distributed-cache name="offlineClientSessions" owners="1"/>
+-                <distributed-cache name="loginFailures" owners="1"/>
++                <!-- <distributed-cache name="sessions" mode="SYNC" owners="3"/> -->
++                <replicated-cache  name="sessions"/>
++                <!-- <distributed-cache name="authenticationSessions" mode="SYNC" owners="3"/> -->
++                <replicated-cache  name="authenticationSessions"/>
++                <!-- <distributed-cache name="offlineSessions" mode="SYNC" owners="3"/> -->
++                <replicated-cache  name="offlineSessions"/>
++                <!-- <distributed-cache name="clientSessions" mode="SYNC" owners="3"/> -->
++                <replicated-cache  name="clientSessions"/>
++                <!-- <distributed-cache name="offlineClientSessions" mode="SYNC" owners="3"/> -->
++                <replicated-cache name="offlineClientSessions"/>
++                <!-- <distributed-cache name="loginFailures" mode="SYNC" owners="3"/> -->
++                <replicated-cache name="loginFailures"/>
+                 <local-cache name="authorization">
+                     <object-memory size="10000"/>
+                 </local-cache>
+@@ -563,6 +582,15 @@
+                 <cacheTemplates>true</cacheTemplates>
+                 <dir>${jboss.home.dir}/themes</dir>
+             </theme>
++            <spi name="eventsListener">
++                <default-provider>jboss-logging</default-provider>
++                    <provider name="jboss-logging" enabled="true">
++                    <properties>
++                        <property name="success-level" value="info"/>
++                        <property name="error-level" value="warn"/>
++                    </properties>
++                </provider>
++            </spi>
+             <spi name="eventsStore">
+                 <provider name="jpa" enabled="true">
+                     <properties>
