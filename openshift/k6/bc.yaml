@@ -22,6 +22,8 @@ objects:
         openshift.io/generated-by: OpenShiftNewBuild
       labels:
         build: ${NAME}
+        group: sso-k6
+        component: ${NAME}-imagestream
       name: k6
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
@@ -33,6 +35,8 @@ objects:
         openshift.io/generated-by: OpenShiftNewBuild
       labels:
         build: ${NAME}
+        group: sso-k6
+        component: ${NAME}-imagestream
       name: ${NAME}
   - apiVersion: build.openshift.io/v1
     kind: BuildConfig
@@ -65,10 +69,12 @@ objects:
         openshift.io/generated-by: OpenShiftNewBuild
       labels:
         build: ${NAME}
+        group: sso-k6
+        component: ${NAME}-buildconfig
       name: ${NAME}
 parameters:
 - name: NAME 
-  value: ocp-k6
+  value: sso-k6
 - name: OUTPUT_TAG
   value: latest
 - name: GIT_REF
