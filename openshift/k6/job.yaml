@@ -12,6 +12,8 @@ objects:
             - name: k6-config
               configMap:
                 name: ${NAME}-config
+            - name: k6-logs
+              emptyDir: {}
           containers:
             - image: ${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_TAG}
               name: ${NAME}
@@ -20,12 +22,8 @@ objects:
                   value: ${SSO_BASE_URL}
                 - name: K6_HTTP_DEBUG
                   value: ${HTTP_DEBUG}
-                  # so that we can set valid redirect uris in an sso client
-                  # jobs are not backed by service we will need the ip
-                - name: MY_POD_IP
-                  valueFrom:
-                    fieldRef:
-                      fieldPath: status.podIP
+                - name: LOG_OUTPUT_PATH
+                  value: ${LOG_OUTPUT_PATH}
               resources:
                 limits:
                   cpu: 100m
@@ -36,6 +34,8 @@ objects:
               volumeMounts:
                 - name: k6-config
                   mountPath: /var/opt/config
+                - name: k6-logs
+                  mountPath: ${LOG_OUTPUT_PATH}
           restartPolicy: Never
     metadata:
       name: ${NAME}
@@ -70,6 +70,9 @@ parameters:
 - name: SSO_BASE_URL
   description: the fully qualified sso base url (including https)
   required: true
+- name: LOG_OUTPUT_PATH
+  description: the path json logs are written to inside of the pod
+  value: /tmp/logs
 - name: HTTP_DEBUG
   description: enable http debug logging in the k6 pod
   value: "false"

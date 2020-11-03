@@ -10,6 +10,7 @@ and then running `docker run sso-k6:latest -e SSO_BASE_URL=<url>`
 ### Environment Variables
 
 - `SSO_BASE_URL`: the full qualified base endpoint (including https) eg: https://dev.oidc.gov.bc.ca
+- `LOG_OUTPUT_PATH`: the path to where json output files will be written to (defaults to /tmp)
 
 ### Configuration
 
