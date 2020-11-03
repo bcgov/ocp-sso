@@ -18,6 +18,14 @@ objects:
               env:
                 - name: SSO_BASE_URL
                   value: ${SSO_BASE_URL}
+                - name: K6_HTTP_DEBUG
+                  value: ${HTTP_DEBUG}
+                  # so that we can set valid redirect uris in an sso client
+                  # jobs are not backed by service we will need the ip
+                - name: MY_POD_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.podIP
               resources:
                 limits:
                   cpu: 100m
@@ -62,6 +70,7 @@ parameters:
 - name: SSO_BASE_URL
   description: the fully qualified sso base url (including https)
   required: true
-
-
+- name: HTTP_DEBUG
+  description: enable http debug logging in the k6 pod
+  value: "false"
 
