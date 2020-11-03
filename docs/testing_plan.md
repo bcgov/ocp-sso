@@ -10,10 +10,8 @@ The Redhat SSO Service functions as a broker between multiple Identity Providers
 
 ### What is being tested?
 
-The tests can be seperated into two broad categories:
+The testing plan simply provides an indication that the Redhat sso service is operating correctly.
 
-1. Keycloak API functionality under load
-2. End User Workflow functionality (via browser session)
 
 ## Keycloak API Functionality Testing 
 
@@ -25,33 +23,20 @@ The K6 tests can be run as an Openshift Job so that we can start and stop the pr
 
 ### Initial Plan
 
-Pick a simple target for amount of users to run the test as and ramp up to it. 
+The initial plan is to settle on a small set of test cases that can verify particular features of Keycloak are working as expected.
 
-Run cases against the ramped up user count to simulate normal operation of the keycloak service. 
+These cases are:
 
-For example:
-
-1. Test Keycloak API Client Creation
-2. Ramp test from 1 virtual user to 100 over 10 seconds
-3. Assert what a succesful response looks like
+1. A user can load the homepage for sso
+2. A user can create a client via the api
+3. A user can login to sso (local authentication)
+3. A user can refresh their authentication token (local authentication)
 
 #### Refine
 
 After running these tests and getting enough information out of them, we should make an effort to continually refine and improve these tests to better reflect the Redhat SSO Production Service
 
 
-## Keycloak End User Functionality Testing
+#### Log Surfacing and Analyzation
 
-The tech being used is __[Cypress](https://cypress.io)__. Cypress is a non selenium based functional testing framework. It is very easy to containerize and authoring tests is simple and well documented. 
-
-### Initial Plan
-
-It is very apparent that sometimes our configuration changes may have a negative impact on our integrations with 3rd party services. The hope with these tests is to assert that end user flows are still functional up to these points of integration. 
-
-For Example we could ensure that common flows for end users work well under a well configured client and realm. 
-
-For Example:
-
-1. Idir auth flow works
-2. users can refresh tokens
-3. users remain logged into clients that are apart of the same realm
+The logs will ouput to a well known place inside of a pod. These logs can then be picked up or pushed to other tools for further analysis.
