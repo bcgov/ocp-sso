@@ -25,9 +25,8 @@ import {
   TOKEN_FIELDS,
 } from './shared.js';
 
-export function obtainToken () {
-  // setup users and auth details:
-  let user = USERS[0];
+export function obtainToken (user) {
+  // setup auth details:
   let tokenComplete = true;
 
   const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.tokenEndpoint;
@@ -44,15 +43,18 @@ export function obtainToken () {
 
   // check result:
   if (res.status == 200) {
-      const resJson = JSON.parse(res.body);
-      TOKEN_FIELDS.forEach(key => {
-        if (!resJson.hasOwnProperty(key)) tokenComplete = false;
-      })
-      RATE.authSuccess.add(1);
+    const resJson = JSON.parse(res.body);
+    TOKEN_FIELDS.forEach(key => {
+      if (!resJson.hasOwnProperty(key)) tokenComplete = false;
+    })
+    RATE.authSuccess.add(1);
+    // store token:
+    user.token = resJson["access_token"];
+    user.refresh = resJson["refresh_token"];
   }
   else {
-      console.log(`Authentication Error for user= ${user.username}. ResponseCode ${res.status}, ${res.error}`);
-      RATE.errorRate.add(1);
+    console.log(`Authentication Error for user= ${user.username}. ResponseCode ${res.status}, ${res.error}`);
+    RATE.errorRate.add(1);
   }
 
   check(res.status, {
@@ -62,4 +64,40 @@ export function obtainToken () {
   sleep(1);
 };
 
-export function refreshToken () {};
+export function refreshToken (user) {
+  // setup auth details:
+  let tokenComplete = true;
+
+  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.tokenEndpoint;
+  
+  const authOptions = {
+    grant_type: 'refresh_token',
+    client_id: SSO_CONFIG.clientId,
+    refresh_token: user.refresh,
+  };
+
+  // make request:
+  const res = http.post(tokenEndpointUrl, authOptions);
+
+  // check result:
+  if (res.status == 200) {
+    const resJson = JSON.parse(res.body);
+    TOKEN_FIELDS.forEach(key => {
+      if (!resJson.hasOwnProperty(key)) tokenComplete = false;
+    })
+    RATE.authSuccess.add(1);
+    // free token:
+    user.token = null;
+    user.refresh = null;
+  }
+  else {
+    console.log(`Token Refresh Error for user= ${user.username}. ResponseCode ${res.status}, ${res.error}`);
+    RATE.errorRate.add(1);
+  }
+
+  check(res.status, {
+    'Token Refresh endpoint successfully': res.status === 200 && tokenComplete,
+  });
+
+  sleep(1);
+};

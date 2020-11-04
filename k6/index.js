@@ -18,14 +18,17 @@ import http from 'k6/http';
 import { sleep } from 'k6';
 
 import { sample } from './libs/sample.js';
-import { obtainToken } from './libs/auth.js';
+import { obtainToken, refreshToken } from './libs/auth.js';
+import { USERS } from './libs/shared.js';
 
 export default function () {
   // run the sample test:
   // sample();
 
   // run test on token endpoint:
-  obtainToken();
+  let user = USERS[0];
+  obtainToken(user);
+  refreshToken(user);
 
   sleep(1);
 }
