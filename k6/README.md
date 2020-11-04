@@ -9,8 +9,12 @@ and then running `docker run sso-k6:latest -e SSO_BASE_URL=<url>`
 
 ### Environment Variables
 
-- `SSO_BASE_URL`: the full qualified base endpoint (including https) eg: https://dev.oidc.gov.bc.ca
 - `LOG_OUTPUT_PATH`: the path to where json output files will be written to (defaults to /tmp)
+- `SSO_ENV`: the environment of the SSO service testing on
+- `SSO_REALM`: the SSO realm testing against
+- `SSO_CLIENT`: the SSO client testing against
+- `USER_PASSWORD`: the test user password
+
 
 ### Configuration
 
