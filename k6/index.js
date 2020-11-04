@@ -1,6 +1,8 @@
 import http from 'k6/http';
-import { parseHTML } from 'k6/html';
 import { sleep } from 'k6';
+
+import { sample } from './libs/sample.js';
+import { obtainToken } from './libs/auth.js';
 
 /**
  * ENVIRONMENT VARIABLES
@@ -8,11 +10,11 @@ import { sleep } from 'k6';
  * 
  */
 export default function () {
-  const res = http.get(`https://developer.gov.bc.ca`);
-  const doc = parseHTML(res.body); // equivalent to res.html()
-  const button = doc.find('button[data-testid="searchbar-button"]').first();
-  console.log('CLICKING')
-  button.click();
+  // run the sample test:
+  // sample();
+
+  // run test on token endpoint:
+  obtainToken();
 
   sleep(1);
 }
