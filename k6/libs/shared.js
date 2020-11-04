@@ -26,23 +26,23 @@ import { Rate } from 'k6/metrics';
 
 // SSO Environment configs:
 export const SSO_CONFIG = {
-    env: (__ENV.SSO_ENV) ? __ENV.SSO_ENV : 'sbox',
-    realmId: (__ENV.SSO_REALM) ? __ENV.SSO_REALM : 'abcd1234',
-    clientId: (__ENV.SSO_CLIENT) ? __ENV.SSO_CLIENT : 'k6',
+  env: (__ENV.SSO_ENV) ? __ENV.SSO_ENV : 'sbox',
+  realmId: (__ENV.SSO_REALM) ? __ENV.SSO_REALM : 'abcd1234',
+  clientId: (__ENV.SSO_CLIENT) ? __ENV.SSO_CLIENT : 'k6',
 };
 
 // auth setting configs:
 export const AUTH_CONFIG = {
-    ssoEndpointUrl: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/realms/${SSO_CONFIG.realmId}`,
-    tokenEndpoint: '/protocol/openid-connect/token',
-    grantType: 'password',
-    userPassword: (__ENV.USER_PASSWORD) ? __ENV.USER_PASSWORD : 'test',
+  ssoEndpointUrl: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/realms/${SSO_CONFIG.realmId}`,
+  tokenEndpoint: '/protocol/openid-connect/token',
+  grantType: 'password',
+  userPassword: (__ENV.USER_PASSWORD) ? __ENV.USER_PASSWORD : 'test',
 };
 
 // Metrics setup:
 export const RATE = {
-    authSuccess: new Rate('authentication_successful'),
-    errorRate: new Rate('errors'),
+  authSuccess: new Rate('authentication_successful'),
+  errorRate: new Rate('errors'),
 };
 
 // local keycloak users:
@@ -56,5 +56,5 @@ export const TOKEN_FIELDS = ['access_token', 'refresh_token', 'expires_in'];
 
 // helper functions:
 export function getExpiresTime(seconds) {
-    return (Date.now() + seconds * 1000);
+  return (Date.now() + seconds * 1000);
 }

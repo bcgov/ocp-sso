@@ -20,7 +20,6 @@ import { check, sleep } from 'k6';
 import {
   SSO_CONFIG,
   AUTH_CONFIG,
-  USERS,
   RATE,
   TOKEN_FIELDS,
 } from './shared.js';
