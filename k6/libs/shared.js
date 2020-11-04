@@ -13,13 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //-------------------------------------------------------------------------
+
 import { Rate } from 'k6/metrics';
 
-// Metrics setup:
-export const RATE = {
-    authSuccess: new Rate('authentication_successful'),
-    errorRate: new Rate('errors'),
-};
+/**
+ * ENVIRONMENT VARIABLES
+ * @param {String} SSO_ENV the environment of the SSO service testing on
+ * @param {String} SSO_REALM the SSO realm testing against
+ * @param {String} SSO_CLIENT the SSO client testing against
+ * @param {String} USER_PASSWORD the test user password 
+ */
 
 // SSO Environment configs:
 export const SSO_CONFIG = {
@@ -33,10 +36,17 @@ export const AUTH_CONFIG = {
     ssoEndpointUrl: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/realms/${SSO_CONFIG.realmId}`,
     tokenEndpoint: '/protocol/openid-connect/token',
     grantType: 'password',
-    userPassword: (__ENV.SSO_PASSWORD) ? __ENV.SSO_PASSWORD : 'test',
+    userPassword: (__ENV.USER_PASSWORD) ? __ENV.USER_PASSWORD : 'test',
+};
+
+// Metrics setup:
+export const RATE = {
+    authSuccess: new Rate('authentication_successful'),
+    errorRate: new Rate('errors'),
 };
 
 // local keycloak users:
+// TODO: get from configmap
 export const USERS = [
   { username: "test_01", password: AUTH_CONFIG.userPassword, token: null, refresh: null, expires: null },
 ];
