@@ -18,8 +18,14 @@ objects:
             - image: ${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_TAG}
               name: ${NAME}
               env:
-                - name: SSO_BASE_URL
-                  value: ${SSO_BASE_URL}
+                - name: SSO_ENV
+                  value: ${SSO_ENV}
+                - name: SSO_REALM
+                  value: ${SSO_REALM}
+                - name: SSO_CLIENT
+                  value: ${SSO_CLIENT}
+                - name: USER_PASSWORD
+                  value: ${USER_PASSWORD}
                 - name: K6_HTTP_DEBUG
                   value: ${HTTP_DEBUG}
                 - name: LOG_OUTPUT_PATH
@@ -67,8 +73,17 @@ parameters:
   value: devops-sso-tools
 - name: IMAGE_REGISTRY
   value: docker-registry.default.svc:5000
-- name: SSO_BASE_URL
-  description: the fully qualified sso base url (including https)
+- name: SSO_ENV
+  description: the environment of the SSO service testing on
+  required: true
+- name: SSO_REALM
+  description: the SSO realm testing against
+  required: true
+- name: SSO_CLIENT
+  description: the SSO client testing against
+  required: true
+- name: USER_PASSWORD
+  description: the test user password
   required: true
 - name: LOG_OUTPUT_PATH
   description: the path json logs are written to inside of the pod
@@ -76,4 +91,3 @@ parameters:
 - name: HTTP_DEBUG
   description: enable http debug logging in the k6 pod
   value: "false"
-
