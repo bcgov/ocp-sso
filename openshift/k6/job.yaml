@@ -1,6 +1,34 @@
 kind: Template
 apiVersion: v1
 objects:
+  - apiVersion: v1
+    data:
+      index.json: |-
+        {
+          "vus": "10",
+          "duration": "30s"
+        }
+    kind: ConfigMap
+    metadata:
+      name: ${NAME}-config
+      labels:
+        app: ${NAME}
+        group: sso-k6
+        component: ${NAME}-configmap
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${NAME}-secret
+      labels:
+        app: ${NAME}
+        group: sso-k6
+        component: ${NAME}-secret
+    type: Opaque
+    stringData:
+      SSO_ENV: "${SSO_ENV}"
+      SSO_REALM: "${SSO_REALM}"
+      SSO_CLIENT: "${SSO_CLIENT}"
+      USER_PASSWORD: "${USER_PASSWORD}"
   - apiVersion: batch/v1
     kind: Job
     spec:
@@ -19,13 +47,25 @@ objects:
               name: ${NAME}
               env:
                 - name: SSO_ENV
-                  value: ${SSO_ENV}
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_ENV
                 - name: SSO_REALM
-                  value: ${SSO_REALM}
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_REALM
                 - name: SSO_CLIENT
-                  value: ${SSO_CLIENT}
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_CLIENT
                 - name: USER_PASSWORD
-                  value: ${USER_PASSWORD}
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: USER_PASSWORD
                 - name: K6_HTTP_DEBUG
                   value: ${HTTP_DEBUG}
                 - name: LOG_OUTPUT_PATH
@@ -47,23 +87,8 @@ objects:
       name: ${NAME}
       labels:
         app: ${NAME}
+        group: sso-k6
         component: ${NAME}-job
-        group: sso-k6
-  - apiVersion: v1
-    data:
-      index.json: |-
-        {
-          "vus": "10",
-          "duration": "30s"
-        }
-    kind: ConfigMap
-    metadata:
-      creationTimestamp: null
-      name: ${NAME}-config
-      labels:
-        app: ${NAME}
-        group: sso-k6
-        component: ${NAME}-configmap
 parameters:
 - name: NAME
   value: sso-k6
