@@ -1,12 +1,13 @@
 {
   "name": "pipeline",
   "version": "1.0.0",
-  "description": "This a pipeliene script",
+  "description": "This a pipeline script",
   "engines": {
     "node": ">=8"
   },
   "scripts": {
-    "build": "DEBUG=* node build.js",
+    "debug": "DEBUG=* node build.js",
+    "build": "node build.js",
     "clean": "node clean.js",
     "deploy": "node deploy.js",
     "version": "echo \"node@$(node --version) ($(which node))\" && echo \"npm@$(npm --version) ($(which npm))\" && npm ls"
