@@ -95,15 +95,17 @@ module.exports = (settings)=>{
   }))
 
   oc.applyRecommendedLabels(objects, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
-  
-  const backup = [];
-  const upgraded = [];
 
+  // CUSTOM: Fine tune labels and configs:
+  // const backup = [];
+  // const upgraded = [];
   objects.forEach((item)=>{
     if (item.kind == 'StatefulSet' && item.metadata.labels["app.kubernetes.io/name"] === "patroni"){
-      // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
+      // 1. Remove PR label from statefulset:
+      delete item.metadata.labels['env-id'];
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels)
 
+      // 2. Fill in the env var with dynamic labels:
       // item.spec.template.spec.containers.forEach((container)=>{
       //   container.env.forEach((env)=>{
       //     if (env.name === "PATRONI_KUBERNETES_LABELS"){
@@ -114,39 +116,51 @@ module.exports = (settings)=>{
       //   })
       // })
 
-      // remove label from volumeClaimTemplates:
+      // 3. Remove useless labels from PVC templates:
       if (item.spec.volumeClaimTemplates) {
         item.spec.volumeClaimTemplates.forEach((pvc) => {
-          // eslint-disable-next-line no-param-reassign
           pvc.metadata.labels = { statefulset: item.metadata.name };
         });
       }
     } else if (item.kind == 'DeploymentConfig'){
       oc.copyRecommendedLabels(item.metadata.labels, item.spec.template.metadata.labels);
-      const existing = oc.objectOrNull(Util.name(item), {'ignore-not-found':'true'})
-      if (existing != null &&
-          item.metadata.labels["app.kubernetes.io/name"] === "rh-sso" && 
-          item.metadata.labels["app.kubernetes.io/component"] === "server" && 
-          existing.metadata.labels["app.kubernetes.io/version"] !== item.metadata.labels["app.kubernetes.io/version"]
-          ){
-        //backup.push(existing);
-        upgraded.push(JSON.parse(JSON.stringify(item)));
+
+      // 4. Update SSO deployment to recreate strategy:
+      // const existing = oc.objectOrNull(Util.name(item), {'ignore-not-found':'true'})
+      // if (existing != null &&
+      //     item.metadata.labels["app.kubernetes.io/name"] === "rh-sso" && 
+      //     item.metadata.labels["app.kubernetes.io/component"] === "server" && 
+      //     existing.metadata.labels["app.kubernetes.io/version"] !== item.metadata.labels["app.kubernetes.io/version"]
+      //     ){
+      //   //backup.push(existing);
+      //   upgraded.push(JSON.parse(JSON.stringify(item)));
         
-        oc.raw('scale', [Util.name(item)], {'replicas':1, 'timeout': "5m"});
-        item.spec.replicas = 1
-        item.spec.strategy.type = 'Recreate'
-        delete item.spec.strategy.rollingParams
-      }
+      //   oc.raw('scale', [Util.name(item)], {'replicas':1, 'timeout': "5m"});
+      //   item.spec.replicas = 1
+      //   item.spec.strategy.type = 'Recreate'
+      //   delete item.spec.strategy.rollingParams
+      // }
     }
   })
 
+  // 5. Debugging:
+  // console.info('all the objects');
+  // objects.forEach((i) => {
+  //   if (i.kind === 'DeploymentConfig' || i.kind === 'StatefulSet') {
+  //     console.dir(i, { depth: null });
+  //   }
+  // });
+
   
-  oc.importImageStreams(objects, phases[phase].tag, phases.build.namespace, phases.build.tag)
-  oc.applyAndDeploy(objects, phases[phase].instance).then((result)=>{
-    upgraded.forEach(item => {
-      const patch = {spec: { replicas: item.spec.replicas, strategy:item.spec.strategy}}
-      oc.raw('patch', Util.name(item), {patch: JSON.stringify(patch)});
-    })
-  })
+  oc.importImageStreams(objects, phases[phase].tag, phases.build.namespace, phases.build.tag);
+  oc.applyAndDeploy(objects, phases[phase].instance);
+
+  // 6. Update with the new deployment strategy:
+  // oc.applyAndDeploy(objects, phases[phase].instance).then((result)=>{
+  //   upgraded.forEach(item => {
+  //     const patch = {spec: { replicas: item.spec.replicas, strategy:item.spec.strategy}}
+  //     oc.raw('patch', Util.name(item), {patch: JSON.stringify(patch)});
+  //   })
+  // })
 
 }
