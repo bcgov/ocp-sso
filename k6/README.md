@@ -4,10 +4,8 @@ This is a sample set up for how to run the k6 functional tests against an sso se
 
 ## Running Locally
 
-Running Locally is as easy as building the docker container `docker built -t sso-k6:latest .`
-and then running `docker run sso-k6:latest -e SSO_BASE_URL=<url>`
-
-Or with k6 installed locally `k6 run index.js -e SSO_BASE_URL=<url>`
+Running Locally is as easy as building the docker container `docker build -t sso-k6:latest .`
+and then running `docker run  -e SSO_ENV=<sso_env> -e ... sso-k6:latest` (order matters!)
 
 ### Environment Variables
 
