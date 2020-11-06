@@ -34,8 +34,7 @@ export default function () {
   sleep(1);
 
   // run test on APIs:
-  // TODO: this does not work on ocp pod but works on docker run, need to debug environment difference!
-  // apiClient()
+  apiClient()
 
   sleep(1);
 }
