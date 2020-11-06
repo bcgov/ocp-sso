@@ -19,6 +19,7 @@ import { sleep } from 'k6';
 
 import { sample } from './libs/sample.js';
 import { obtainToken, refreshToken } from './libs/auth.js';
+import { apiClient } from './libs/api.js';
 import { USERS } from './libs/shared.js';
 
 export default function () {
@@ -29,6 +30,9 @@ export default function () {
   let user = USERS[0];
   obtainToken(user);
   refreshToken(user);
+
+  // run test on APIs:
+  apiClient()
 
   sleep(1);
 }
