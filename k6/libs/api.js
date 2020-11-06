@@ -56,7 +56,7 @@ function authenticateClient (client) {
     client.expiry = getExpiresTime(resJson["expires_in"]);
   }
   else {
-    console.log("Authentication Error for client= " + client.id + ". ResponseCode[" + res.status + "] " + res.error);
+    console.log("Authentication Error for client=" + client.id + ". ResponseCode[" + res.status + "] " + res.error);
     client.authToken = null;
   }
 
@@ -88,6 +88,7 @@ export function apiClient() {
         // client name unique for each iteration
         const clientName = `testClient-${__ITER}-${__VU}`;
         let newId = null;
+        console.log(`------now creating client ${clientName} and with SA ${__ENV.SSO_SA_CLIENT_PASSWORD}`);
     
         // 1. Create client
         group('Create clients', () => {
