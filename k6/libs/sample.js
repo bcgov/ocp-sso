@@ -27,6 +27,7 @@ export function sample () {
   const res = http.get(`https://developer.gov.bc.ca`);
   const doc = parseHTML(res.body); // equivalent to res.html()
   const button = doc.find('button[data-testid="searchbar-button"]').first();
+  // TODO: k6 does not include interactions
   console.log('CLICKING')
   button.click();
 
