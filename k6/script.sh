@@ -8,4 +8,9 @@ if [ -z "$LOG_OUTPUT_PATH" ]; then
 LOG_OUTPUT_PATH=/tmp
 fi
 
-k6 run index.js --config ./config/index.json --out json=$LOG_OUTPUT_PATH/$JSON_FILENAME
+k6 run index.js \
+-e SSO_ENV=$SSO_ENV -e SSO_REALM=$SSO_REALM -e SSO_CLIENT=$SSO_CLIENT \
+-e USER_PASSWORD=$USER_PASSWORD \
+-e SSO_SA_CLIENT_ID=$SSO_SA_CLIENT_ID -e SSO_SA_CLIENT_PASSWORD=$SSO_SA_CLIENT_PASSWORD \
+--config ./config/index.json \
+--out json=$LOG_OUTPUT_PATH/$JSON_FILENAME
