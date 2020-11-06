@@ -85,7 +85,8 @@ export function apiClient() {
     
       group('Client APIs', () => {
         const clientEndpoint = AUTH_CONFIG.ssoAPI + AUTH_CONFIG.clientEndpoint;
-        const clientName = 'testClient';
+        // client name unique for each iteration
+        const clientName = `testClient-${__ITER}-${__VU}`;
         let newId = null;
     
         // 1. Create client
