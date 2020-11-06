@@ -31,6 +31,8 @@ export default function () {
   obtainToken(user);
   refreshToken(user);
 
+  sleep(1);
+
   // run test on APIs:
   apiClient()
 

@@ -100,6 +100,7 @@ export function apiClient() {
           check(res, {
             'SA Client POST-Create successfully': res.status === 201
           });
+          sleep(1);
         });
 
         // 2. Get the client
@@ -120,6 +121,7 @@ export function apiClient() {
           check(newId, {
             'SA Client GET successfully': res.status === 200 && newId
           });
+          sleep(1);
         });
 
         // 3. Delete the client
@@ -129,6 +131,7 @@ export function apiClient() {
           check(res, {
             'SA Client DELETE successfully': res.status === 204
           });
+          sleep(1);
         });
       });
   } catch (err) {
