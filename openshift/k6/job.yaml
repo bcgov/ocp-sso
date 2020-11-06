@@ -29,6 +29,8 @@ objects:
       SSO_REALM: "${SSO_REALM}"
       SSO_CLIENT: "${SSO_CLIENT}"
       USER_PASSWORD: "${USER_PASSWORD}"
+      SSO_SA_CLIENT_ID: "${SSO_SA_CLIENT_ID}"
+      SSO_SA_CLIENT_PASSWORD: "${SSO_SA_CLIENT_PASSWORD}"
   - apiVersion: batch/v1
     kind: Job
     spec:
@@ -66,6 +68,16 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-secret
                       key: USER_PASSWORD
+                - name: SSO_SA_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_ID
+                - name: SSO_SA_CLIENT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_PASSWORD
                 - name: K6_HTTP_DEBUG
                   value: ${HTTP_DEBUG}
                 - name: LOG_OUTPUT_PATH
@@ -109,6 +121,12 @@ parameters:
   required: true
 - name: USER_PASSWORD
   description: the test user password
+  required: true
+- name: SSO_SA_CLIENT_ID
+  description: Service account ID
+  required: true
+- name: SSO_SA_CLIENT_PASSWORD
+  description: Service account password
   required: true
 - name: LOG_OUTPUT_PATH
   description: the path json logs are written to inside of the pod
