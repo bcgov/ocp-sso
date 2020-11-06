@@ -34,9 +34,20 @@ export const SSO_CONFIG = {
 // auth setting configs:
 export const AUTH_CONFIG = {
   ssoEndpointUrl: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/realms/${SSO_CONFIG.realmId}`,
+  ssoAPI: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/admin/realms/${SSO_CONFIG.realmId}`,
   tokenEndpoint: '/protocol/openid-connect/token',
+  clientEndpoint: '/clients',
   grantType: 'password',
   userPassword: (__ENV.USER_PASSWORD) ? __ENV.USER_PASSWORD : 'test',
+};
+
+// service account client for API testing:
+export let SERVICE_ACCOUNT_CLIENT = {
+  id: (__ENV.SSO_SA_CLIENT_ID) ? __ENV.SSO_SA_CLIENT_ID : 'api-test',
+  secret: (__ENV.SSO_SA_CLIENT_PASSWORD) ? __ENV.SSO_SA_CLIENT_PASSWORD : '',
+  authToken: null,
+  refreshToken: null,
+  expiry: null,
 };
 
 // Metrics setup:
