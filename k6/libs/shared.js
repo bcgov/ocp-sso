@@ -18,7 +18,7 @@ import { Rate } from 'k6/metrics';
 
 /**
  * ENVIRONMENT VARIABLES
- * @param {String} SSO_ENV the environment of the SSO service testing on
+ * @param {String} SSO_BASE_URL sso service base url
  * @param {String} SSO_REALM the SSO realm testing against
  * @param {String} SSO_CLIENT the SSO client testing against
  * @param {String} USER_PASSWORD the test user password 
@@ -26,15 +26,15 @@ import { Rate } from 'k6/metrics';
 
 // SSO Environment configs:
 export const SSO_CONFIG = {
-  env: (__ENV.SSO_ENV) ? __ENV.SSO_ENV : 'sbox',
+  url: (__ENV.SSO_BASE_URL) || 'https://sbox.oidc.gov.bc.ca',
   realmId: (__ENV.SSO_REALM) ? __ENV.SSO_REALM : 'abcd1234',
   clientId: (__ENV.SSO_CLIENT) ? __ENV.SSO_CLIENT : 'k6',
 };
 
 // auth setting configs:
 export const AUTH_CONFIG = {
-  ssoEndpointUrl: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/realms/${SSO_CONFIG.realmId}`,
-  ssoAPI: `https://${SSO_CONFIG.env}.oidc.gov.bc.ca/auth/admin/realms/${SSO_CONFIG.realmId}`,
+  ssoEndpointUrl: `${SSO_CONFIG.url}/auth/realms/${SSO_CONFIG.realmId}`,
+  ssoAPI: `${SSO_CONFIG.url}/auth/admin/realms/${SSO_CONFIG.realmId}`,
   tokenEndpoint: '/protocol/openid-connect/token',
   clientEndpoint: '/clients',
   grantType: 'password',

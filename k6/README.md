@@ -5,12 +5,12 @@ This is a sample set up for how to run the k6 functional tests against an sso se
 ## Running Locally
 
 Running Locally is as easy as building the docker container `docker build -t sso-k6:latest .`
-and then running `docker run  -e SSO_ENV=<sso_env> -e ... sso-k6:latest` (order matters!)
+and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:latest` (order matters!)
 
 ### Environment Variables
 
 - `LOG_OUTPUT_PATH`: the path to where json output files will be written to (defaults to /tmp)
-- `SSO_ENV`: the environment of the SSO service testing on
+- `SSO_BASE_URL`: the SSO base url
 - `SSO_REALM`: the SSO realm testing against
 - `SSO_CLIENT`: the SSO client testing against
 - `USER_PASSWORD`: the test user password
@@ -29,7 +29,7 @@ oc -n <tools_namespace> process -f bc.yaml | oc apply -f -
 
 # deploy job:
 oc -n <job_namespace> process -f job.yaml \
--p SSO_ENV=<env> -p SSO_REALM=<realm> \
+-p SSO_BASE_URL=<sso_base_url> -p SSO_REALM=<realm> \
 -p SSO_CLIENT=<client> -p USER_PASSWORD=<password> \
 -p SSO_SA_CLIENT_ID=<c_id> -p SSO_SA_CLIENT_PASSWORD=<c_psw> | oc -n <job_namespace> apply -f -
 
