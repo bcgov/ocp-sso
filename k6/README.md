@@ -1,13 +1,19 @@
 ## K6 Load Tests
 
-This is a sample set up for how to run the k6 functional tests against an sso service. 
+This is a sample set up for how to run the k6 functional tests against an sso service.
 
-## Running Locally
+## Prerequisites
+This test suits assume that you have a SSO KeyCloak instance setup with the following components
+- **default master realm**: it manages all resources
+- **k6 realm**: a application realm for testing
+- **k6 client**: a public client to test user login
+- **api-test client**: a service account client to test API requests
 
-Running Locally is as easy as building the docker container `docker build -t sso-k6:latest .`
-and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:latest` (order matters!)
+
+## Running the Test Cases
 
 ### Environment Variables
+All of the following env vars are required.
 
 - `LOG_OUTPUT_PATH`: string of the path to where json output files will be written to (defaults to /tmp)
 - `SSO_BASE_URL`: string of the SSO base url
@@ -19,8 +25,13 @@ and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:lates
 
 
 ### Configuration
-
 You can modify `config/index.json` to suite your needs. See the [k6 config documentation for options](https://k6.io/docs/using-k6/options)
+
+
+### Running Locally
+Running Locally is as easy as building the docker container `docker build -t sso-k6:latest .`
+and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:latest` (order matters!)
+
 
 ## Running on OpenShift
 ```shell
@@ -37,3 +48,7 @@ oc -n <job_namespace> process -f job.yaml \
 oc get all,configmap,secret,pvc -l group=sso-k6
 oc delete all,configmap,secret,pvc -l group=sso-k6
 ```
+
+## Todo Tasks
+- automate creation of the prerequisite components, ansible playbook or here in the test run
+- analyze test result and output methods
