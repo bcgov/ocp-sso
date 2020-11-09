@@ -49,6 +49,12 @@ oc get all,configmap,secret,pvc -l group=sso-k6
 oc delete all,configmap,secret,pvc -l group=sso-k6
 ```
 
+## Process Results
+> this is a temporary solution until we find a way to import the json results to prometheus for processing
+
+- take the results from the k6 test and and point the process_results shell script to it.
+`JSON_FILE_PATH=path/to/file ./process_results.sh
+
+
 ## Todo Tasks
 - automate creation of the prerequisite components, ansible playbook or here in the test run
-- analyze test result and output methods
