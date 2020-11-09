@@ -26,9 +26,9 @@ import { Rate } from 'k6/metrics';
 
 // SSO Environment configs:
 export const SSO_CONFIG = {
-  url: (__ENV.SSO_BASE_URL) || 'https://sbox.oidc.gov.bc.ca',
-  realmId: (__ENV.SSO_REALM) ? __ENV.SSO_REALM : 'abcd1234',
-  clientId: (__ENV.SSO_CLIENT) ? __ENV.SSO_CLIENT : 'k6',
+  url: __ENV.SSO_BASE_URL || 'https://sbox.oidc.gov.bc.ca',
+  realmId: __ENV.SSO_REALM || 'abcd1234',
+  clientId: __ENV.SSO_CLIENT || 'k6',
 };
 
 // auth setting configs:
@@ -38,13 +38,13 @@ export const AUTH_CONFIG = {
   tokenEndpoint: '/protocol/openid-connect/token',
   clientEndpoint: '/clients',
   grantType: 'password',
-  userPassword: (__ENV.USER_PASSWORD) ? __ENV.USER_PASSWORD : 'test',
+  userPassword: __ENV.USER_PASSWORD || 'test',
 };
 
 // service account client for API testing:
 export let SERVICE_ACCOUNT_CLIENT = {
-  id: (__ENV.SSO_SA_CLIENT_ID) ? __ENV.SSO_SA_CLIENT_ID : 'api-test',
-  secret: (__ENV.SSO_SA_CLIENT_PASSWORD) ? __ENV.SSO_SA_CLIENT_PASSWORD : '',
+  id: __ENV.SSO_SA_CLIENT_ID|| 'api-test',
+  secret: __ENV.SSO_SA_CLIENT_PASSWORD || '',
   authToken: null,
   refreshToken: null,
   expiry: null,
