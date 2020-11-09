@@ -25,7 +25,7 @@ objects:
         component: ${NAME}-secret
     type: Opaque
     stringData:
-      SSO_ENV: "${SSO_ENV}"
+      SSO_BASE_URL: "${SSO_BASE_URL}"
       SSO_REALM: "${SSO_REALM}"
       SSO_CLIENT: "${SSO_CLIENT}"
       USER_PASSWORD: "${USER_PASSWORD}"
@@ -48,11 +48,11 @@ objects:
             - image: ${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_TAG}
               name: ${NAME}
               env:
-                - name: SSO_ENV
+                - name: SSO_BASE_URL
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-secret
-                      key: SSO_ENV
+                      key: SSO_BASE_URL
                 - name: SSO_REALM
                   valueFrom:
                     secretKeyRef:
@@ -110,8 +110,8 @@ parameters:
   value: devops-sso-tools
 - name: IMAGE_REGISTRY
   value: docker-registry.default.svc:5000
-- name: SSO_ENV
-  description: the environment of the SSO service testing on
+- name: SSO_BASE_URL
+  description: SSO service base url
   required: true
 - name: SSO_REALM
   description: the SSO realm testing against
