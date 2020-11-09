@@ -9,13 +9,13 @@ and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:lates
 
 ### Environment Variables
 
-- `LOG_OUTPUT_PATH`: the path to where json output files will be written to (defaults to /tmp)
-- `SSO_BASE_URL`: the SSO base url
-- `SSO_REALM`: the SSO realm testing against
-- `SSO_CLIENT`: the SSO client testing against
-- `USER_PASSWORD`: the test user password
-- `SSO_SA_CLIENT_ID`: the Service account client ID
-- `SSO_SA_CLIENT_PASSWORD`: the Service account client password
+- `LOG_OUTPUT_PATH`: string of the path to where json output files will be written to (defaults to /tmp)
+- `SSO_BASE_URL`: string of the SSO base url
+- `SSO_REALM`: string of the SSO realm testing against
+- `SSO_CLIENT`: string of the SSO client testing against
+- `USER_PASSWORD`: string of the test user password
+- `SSO_SA_CLIENT_ID`: string of the Service account client ID
+- `SSO_SA_CLIENT_PASSWORD`: string of the Service account client password
 
 
 ### Configuration
