@@ -56,5 +56,38 @@ oc delete all,configmap,secret,pvc -l group=sso-k6
 `JSON_FILE_PATH=path/to/file ./process_results.sh
 
 
-## Todo Tasks
+## Todo
 - automate creation of the prerequisite components, ansible playbook or here in the test run
+- create more users for token test
+
+
+## How to make use of these K6 tests
+The K6 test cases simulates user behavior and API usage. By running the test cases *during an operational task* helps us to understand what are the expected events when we introduce the same task to production SSO instances.
+
+### Operational Tasks:
+There are two types of major operational tasks that we do commonly.
+
+***DB changes***
+- DB backup and restore
+- DB template/config update that require pod restarts
+- DB master pod failover and issue shutdown
+
+***SSO app changes***
+- deployment strategy change
+- resource limit/request change
+
+
+### How to run:
+0. Spin up a sandbox SSO instance to test against
+
+1. Simulate production DB: First of all, we will need to take a DB backup from production SSO instance to simulate the DB load. As a prerequisite, we assume the production instances have K6 required components setup already (see [readme](./README.md) for details). Then restore the DB and verify working.
+
+2. take an estimation of time needed for operational task, update [K6 config](./config/index.json) to cover the period with proper VU number.
+
+3. kick off the test cases without app changes to set baseline for test result
+
+4. then start the operational task during a another test run
+
+4. check if test cases fail, or significant service slowness compared with the baseline
+
+5. tweak settings and rerun
