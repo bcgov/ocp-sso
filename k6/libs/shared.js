@@ -59,7 +59,9 @@ export const RATE = {
 // local keycloak users:
 // TODO: get from configmap
 export const USERS = [
+  { username: "test_00", password: AUTH_CONFIG.userPassword, token: null, refresh: null, expires: null },
   { username: "test_01", password: AUTH_CONFIG.userPassword, token: null, refresh: null, expires: null },
+  { username: "test_02", password: AUTH_CONFIG.userPassword, token: null, refresh: null, expires: null },
 ];
 
 // expected token fields:
