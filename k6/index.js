@@ -26,8 +26,9 @@ export default function () {
   // run the sample test:
   // sample();
 
-  // run test on token endpoint:
-  let user = USERS[0];
+  // // run test on token endpoint:
+  const remainder = __VU % 3;
+  let user = USERS[remainder];
   obtainToken(user);
   refreshToken(user);
 
