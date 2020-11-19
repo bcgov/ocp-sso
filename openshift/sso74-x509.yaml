@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: sso73-x509-postgresql-persistent
+  template: sso74-x509-postgresql-persistent
   xpaas: 1.4.14
   app.kubernetes.io/version: "${VERSION}"
   app.kubernetes.io/name: "rh-sso"
@@ -23,23 +23,24 @@ metadata:
     description: An example RH-SSO 7 application with a PostgreSQL database. For more
       information about using this template, see https://github.com/jboss-openshift/application-templates.
     iconClass: icon-sso
-    openshift.io/display-name: Red Hat Single Sign-On 7.3 + PostgreSQL (Persistent)
+    openshift.io/display-name: Red Hat Single Sign-On 7.4 + PostgreSQL (Persistent)
     openshift.io/provider-display-name: Red Hat, Inc.
     tags: sso,keycloak,jboss
     template.openshift.io/documentation-url: https://access.redhat.com/documentation/en/red-hat-single-sign-on/
     template.openshift.io/long-description: This template defines resources needed
-      to develop Red Hat Single Sign-On 7.3 server based deployment, deployment configuration
+      to develop Red Hat Single Sign-On 7.4 server based deployment, deployment configuration
       for PostgreSQL using persistence, and securing RH-SSO communication using re-encrypt
       TLS.
     template.openshift.io/support-url: https://access.redhat.com
-    version: 1.4.14
+    version: 7.4.1.GA
   creationTimestamp: null
-  name: sso73-x509-postgresql-persistent
+  name: sso74-x509-postgresql-persistent
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     annotations:
+    # TODO: Update to netapp
       volume.beta.kubernetes.io/storage-class: gluster-file
       volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
     name: ${NAME}-logs${SUFFIX}
@@ -130,7 +131,12 @@ objects:
         name: ${NAME}${SUFFIX}
       spec:
         containers:
-        - env:
+        # SH: remove base chain build, use configmap
+        - command:
+          - /bin/sh
+          - -c
+          - cp /provisioning/standalone-openshift.xml /opt/eap/standalone/configuration/standalone-openshift.xml && /opt/eap/bin/openshift-launch.sh
+          env:
           - name: DB_POSTGRESQL_SERVICE_HOST
             value: ${DB_SERVICE_HOST}
           - name: DB_POSTGRESQL_SERVICE_PORT
@@ -156,14 +162,14 @@ objects:
                   key: "${DB_SECRET_DATABASE_KEY}"
           - name: TX_DATABASE_PREFIX_MAPPING
             value: db-postgresql=DB
-          - name: DB_TX_MIN_POOL_SIZE
+          - name: DB_MIN_POOL_SIZE
             value: ${DB_MIN_POOL_SIZE}
-          - name: DB_TX_MAX_POOL_SIZE
+          - name: DB_MAX_POOL_SIZE
             value: ${DB_MAX_POOL_SIZE}
           - name: DB_TX_ISOLATION
             value: ${DB_TX_ISOLATION}
           - name: JGROUPS_PING_PROTOCOL
-            value: openshift.DNS_PING
+            value: dns.DNS_PING
           - name: OPENSHIFT_DNS_PING_SERVICE_NAME
             value: ${NAME}-ping${SUFFIX}
           - name: OPENSHIFT_DNS_PING_SERVICE_PORT
@@ -193,6 +199,8 @@ objects:
             value: ""
           - name: JAVA_OPTS_APPEND
             value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap"
+            # SH: For upgrade timeout settings 
+            # value: "-Dkeycloak.profile.feature.authorization=enabled -Djboss.persistent.log.dir=/var/log/eap -Djboss.as.management.blocking.timeout=600"
 # Debug configuration for remote debugging
 #          - name: DEBUG
 #            value: 'true'
@@ -206,13 +214,14 @@ objects:
               - /bin/bash
               - -c
               - /opt/eap/bin/livenessProbe.sh
-            initialDelaySeconds: 60
+            initialDelaySeconds: 180
           readinessProbe:
             exec:
               command:
               - /bin/bash
               - -c
               - /opt/eap/bin/readinessProbe.sh
+            initialDelaySeconds: 120
           name: ${CONTAINER_NAME}
           ports:
           - containerPort: 8778
@@ -234,6 +243,10 @@ objects:
               memory: ${MEMORY_LIMIT}
               cpu: "1"
           volumeMounts:
+          # SH: remove base chain build, use configmap
+          - mountPath: /provisioning
+            name: ${NAME}-standalone-openshift-xml${SUFFIX}
+            readOnly: true
           - mountPath: /etc/x509/https
             name: sso-x509-https-volume
             readOnly: true
@@ -244,6 +257,11 @@ objects:
             name: logs
         terminationGracePeriodSeconds: 75
         volumes:
+        # SH: remove base chain build, use configmap
+        - name: ${NAME}-standalone-openshift-xml${SUFFIX}
+          configMap:
+            defaultMode: 420
+            name: ${NAME}-standalone-openshift-xml${SUFFIX}
         - name: sso-x509-https-volume
           secret:
             secretName: ${NAME}-x509-https-secret${SUFFIX}
@@ -269,7 +287,7 @@ objects:
     creationTimestamp: null
     name: ${NAME}${SUFFIX}
   spec:
-    minAvailable: 2
+    maxUnavailable: 1
     selector:
       matchLabels:
         deploymentconfig: ${NAME}${SUFFIX}
@@ -289,9 +307,9 @@ parameters:
   name: SUFFIX
   value: ""
 - name: VERSION
-  value: "7.3"
+  value: "7.4"
 - name: IMAGE_TAG
-  value: "7.3-1"
+  value: "7.4"
 - description: Database JNDI name used by application to resolve the datasource, e.g.
     java:/jboss/datasources/postgresql
   displayName: Database JNDI Name

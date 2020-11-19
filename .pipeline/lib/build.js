@@ -10,7 +10,7 @@ module.exports = (settings)=>{
   let objects = []
   const templatesLocalBaseUrl = oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
 
-  objects = objects.concat(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso73-x509.build.yaml`, {
+  objects = objects.concat(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/sso74-x509.build.yaml`, {
     'param':{
       'NAME': phases[phase].name,
       'SUFFIX': phases[phase].suffix,
