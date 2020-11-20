@@ -94,16 +94,14 @@ module.exports = (settings)=>{
     }
   }))
   // filter out stateful set from the rest but keep 
-  const [ objectsLessStatefulSet, statefulSets ] = objects.reduce((acc, object) => {
-    if(acc.length === 0) acc = [[], []];
-    
+  const { objectsLessStatefulSet, statefulSets } = objects.reduce((acc, object) => {
     if(object.kind === 'StatefulSet') {
-      acc[1].push(object);
+      acc.statefulSets.push(object);
     } else {
-      acc[0].push(object);
+      acc.objectsLessStatefulSet.push(object);
     }
-    return object;
-  }, []);
+    return acc;
+  }, { objectsLessStatefulSet: [], statefulSets: [] });
 
   oc.applyRecommendedLabels(objectsLessStatefulSet, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
   
