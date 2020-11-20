@@ -38,11 +38,15 @@ and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:lates
 # build mage:
 oc -n <tools_namespace> process -f bc.yaml | oc apply -f -
 
-# deploy job:
-oc -n <job_namespace> process -f job.yaml \
+# setup prep configmap and secret:
+oc -n <job_namespace> process -f prep.yaml \
 -p SSO_BASE_URL=<sso_base_url> -p SSO_REALM=<realm> \
 -p SSO_CLIENT=<client> -p USER_PASSWORD=<password> \
 -p SSO_SA_CLIENT_ID=<c_id> -p SSO_SA_CLIENT_PASSWORD=<c_psw> | oc -n <job_namespace> apply -f -
+
+# delete existing job then deploy it:
+oc -n <job_namespace> delete job <job_name>
+oc -n <job_namespace> process -f job.yaml | oc -n <job_namespace> apply -f -
 
 # delete job:
 oc get all,configmap,secret,pvc -l group=sso-k6

@@ -1,0 +1,55 @@
+kind: Template
+apiVersion: v1
+objects:
+  - apiVersion: v1
+    data:
+      # modify the k6 config
+      index.json: |-
+        {
+          "vus": "40",
+          "duration": "300s"
+        }
+    kind: ConfigMap
+    metadata:
+      name: ${NAME}-config
+      labels:
+        app: ${NAME}
+        group: sso-k6
+        component: ${NAME}-configmap
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${NAME}-secret
+      labels:
+        app: ${NAME}
+        group: sso-k6
+        component: ${NAME}-secret
+    type: Opaque
+    stringData:
+      SSO_BASE_URL: "${SSO_BASE_URL}"
+      SSO_REALM: "${SSO_REALM}"
+      SSO_CLIENT: "${SSO_CLIENT}"
+      USER_PASSWORD: "${USER_PASSWORD}"
+      SSO_SA_CLIENT_ID: "${SSO_SA_CLIENT_ID}"
+      SSO_SA_CLIENT_PASSWORD: "${SSO_SA_CLIENT_PASSWORD}"
+parameters:
+- name: NAME
+  value: sso-k6
+- name: SSO_BASE_URL
+  description: SSO service base url
+  required: true
+- name: SSO_REALM
+  description: the SSO realm testing against
+  required: true
+- name: SSO_CLIENT
+  description: the SSO client testing against
+  required: true
+- name: USER_PASSWORD
+  description: the test user password
+  required: true
+- name: SSO_SA_CLIENT_ID
+  description: Service account ID
+  required: true
+- name: SSO_SA_CLIENT_PASSWORD
+  description: Service account password
+  required: true
