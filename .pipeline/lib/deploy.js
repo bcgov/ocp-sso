@@ -9,7 +9,7 @@ module.exports = (settings)=>{
   const changeId = phases[phase].changeId
   const oc=new OpenShiftClientX(Object.assign({'namespace':phases[phase].namespace}, options));
   const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
-  const objects = []
+  let objects = []
 
   //Secrets for PGSQL/Patroni
   //First call will create/generate default values and a template
@@ -93,12 +93,22 @@ module.exports = (settings)=>{
       'HOST': phases[phase].host
     }
   }))
+  // filter out stateful set from the rest but keep 
+  const [ objectsLessStatefulSet, statefulSets ] = objects.reduce((acc, object) => {
+    if(object.kind === 'StatefulSet') {
+      acc[1].push(object);
+    } else {
+      acc[0].push(object);
+    }
+    return object;
+  }, [[], []]);
 
-  oc.applyRecommendedLabels(objects, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
+  oc.applyRecommendedLabels(objectsLessStatefulSet, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
   
   const backup = [];
   const upgraded = [];
-
+  objects = objectsLessStatefulSet.concat(statefulSets);
+  
   objects.forEach((item)=>{
     if (item.kind == 'StatefulSet' && item.metadata.labels["app.kubernetes.io/name"] === "patroni"){
       // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
