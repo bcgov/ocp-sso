@@ -95,20 +95,22 @@ module.exports = (settings)=>{
   }))
   // filter out stateful set from the rest but keep 
   const [ objectsLessStatefulSet, statefulSets ] = objects.reduce((acc, object) => {
+    if(acc.length === 0) acc = [[], []];
+    
     if(object.kind === 'StatefulSet') {
       acc[1].push(object);
     } else {
       acc[0].push(object);
     }
     return object;
-  }, [[], []]);
+  }, []);
 
   oc.applyRecommendedLabels(objectsLessStatefulSet, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
   
   const backup = [];
   const upgraded = [];
   objects = objectsLessStatefulSet.concat(statefulSets);
-  
+
   objects.forEach((item)=>{
     if (item.kind == 'StatefulSet' && item.metadata.labels["app.kubernetes.io/name"] === "patroni"){
       // oc.copyRecommendedLabels(item.metadata.labels, item.spec.selector.matchLabels)
