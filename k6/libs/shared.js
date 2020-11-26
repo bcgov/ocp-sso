@@ -36,6 +36,7 @@ export const AUTH_CONFIG = {
   ssoEndpointUrl: `${SSO_CONFIG.url}/auth/realms/${SSO_CONFIG.realmId}`,
   ssoAPI: `${SSO_CONFIG.url}/auth/admin/realms/${SSO_CONFIG.realmId}`,
   tokenEndpoint: '/protocol/openid-connect/token',
+  logoutEndpoint: '/protocol/openid-connect/logout',
   clientEndpoint: '/clients',
   grantType: 'password',
   userPassword: __ENV.USER_PASSWORD || 'test',

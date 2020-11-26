@@ -85,9 +85,8 @@ export function refreshToken (user) {
       if (!resJson.hasOwnProperty(key)) tokenComplete = false;
     })
     RATE.authSuccess.add(1);
-    // free token:
-    user.token = null;
-    user.refresh = null;
+    // update token
+    user.refresh = resJson.refresh_token;
   }
   else {
     console.log(`Token Refresh Error for user= ${user.username}. ResponseCode ${res.status}, ${res.error}`);
@@ -96,6 +95,43 @@ export function refreshToken (user) {
 
   check(res.status, {
     'Token Refresh endpoint successfully': res.status === 200 && tokenComplete,
+  });
+
+  sleep(1);
+};
+
+export function invalidateToken (user) {
+  // setup auth details:
+  let tokenComplete = true;
+
+  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.logoutEndpoint;
+  
+  const authOptions = {
+    grant_type: 'refresh_token',
+    client_id: SSO_CONFIG.clientId,
+    refresh_token: user.refresh,
+  };
+
+  // make request:
+  const res = http.post(tokenEndpointUrl, authOptions);
+
+  // check result:
+  if (res.status == 200) {
+    const resJson = JSON.parse(res.body);
+    console.log(resJson);
+
+    RATE.authSuccess.add(1);
+    // free token:
+    user.token = null;
+    user.refresh = null;
+  }
+  else {
+    console.log(`Logout Error for user= ${user.username}. ResponseCode ${res.status}, ${res.error}`);
+    RATE.errorRate.add(1);
+  }
+
+  check(res.status, {
+    'Logout endpoint successfully': res.status === 204,
   });
 
   sleep(1);

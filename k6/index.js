@@ -18,7 +18,7 @@ import http from 'k6/http';
 import { sleep } from 'k6';
 
 import { sample } from './libs/sample.js';
-import { obtainToken, refreshToken } from './libs/auth.js';
+import { obtainToken, refreshToken, invalidateToken } from './libs/auth.js';
 import { apiClient } from './libs/api.js';
 import { USERS } from './libs/shared.js';
 
@@ -31,6 +31,7 @@ export default function () {
   let user = USERS[remainder];
   obtainToken(user);
   refreshToken(user);
+  invalidateToken(user);
 
   sleep(1);
 
