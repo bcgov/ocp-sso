@@ -116,10 +116,7 @@ export function invalidateToken (user) {
   const res = http.post(tokenEndpointUrl, authOptions);
 
   // check result:
-  if (res.status == 200) {
-    const resJson = JSON.parse(res.body);
-    console.log(resJson);
-
+  if (res.status == 204) {
     RATE.authSuccess.add(1);
     // free token:
     user.token = null;
