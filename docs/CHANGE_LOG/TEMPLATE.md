@@ -9,7 +9,7 @@ version: v1
 
 ## More Information
 
-Type of Change: scheduled maintenance | unscheduled maintenance | hotfix
-Service Bulletin No: (n/a if none created)
-Impact Notes:
+- Type of Change: scheduled maintenance | unscheduled maintenance | hotfix
+- Service Bulletin No: (n/a if none created)
+- Impact Notes:
  
