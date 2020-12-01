@@ -1,5 +1,5 @@
 'use strict';
-const settings = require('./lib/config.js')
-const task = require('./lib/deploy.js')
+const settings = require('./lib/config.js');
+const task = require('./lib/deploy.js');
 
-task(Object.assign(settings, { phase: 'build'}))
+task(Object.assign(settings, { phase: 'build' }));
