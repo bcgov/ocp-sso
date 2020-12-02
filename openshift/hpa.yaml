@@ -1,0 +1,23 @@
+kind: Template
+apiVersion: v1
+objects:
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    spec:
+      maxReplicas: 9
+      minReplicas: 5
+      scaleTargetRef:
+        apiVersion: apps.openshift.io/v1
+        kind: DeploymentConfig
+        name: ${TARGET_DC_NAME}
+      targetCPUUtilizationPercentage: 80
+    metadata:
+      annotations: {}
+      labels:
+        app: ${TARGET_DC_NAME}
+      name: ${NAME}
+paramaters:
+- name: NAME 
+  value: sso-prod-hpa
+- name: TARGET_DC_NAME
+  value: sso-prod

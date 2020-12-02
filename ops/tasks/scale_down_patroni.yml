@@ -10,3 +10,5 @@
   vars:
     delay: 45
     KIND: StatefulSet
+    OBJECT_NAME: "{{ PATRONI_SS_NAME }}" 
+    DESIRED_REPLICAS: 0

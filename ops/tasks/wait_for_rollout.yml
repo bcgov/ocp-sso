@@ -5,6 +5,8 @@
 # delay: number
 # OPENSHIFT_SERVER_URL: string
 # TARGET_NAMESPACE: string
+# OBJECT_NAME: string
+# DESIRED_REPLICAS: number
 
 - name: get token
   shell: oc whoami -t 
@@ -16,7 +18,7 @@
 
 - name: Wait for "{{ KIND }}" object {{ name }} pods to be {{ DESIRED_REPLICAS }} into ready state in {{ TARGET_NAMESPACE }} 
   uri:
-    url: "{{ OPENSHIFT_SERVER_URL }}/apis/apps.openshift.io/v1/namespaces/{{ TARGET_NAMESPACE }}/{{ kind }}/{{ name }}"
+    url: "{{ OPENSHIFT_SERVER_URL }}/apis/apps.openshift.io/v1/namespaces/{{ TARGET_NAMESPACE }}/{{ kind }}/{{ OBJECT_NAME }}"
     method: GET
     headers:
       Authorization: "Bearer {{ token.stdout }}"
