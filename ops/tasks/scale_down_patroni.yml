@@ -12,3 +12,6 @@
     KIND: StatefulSet
     OBJECT_NAME: "{{ PATRONI_SS_NAME }}" 
     DESIRED_REPLICAS: 0
+
+- name: Remove {{ PATRONI_SS_NAME }} patroni status configmap
+  shell: oc delete configmap {{ PATRONI_SS_NAME }}-config {{ PATRONI_SS_NAME }}-leader
