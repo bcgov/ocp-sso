@@ -14,17 +14,17 @@
 
 - name: setting fact for KIND to use with api
   set_fact:
-    _kind: "{% if KIND|upper is 'STATEFULSET' %}'statefulsets'{% elif KIND|upper is 'DEPLOYMENTCONFIG' %}'deploymentconfigs'{% endif %}"
-
-- name: Wait for "{{ KIND }}" object {{ name }} pods to be {{ DESIRED_REPLICAS }} into ready state in {{ TARGET_NAMESPACE }} 
+    _kind: "{% if KIND|upper == 'STATEFULSET' %}statefulsets{% elif KIND|upper == 'DEPLOYMENTCONFIG' %}deploymentconfigs{% endif %}"
+    _api_type: "{% if KIND|upper == 'STATEFULSET' %}apps{% elif KIND|upper == 'DEPLOYMENTCONFIG' %}apps.openshift.io{% endif %}"
+- name: Wait for "{{ KIND }}" object {{ OBJECT_NAME }} pods to be {{ DESIRED_REPLICAS }} into ready state in {{ TARGET_NAMESPACE }} 
   uri:
-    url: "{{ OPENSHIFT_SERVER_URL }}/apis/apps.openshift.io/v1/namespaces/{{ TARGET_NAMESPACE }}/{{ _kind }}/{{ OBJECT_NAME }}"
+    url: "{{ OPENSHIFT_SERVER_URL }}/apis/{{ _api_type }}/v1/namespaces/{{ TARGET_NAMESPACE }}/{{ _kind }}/{{ OBJECT_NAME }}"
     method: GET
     headers:
       Authorization: "Bearer {{ token.stdout }}"
       Accept: 'application/json'
   register: result
-  until: (result.json.status.readyReplicas is defined) and (result.json.status.readyReplicas == result.json.spec.replicas) and (result.json.spec.replicas == DESIRED_REPLICAS)
+  until: ((result.json.status.readyReplicas is defined) and (result.json.status.readyReplicas == result.json.spec.replicas) and (result.json.spec.replicas == DESIRED_REPLICAS)) or (DESIRED_REPLICAS == 0 and result.json.status.readyReplicas is not defined)
   delay: "{{ delay | default(15) }}"
   retries: 45
   ignore_errors: True

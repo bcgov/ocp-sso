@@ -14,7 +14,7 @@
 - name: wait for {{ SSO_DC_NAME }} to be at 0 replicas 
   include_tasks: wait_for_rollout.yml
   vars:
-    delay: 45
+    delay: 10
     KIND: DeploymentConfig
     OBJECT_NAME: "{{ SSO_DC_NAME }}" 
     DESIRED_REPLICAS: 0
