@@ -110,7 +110,7 @@ objects:
       template.alpha.openshift.io/wait-for-ready: "true"
     name: ${NAME}${SUFFIX}
   spec:
-    replicas: 5
+    replicas: 3
     selector:
       deploymentConfig: ${NAME}${SUFFIX}
     strategy:

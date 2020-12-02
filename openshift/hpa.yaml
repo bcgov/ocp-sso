@@ -4,8 +4,8 @@ objects:
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     spec:
-      maxReplicas: 9
-      minReplicas: 5
+      maxReplicas: 5
+      minReplicas: 3
       scaleTargetRef:
         apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
