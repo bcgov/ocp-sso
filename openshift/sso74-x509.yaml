@@ -343,7 +343,7 @@ parameters:
 - description: Container CPU limit.
   displayName: Container CPU Limit
   name: CPU_LIMIT
-  value: 2
+  value: "2"
 - description: Container CPU request.
   displayName: Container CPU Request
   name: CPU_REQUEST
