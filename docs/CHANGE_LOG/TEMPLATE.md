@@ -8,6 +8,10 @@ version: v1
 
 <!-- Enter Summary Here -->
 
+## Changes
+
+<!-- List of Changes Here -->
+
 ## More Information
 - Approximate Time of Change:
 - Type of Change: scheduled maintenance | unscheduled maintenance | hotfix
