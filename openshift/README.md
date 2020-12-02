@@ -45,6 +45,16 @@ printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-p
 
 ```
 
+## SSO instance initialization
+Starting from SSO 7.4, there is a need to initialize a brand new SSO instance. Use the job to complete the DB initialization work, then scale up SSO dc.
+```shell
+oc create -f job-to-initialize-sso74.yaml -p SUFFIX=<sso_suffix> -p IMAGE=<sso_istag>
+# check sso dc is scaled to 0, then run job
+oc scale job/job-to-initiate-sso-74 --replicas=1
+# after it's complete, scale down job pod and scale up sso dc
+oc scale job/job-to-initiate-sso-74 --replicas=0
+```
+
 # Source Templates
 - https://github.com/jboss-container-images/redhat-sso-7-openshift-image/blob/sso74-dev/templates/sso74-x509-postgresql-persistent.json
 - https://github.com/BCDevOps/platform-services/blob/master/apps/pgsql/patroni/openshift-example/templates/template_patroni_persistent.yml
