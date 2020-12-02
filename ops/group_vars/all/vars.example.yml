@@ -1,0 +1,5 @@
+---
+OPENSHIFT_SERVER_URL: https://console.pathfinder.gov.bc.ca:8443
+TEST_NAMESPACE: devops-sso-test
+DEV_NAMESPACE: devops-sso-dev
+PROD_NAMESPACE: devops-sso-prod
