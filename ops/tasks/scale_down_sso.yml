@@ -6,7 +6,6 @@
 - name: Delete HPA if exists
   include_tasks: create_or_delete_sso_hpa.yml
   vars:
-    HPA_NAME: {{ HPA_NAME | default('matt_damon') }}
     _action: delete
     
 - name: Scaling {{ SSO_DC_NAME }} to 0 pods 

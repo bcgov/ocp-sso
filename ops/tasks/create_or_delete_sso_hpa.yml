@@ -21,4 +21,4 @@
   when: _action == 'delete'
 - name: deleting HPA
   shell: oc delete hpa/{{ HPA_NAME }} -n {{ TARGET_NAMESPACE}}
-  when: _action == 'delete' and hpa.resources|length == 0
+  when: _action == 'delete' and hpa.resources|length > 0

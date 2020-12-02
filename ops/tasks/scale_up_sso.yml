@@ -1,0 +1,23 @@
+# vars 
+# SSO_DC_NAME: string (the stateful set name)
+# TARGET_NAMESPACE: string the target namespace to scale down the replicas
+# HPA_NAME: string
+# include_hpa: bool
+
+- name: Create HPA to scale automatically
+  include_tasks: create_or_delete_sso_hpa.yml
+  vars:
+    _action: create
+  when: include_hpa
+
+- name: Scaling {{ SSO_DC_NAME }} to 5 pods manually
+  shell: oc scale deploymentConfig/{{ SSO_DC_NAME }} --replicas=5 -n {{ TARGET_NAMESPACE }}
+  when: not include_hpa
+
+- name: wait for {{ SSO_DC_NAME }} to be at 5 replicas 
+  include_tasks: wait_for_rollout.yml
+  vars:
+    delay: 45
+    KIND: DeploymentConfig
+    OBJECT_NAME: "{{ SSO_DC_NAME }}" 
+    DESIRED_REPLICAS: 5

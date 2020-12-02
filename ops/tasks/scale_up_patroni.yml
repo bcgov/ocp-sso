@@ -1,0 +1,14 @@
+# vars 
+# PATRONI_SS_NAME: string (the stateful set name)
+# TARGET_NAMESPACE: string the target namespace to scale down the replicas
+
+- name: Scaling {{ PATRONI_SS_NAME }} to 3 pods 
+  shell: oc scale statefulset/{{ PATRONI_SS_NAME }} --replicas=3
+
+- name: wait for patroni to be at 3 replicas 
+  include_tasks: wait_for_rollout.yml
+  vars:
+    delay: 45
+    KIND: StatefulSet
+    OBJECT_NAME: "{{ PATRONI_SS_NAME }}" 
+    DESIRED_REPLICAS: 3
