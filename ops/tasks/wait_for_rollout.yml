@@ -24,6 +24,7 @@
       Authorization: "Bearer {{ token.stdout }}"
       Accept: 'application/json'
   register: result
+  # known bug here, it doesn't wait for scaling to 0 replicas because there is no state to verify pods are terminating
   until: ((result.json.status.readyReplicas is defined) and (result.json.status.readyReplicas == result.json.spec.replicas) and (result.json.spec.replicas == DESIRED_REPLICAS)) or (DESIRED_REPLICAS == 0 and result.json.status.readyReplicas is not defined)
   delay: "{{ delay | default(15) }}"
   retries: 45

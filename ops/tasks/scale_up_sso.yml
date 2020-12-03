@@ -4,12 +4,6 @@
 # HPA_NAME: string
 # include_hpa: bool
 
-- name: Create HPA to scale automatically
-  include_tasks: create_or_delete_sso_hpa.yml
-  vars:
-    _action: create
-  when: include_hpa
-
 - name: Scaling {{ SSO_DC_NAME }} to 5 pods manually
   shell: oc scale deploymentConfig/{{ SSO_DC_NAME }} --replicas=5 -n {{ TARGET_NAMESPACE }}
   when: not include_hpa
