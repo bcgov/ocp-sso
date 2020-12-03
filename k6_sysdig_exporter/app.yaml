@@ -1,0 +1,140 @@
+kind: Template
+apiVersion: v1
+objects:
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations:
+            openshift.io/imported-from: 'golang:1.15.5'
+          from:
+            kind: DockerImage
+            name: 'golang:1.15.5'
+          generation: null
+          importPolicy: {}
+          name: 1.15.5
+          referencePolicy:
+            type: ''
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/component: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
+      name: golang
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    spec:
+      lookupPolicy:
+        local: false
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/component: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
+      name: ${NAME}
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: '${NAME}:latest'
+      postCommit: {}
+      resources: {}
+      source:
+        contextDir: k6_sysdig_exporter
+        git:
+          ref: ${GIT_REF}
+          uri: ${GIT_URL}
+        type: Git
+      strategy:
+        dockerStrategy:
+          pullSecret:
+            name: docker-custom-puller
+          from:
+            kind: ImageStreamTag
+            name: 'golang:1.15.5'
+        type: Docker
+      triggers:
+        - github:
+            secret: a9wRjpxCTWDDZojOi8eR
+          type: GitHub
+        - generic:
+            secret: 2hQrZy01X_6Xl-S5wiqy
+          type: Generic
+        - type: ConfigChange
+        - imageChange: {}
+          type: ImageChange
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/component: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
+      name: ${NAME}
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    spec:
+      replicas: 1
+      selector:
+        deploymentconfig: ${NAME}
+      strategy:
+        resources: {}
+      template:
+        metadata:
+          annotations:
+            openshift.io/generated-by: OpenShiftNewApp
+          creationTimestamp: null
+          labels:
+            deploymentconfig: ${NAME}
+        spec:
+          containers:
+            - image: '${NAME}:latest'
+              name: ${NAME}
+              resources: 
+                requests:
+                  cpu: 15m
+                  memory: 150Mi
+                limits:
+                  cpu: 125m
+                  memory: 500Mi
+      test: false
+      triggers:
+        - type: ConfigChange
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: '${NAME}:latest'
+          type: ImageChange
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/component: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
+      name: ${NAME}
+parameters:
+- name: NAME 
+  description: the name of the component
+  value: k6-sysdig-exporter
+  displayName: Name
+- name: GIT_REF
+  value: master
+  displayName: Git Ref/Branch
+  description: the git branch the build is based off of
+- name: GIT_URL
+  value: https://github.com/bcgov/ocp-sso
+  displayName: Git URL
+  description: the git repo the build is based off of
