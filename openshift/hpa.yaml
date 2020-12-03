@@ -16,7 +16,7 @@ objects:
       labels:
         app: ${TARGET_DC_NAME}
       name: ${NAME}
-paramaters:
+parameters:
 - name: NAME 
   value: sso-prod-hpa
 - name: TARGET_DC_NAME
