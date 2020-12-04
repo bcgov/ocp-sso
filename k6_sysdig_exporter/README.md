@@ -10,3 +10,4 @@ pick up.
 
 ## Running on Openshift
 
+1. If you do not have a redhat [registry service account](https://access.redhat.com/terms-based-registry/), create one and then create a `docker-registry` secret with the name `redhat-registry-puller-secret`.

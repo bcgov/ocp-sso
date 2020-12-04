@@ -55,20 +55,14 @@ objects:
           uri: ${GIT_URL}
         type: Git
       strategy:
-        dockerStrategy:
-          pullSecret:
-            name: docker-custom-puller
+        sourceStrategy:
           from:
-            kind: ImageStreamTag
-            name: 'golang:1.15.5'
-        type: Docker
+            kind: DockerImage
+            name: 'registry.redhat.io/ubi8/go-toolset'
+          pullSecret:
+            name: redhat-registry-puller-secret
+        type: Source
       triggers:
-        - github:
-            secret: a9wRjpxCTWDDZojOi8eR
-          type: GitHub
-        - generic:
-            secret: 2hQrZy01X_6Xl-S5wiqy
-          type: Generic
         - type: ConfigChange
         - imageChange: {}
           type: ImageChange
@@ -91,6 +85,9 @@ objects:
       template:
         metadata:
           annotations:
+            prometheus.io/scrape: 'true'
+            prometheus.io/port: "8080"
+            prometheus.io/path: "/metrics"
             openshift.io/generated-by: OpenShiftNewApp
           creationTimestamp: null
           labels:
@@ -119,12 +116,37 @@ objects:
           type: ImageChange
     metadata:
       annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
         openshift.io/generated-by: OpenShiftNewApp
       labels:
         app: ${NAME}
         app.kubernetes.io/component: ${NAME}
         app.kubernetes.io/instance: ${NAME}
       name: ${NAME}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      creationTimestamp: "2020-12-04T19:08:43Z"
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/component: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
+      name: ${NAME}
+    spec:
+      ports:
+      - port: 8080
+        protocol: TCP
+        targetPort: 8080
+      selector:
+        deploymentconfig: ${NAME}
+      sessionAffinity: None
+      type: ClusterIP
 parameters:
 - name: NAME 
   description: the name of the component
