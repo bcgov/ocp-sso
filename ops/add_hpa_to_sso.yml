@@ -1,10 +1,8 @@
 ---
   - hosts: localhost
     gather_facts: no
-    vars:
-      SSO_DC_NAME: sso-sbox-121
-      TARGET_NAMESPACE: devops-sso-sandbox
-      HPA_NAME: matt_damon
+    vars_files:
+      - group_vars/all/vars.yml
     tasks:
       - debug: 
           msg: "--------- Scaling SSO and Patroni in order ---------"

@@ -5,16 +5,16 @@
       - name: "backup_run"
         prompt: "Have you run a backup?(yes/no)?"
         private: no
-    vars:
+    vars_files:
       - group_vars/all/vars.yml
     tasks:
       - debug: 
-          msg: "--------- Scaling SSO and Patroni in order ---------"
+          msg: "--------- Scaling SSO and Patroni in order {{ PROD_NAMESPACE }}---------"
 
-      - name: Scaling SSO to 0 Pods 
-        include_tasks: ./tasks/scale_down_sso.yml
-        when: backup_run | bool
+      # - name: Scaling SSO to 0 Pods 
+      #   include_tasks: ./tasks/scale_down_sso.yml
+      #   when: backup_run | bool
       
-      - debug: 
-          msg: "Unable to continue until you have completed a backup"
-        when: not backup_run | bool
+      # - debug: 
+      #     msg: "Unable to continue until you have completed a backup"
+      #   when: not backup_run | bool
