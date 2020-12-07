@@ -1,0 +1,88 @@
+kind: Template
+apiVersion: v1
+objects:
+  - apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          volumes:
+            - name: k6-config
+              configMap:
+                name: ${NAME}-config
+            - name: k6-logs
+              emptyDir: {}
+          containers:
+            - image: ${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_TAG}
+              name: ${NAME}
+              env:
+                - name: SSO_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_BASE_URL
+                - name: SSO_REALM
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_REALM
+                - name: SSO_CLIENT
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_CLIENT
+                - name: USER_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: USER_PASSWORD
+                - name: SSO_SA_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_ID
+                - name: SSO_SA_CLIENT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_PASSWORD
+                - name: K6_HTTP_DEBUG
+                  value: ${HTTP_DEBUG}
+                - name: LOG_OUTPUT_PATH
+                  value: ${LOG_OUTPUT_PATH}
+              resources:
+                limits:
+                  cpu: 1
+                  memory: 1Gi
+                requests:
+                  cpu: 500m
+                  memory: 500Mi
+              volumeMounts:
+                - name: k6-config
+                  mountPath: /var/opt/config
+                - name: k6-logs
+                  mountPath: ${LOG_OUTPUT_PATH}
+          restartPolicy: Never
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        group: sso-k6
+        component: ${NAME}-job
+parameters:
+- name: NAME
+  value: sso-k6
+- name: IMAGE_TAG
+  value: sso-k6:latest
+- name: IMAGE_NAMESPACE
+  value: devops-sso-tools
+- name: IMAGE_REGISTRY
+  value: docker-registry.default.svc:5000
+- name: LOG_OUTPUT_PATH
+  description: the path json logs are written to inside of the pod
+  value: /tmp/logs
+- name: HTTP_DEBUG
+  description: enable http debug logging in the k6 pod
+  value: "false"
