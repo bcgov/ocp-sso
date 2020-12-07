@@ -9,6 +9,8 @@ This test suits assume that you have a SSO KeyCloak instance setup with the foll
 - **k6 client**: a public client to test user login
 - **api-test client**: a service account client to test API requests
 
+To have the above setup, refer to [doc](https://github.com/BCDevOps/keycloak-admin/blob/master/keycloak_realm_builder/scripts/custom_usage/readme.md#steps-to-run) and obtain the info following the instruction there.
+
 
 ## Running the Test Cases
 
