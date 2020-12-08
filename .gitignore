@@ -7,3 +7,4 @@ node_modules
 /.metadata/
 target/
 .node
+ops/group_vars/all/vars.yml

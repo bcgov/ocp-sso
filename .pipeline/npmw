@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 set -e
 
-curl -sSL 'https://raw.githubusercontent.com/BCDevOps/pipeline-cli/v1.0/cli.sh' | bash -s "$@"
+curl -sSL 'https://raw.githubusercontent.com/BCDevOps/pipeline-cli/v1.1/cli.sh' | bash -s "$@"

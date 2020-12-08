@@ -1,0 +1,23 @@
+---
+  - hosts: localhost
+    gather_facts: no
+    vars_prompt:
+      - name: "backup_run"
+        prompt: "Have you run a backup?(yes/no)?"
+        private: no
+    vars:
+      SSO_DC_NAME: sso-sbox-121
+      PATRONI_SS_NAME: sso-pgsql-sbox-121
+      TARGET_NAMESPACE: devops-sso-sandbox
+      HPA_NAME: matt_damon
+    tasks:
+      - debug: 
+          msg: "--------- Scaling SSO and Patroni in order ---------"
+
+      - name: Scaling SSO to 0 Pods 
+        include_tasks: ./tasks/scale_down_sso.yml
+        when: backup_run | bool
+      
+      - debug: 
+          msg: "Unable to continue until you have completed a backup"
+        when: not backup_run | bool
