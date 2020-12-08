@@ -7,7 +7,7 @@ PROD_NAMESPACE: devops-sso-prod
 
 # SSO env vars:
 SSO_DC_NAME: sso-<env>
-BACKUP_POD_NAME: backup-xxx
+BACKUP_DC_NAME: backup-<env>
 PATRONI_SS_NAME: sso-pgsql-<env>
 TARGET_NAMESPACE: devops-sso-<env>
 HPA_NAME: matt_damon
