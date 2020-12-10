@@ -1,0 +1,23 @@
+---
+# Backup DB with backup-container
+
+- name: Backup test
+  set_fact:
+    successful_keyword: "Single backup run complete"
+
+- name: Take a backup
+  raw: scl enable rh-postgresql10 '/backup.sh -1'
+  register: result
+
+- debug: msg="{{ result }}"
+
+- debug: msg="DB Backup completed. ---------"
+  when: 'successful_keyword in result.stdout'
+
+- debug: msg="DB Backup failed! Stop play now. ---------"
+  when: 'successful_keyword not in result.stdout'
+
+# TODO: double check on end_play behaviour, is it for all hosts!
+- name: End play for all
+  meta: end_play
+  when: 'successful_keyword not in result.stdout'

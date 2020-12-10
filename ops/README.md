@@ -8,10 +8,14 @@ This folder is an intermediary step for the common operational work that we do o
 
 ## Structure
 
-This will be a standard playbook structure with common items seperated as __tasks__ and playbooks
+This will be a standard playbook structure with common items separated as __tasks__ and playbooks
 describing the automation process. All of this is meant to run on a local machine. Eventually the pipeline could handle these steps using the playbooks. 
 
 
 ## Usage
 - Ensure you or your service account is logged into your cluster of choice
 - Make sure to `cp group_vars/all/vars.example.yml group_vars/all/vars.yml` and fill in your values before starting
+- currently available playbook:
+  - scale down SSO dc
+  - add hpa for SSO dc
+  - take a DB backup

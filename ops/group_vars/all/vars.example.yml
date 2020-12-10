@@ -1,5 +1,13 @@
 ---
+# ocp namespace vars:
 OPENSHIFT_SERVER_URL: https://console.pathfinder.gov.bc.ca:8443
 TEST_NAMESPACE: devops-sso-test
 DEV_NAMESPACE: devops-sso-dev
 PROD_NAMESPACE: devops-sso-prod
+
+# SSO env vars:
+SSO_DC_NAME: sso-<env>
+BACKUP_DC_NAME: backup-<env>
+PATRONI_SS_NAME: sso-pgsql-<env>
+TARGET_NAMESPACE: devops-sso-<env>
+HPA_NAME: matt_damon
