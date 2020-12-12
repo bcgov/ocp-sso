@@ -18,21 +18,20 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 import {
-  SSO_CONFIG,
   AUTH_CONFIG,
   RATE,
   TOKEN_FIELDS,
 } from './shared.js';
 
-export function obtainToken (user) {
+export function obtainToken (config, user) {
   // setup auth details:
   let tokenComplete = true;
 
-  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.tokenEndpoint;
+  const tokenEndpointUrl = config.ssoAuth + AUTH_CONFIG.tokenEndpoint;
 
   const authOptions = {
       grant_type: AUTH_CONFIG.grantType,
-      client_id: SSO_CONFIG.clientId,
+      client_id: config.clientId,
       username: user.username,
       password: user.password,
   };
@@ -63,15 +62,15 @@ export function obtainToken (user) {
   sleep(1);
 };
 
-export function refreshToken (user) {
+export function refreshToken (config, user) {
   // setup auth details:
   let tokenComplete = true;
 
-  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.tokenEndpoint;
+  const tokenEndpointUrl = config.ssoAuth + AUTH_CONFIG.tokenEndpoint;
   
   const authOptions = {
     grant_type: 'refresh_token',
-    client_id: SSO_CONFIG.clientId,
+    client_id: config.clientId,
     refresh_token: user.refresh,
   };
 
@@ -100,15 +99,13 @@ export function refreshToken (user) {
   sleep(1);
 };
 
-export function invalidateToken (user) {
+export function invalidateToken (config, user) {
   // setup auth details:
-  let tokenComplete = true;
-
-  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.logoutEndpoint;
+  const tokenEndpointUrl = config.ssoAuth + AUTH_CONFIG.logoutEndpoint;
   
   const authOptions = {
     grant_type: 'refresh_token',
-    client_id: SSO_CONFIG.clientId,
+    client_id: config.clientId,
     refresh_token: user.refresh,
   };
 
