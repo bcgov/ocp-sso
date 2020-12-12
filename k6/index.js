@@ -20,23 +20,28 @@ import { sleep } from 'k6';
 import { sample } from './libs/sample.js';
 import { obtainToken, refreshToken, invalidateToken } from './libs/auth.js';
 import { apiClient } from './libs/api.js';
-import { USERS } from './libs/shared.js';
+import { USERS, PER_REALM_CONFIG } from './libs/shared.js';
 
 export default function () {
   // run the sample test:
   // sample();
+  const REALM_INDEX = __ITER % 3;
+  const USER_INDEX = __VU % 3;
+  const conf = PER_REALM_CONFIG(REALM_INDEX);
+  const user = USERS[USER_INDEX];
 
-  // // run test on token endpoint:
-  const remainder = __VU % 3;
-  let user = USERS[remainder];
-  obtainToken(user);
-  refreshToken(user);
-  invalidateToken(user);
+  console.log(`Currently on ${REALM_INDEX} with realm ${conf.realmId}`);
+  console.log(`API client is ${conf.apiClient.id} and secret is ${conf.apiClient.secret}`);
 
+  // run test on token endpoint:
+  obtainToken(conf, user);
+  refreshToken(conf, user);
+  // note: to test on multiple sessions, should not invalidate token?
+  invalidateToken(conf, user);
   sleep(1);
 
   // run test on APIs:
-  apiClient()
-
+  apiClient(conf);
   sleep(1);
+
 }
