@@ -27,19 +27,20 @@ objects:
     type: Opaque
     stringData:
       SSO_BASE_URL: "${SSO_BASE_URL}"
-      SSO_REALM: "${SSO_REALM}"
+      SSO_REALM_0: "${SSO_REALM_0}"
+      SSO_REALM_1: "${SSO_REALM_1}"
+      SSO_REALM_2: "${SSO_REALM_2}"
       SSO_CLIENT: "${SSO_CLIENT}"
       USER_PASSWORD: "${USER_PASSWORD}"
       SSO_SA_CLIENT_ID: "${SSO_SA_CLIENT_ID}"
-      SSO_SA_CLIENT_PASSWORD: "${SSO_SA_CLIENT_PASSWORD}"
+      SSO_SA_CLIENT_PASSWORD_0: "${SSO_SA_CLIENT_PASSWORD_0}"
+      SSO_SA_CLIENT_PASSWORD_1: "${SSO_SA_CLIENT_PASSWORD_1}"
+      SSO_SA_CLIENT_PASSWORD_2: "${SSO_SA_CLIENT_PASSWORD_2}"
 parameters:
 - name: NAME
   value: sso-k6
 - name: SSO_BASE_URL
   description: SSO service base url
-  required: true
-- name: SSO_REALM
-  description: the SSO realm testing against
   required: true
 - name: SSO_CLIENT
   description: the SSO client testing against
@@ -50,6 +51,21 @@ parameters:
 - name: SSO_SA_CLIENT_ID
   description: Service account ID
   required: true
-- name: SSO_SA_CLIENT_PASSWORD
-  description: Service account password
+- name: SSO_REALM_0
+  description: the SSO realm 0 testing against
+  required: true
+- name: SSO_REALM_1
+  description: the SSO realm 1 testing against
+  required: true
+- name: SSO_REALM_2
+  description: the SSO realm 2 testing against
+  required: true
+- name: SSO_SA_CLIENT_PASSWORD_0
+  description: Service account 0 password
+  required: true
+- name: SSO_SA_CLIENT_PASSWORD_1
+  description: Service account 1 password
+  required: true
+- name: SSO_SA_CLIENT_PASSWORD_2
+  description: Service account 2 password
   required: true
