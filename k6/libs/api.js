@@ -20,19 +20,18 @@ import { check, group, sleep } from 'k6';
 
 import {
   AUTH_CONFIG,
-  SERVICE_ACCOUNT_CLIENT,
 } from './shared.js';
 
 function getExpiresTime(seconds) {
   return (Date.now() + seconds * 1000);
 }
 
-function authenticateClient (client) {
+function authenticateClient (config) {
 
-  const tokenEndpointUrl = AUTH_CONFIG.ssoEndpointUrl + AUTH_CONFIG.tokenEndpoint;
+  const tokenEndpointUrl = config.ssoAuth + AUTH_CONFIG.tokenEndpoint;
 
   const encodedCredentials = b64encode(
-    `${client.id}:${client.secret}`,
+    `${config.apiClient.id}:${config.apiClient.secret}`,
   );
 
   const params = {
@@ -51,24 +50,23 @@ function authenticateClient (client) {
 
   if (res.status == 200) {
     const resJson = JSON.parse(res.body);
-    client.authToken = resJson["access_token"];
-    client.refreshToken = resJson["refresh_token"];
-    client.expiry = getExpiresTime(resJson["expires_in"]);
+    config.apiClient.authToken = resJson["access_token"];
+    config.apiClient.refreshToken = resJson["refresh_token"];
+    config.apiClient.expiry = getExpiresTime(resJson["expires_in"]);
   }
   else {
-    console.log("Authentication Error for client=" + client.id + ". ResponseCode[" + res.status + "] " + res.error);
-    client.authToken = null;
+    console.log("Authentication Error for client=" + config.apiClient.id + ". ResponseCode[" + res.status + "] " + res.error);
+    config.apiClient.authToken = null;
   }
 
   return res.status;
 };
 
-
-export function apiClient() {
+export function apiClient(config) {
   try {
       // 1. Re-authenticate when needed, refresh 45 seconds before expiry
-      if (!SERVICE_ACCOUNT_CLIENT.expiry || (SERVICE_ACCOUNT_CLIENT.expiry < (Date.now() + 45000))) {
-        const loginRes = authenticateClient(SERVICE_ACCOUNT_CLIENT);
+      if (!config.apiClient.expiry || (config.apiClient.expiry < (Date.now() + 45000))) {
+        const loginRes = authenticateClient(config);
     
         check(loginRes, {
           'SA Client auth successfully': loginRes === 200
@@ -79,12 +77,12 @@ export function apiClient() {
       const params = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${SERVICE_ACCOUNT_CLIENT.authToken}`,
+          Authorization: `Bearer ${config.apiClient.authToken}`,
         },
       };
     
       group('Client APIs', () => {
-        const clientEndpoint = AUTH_CONFIG.ssoAPI + AUTH_CONFIG.clientEndpoint;
+        const clientEndpoint = config.ssoAPI + AUTH_CONFIG.clientEndpoint;
         // client name unique for each iteration
         const clientName = `testClient-${__ITER}-${__VU}`;
         let newId = null;
