@@ -10,6 +10,13 @@ oc process -f openshift/sso74-x509-secrets.yaml -p 'NAME=template.sso' -p 'SUFFI
 oc delete secret -l part-of=rh-sso,shared=true
 
 ```
+
+Additionally, a secret must be created to set up the docker account. In your namespace, run the command 
+    ```oc create secret docker-registry <secret-name> --docker-server=docker.io --docker-username=<docker-username> --docker-password=<docker-password> --docker-email=unused```
+
+Then link your secret with the command
+    ```oc process -f ./openshift/k6/sa-linked-image-pull-secrets.yaml -p NAMESPACE=<namespace> -p SECRET_NAME=<secret-name> | oc apply -f - -n <namespace>```
+
 ## Building
 ```
 cd .pipeline && ./npmw build -- --pr=9
