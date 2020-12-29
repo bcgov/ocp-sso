@@ -37,7 +37,7 @@ export default function () {
   obtainToken(conf, user);
   refreshToken(conf, user);
   // note: to test on multiple sessions, should not invalidate token?
-  invalidateToken(conf, user);
+  // invalidateToken(conf, user);
   sleep(1);
 
   // run test on APIs:
