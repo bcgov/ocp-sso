@@ -23,11 +23,21 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-secret
                       key: SSO_BASE_URL
-                - name: SSO_REALM
+                - name: SSO_REALM_0
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-secret
-                      key: SSO_REALM
+                      key: SSO_REALM_0
+                - name: SSO_REALM_1
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_REALM_1
+                - name: SSO_REALM_2
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_REALM_2
                 - name: SSO_CLIENT
                   valueFrom:
                     secretKeyRef:
@@ -43,19 +53,29 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-secret
                       key: SSO_SA_CLIENT_ID
-                - name: SSO_SA_CLIENT_PASSWORD
+                - name: SSO_SA_CLIENT_PASSWORD_0
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-secret
-                      key: SSO_SA_CLIENT_PASSWORD
+                      key: SSO_SA_CLIENT_PASSWORD_0
+                - name: SSO_SA_CLIENT_PASSWORD_1
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_PASSWORD_1
+                - name: SSO_SA_CLIENT_PASSWORD_2
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-secret
+                      key: SSO_SA_CLIENT_PASSWORD_2
                 - name: K6_HTTP_DEBUG
                   value: ${HTTP_DEBUG}
                 - name: LOG_OUTPUT_PATH
                   value: ${LOG_OUTPUT_PATH}
               resources:
                 limits:
-                  cpu: 1
-                  memory: 1Gi
+                  cpu: 2
+                  memory: 2Gi
                 requests:
                   cpu: 500m
                   memory: 500Mi

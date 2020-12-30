@@ -19,11 +19,11 @@ All of the following env vars are required.
 
 - `LOG_OUTPUT_PATH`: string of the path to where json output files will be written to (defaults to /tmp)
 - `SSO_BASE_URL`: string of the SSO base url
-- `SSO_REALM`: string of the SSO realm testing against
+- `SSO_REALM_X`: string of the SSO realm testing against (support multiple realms)
 - `SSO_CLIENT`: string of the SSO client testing against
 - `USER_PASSWORD`: string of the test user password
 - `SSO_SA_CLIENT_ID`: string of the Service account client ID
-- `SSO_SA_CLIENT_PASSWORD`: string of the Service account client password
+- `SSO_SA_CLIENT_PASSWORD_X`: string of the Service account client password (this will be different in each realm)
 
 
 ### Configuration
@@ -62,11 +62,6 @@ oc delete all,configmap,secret,pvc -l group=sso-k6
 `JSON_FILE_PATH=path/to/file ./process_results.sh
 
 
-## Todo
-- automate creation of the prerequisite components, ansible playbook or here in the test run
-- create more users for token test
-
-
 ## How to make use of these K6 tests
 The K6 test cases simulates user behavior and API usage. By running the test cases *during an operational task* helps us to understand what are the expected events when we introduce the same task to production SSO instances.
 
@@ -92,7 +87,7 @@ There are two types of major operational tasks that we do commonly.
 
 3. kick off the test cases without app changes to set baseline for test result
 
-4. then start the operational task during a another test run
+4. then start the operational task during another test run
 
 4. check if test cases fail, or significant service slowness compared with the baseline
 
