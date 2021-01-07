@@ -75,12 +75,25 @@ oc tag devops-sso-tools/sso74-openshift-rhel8:7.4 sso74-openshift-rhel8:7.4
 
 4. Create Keycloak/RH-SSO
 ```
+oc tag sso74-openshift-rhel8:7.4 rh-sso:7.4
+
 oc process -f openshift/sso74-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc process -f openshift/sso74-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=1.3-7 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/sso74-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=7.4 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
 
-5. Delete everything
+5. Initialize the SSO instance
+Starting from SSO 7.4, there is a need to initialize a brand new SSO instance. Use the job to complete the DB initialization work, then scale up SSO dc.
+
+```shell
+oc process -f openshift/job-to-initialize-sso74.yaml -p SUFFIX=-dev -p IMAGE=rh-sso:7.4 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+# check sso dc is scaled to 0, then run job
+oc scale job/job-to-initiate-sso-74 --replicas=1
+# after it's complete, scale down job pod and scale up sso dc
+oc scale job/job-to-initiate-sso-74 --replicas=0
+```
+
+6. Delete everything
 ```
 oc delete rc,svc,dc,route,pvc,secret -l app=rh-sso-sandbox
 ```

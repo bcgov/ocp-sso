@@ -1,5 +1,7 @@
-# How the templates were created?
+# SSO OpenShift Templates
+All SSO components are created from oc templates modified from RedHat resources.
 
+## How the templates were created?
 The templates where created using `sso74-x509-postgresql-persistent` as reference.
 
 1. Obtain template
@@ -33,6 +35,7 @@ oc create -f sso74-x509-postgresql-secrets.json --dry-run=true -o yaml > sso74-x
 oc create -f sso74-x509.json --dry-run=true -o yaml > sso74-x509.yaml
 oc create -f sso74-x509-secrets.json --dry-run=true -o yaml > sso74-x509-secrets.yaml
 ```
+
 ## Project setup
 ```
 printf "tools\ndev\ntest\nprod" | xargs -I {} oc new-project 'devops-sso-{}' > /dev/null
@@ -45,14 +48,6 @@ printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-p
 
 ```
 
-## SSO instance initialization
-Starting from SSO 7.4, there is a need to initialize a brand new SSO instance. Use the job to complete the DB initialization work, then scale up SSO dc.
-```shell
-oc create -f job-to-initialize-sso74.yaml -p SUFFIX=<sso_suffix> -p IMAGE=<sso_istag>
-# check sso dc is scaled to 0, then run job
-oc scale job/job-to-initiate-sso-74 --replicas=1
-# after it's complete, scale down job pod and scale up sso dc
-oc scale job/job-to-initiate-sso-74 --replicas=0
 ```
 
 # Source Templates
