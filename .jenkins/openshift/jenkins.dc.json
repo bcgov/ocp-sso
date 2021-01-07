@@ -95,27 +95,6 @@
             "type": "kubernetes.io/basic-auth"
         },
         {
-            "kind": "PersistentVolumeClaim",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${NAME}${SUFFIX}",
-                "annotations": {
-                    "volume.beta.kubernetes.io/storage-class": "gluster-file",
-                    "volume.beta.kubernetes.io/storage-provisioner": "kubernetes.io/glusterfs"
-                }
-            },
-            "spec": {
-                "accessModes": [
-                    "ReadWriteOnce"
-                ],
-                "resources": {
-                    "requests": {
-                        "storage": "1Gi"
-                    }
-                }
-            }
-        },
-        {
             "apiVersion": "v1",
             "kind": "ServiceAccount",
             "metadata": {
@@ -210,10 +189,7 @@
                     "spec": {
                         "volumes": [
                             {
-                                "name": "jenkins-jobs",
-                                "persistentVolumeClaim": {
-                                    "claimName": "${NAME}${SUFFIX}"
-                                }
+                                "name": "jenkins-jobs"
                             },
                             {
                                 "name": "pod-metadata",
@@ -387,10 +363,7 @@
                     "spec": {
                         "volumes": [
                             {
-                                "name": "jenkins-home",
-                                "persistentVolumeClaim": {
-                                    "claimName": "${NAME}${SUFFIX}"
-                                }
+                                "name": "jenkins-home"
                             },
                             {
                                 "name": "pod-metadata",
