@@ -4,6 +4,11 @@ Use the provided `openshift/secrets.json` as follow:
 oc -n bcgov-tools process -f 'openshift/secrets.json' -p 'GH_USERNAME=' -p 'GH_PASSWORD=' | oc  -n bcgov-tools create -f -
 ```
 
+# Get Jenkins Base Image
+```
+curl https://raw.githubusercontent.com/BCDevOps/openshift-components/master/cicd/jenkins-basic/openshift/build.yaml | oc process -f - -p VERSION=prod | oc apply -f -
+```
+
 # Build
 ```
 ( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run build -- --pr=0 --dev-mode=true )

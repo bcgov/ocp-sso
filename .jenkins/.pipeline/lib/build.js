@@ -17,7 +17,7 @@ module.exports = (settings)=>{
       'SOURCE_REPOSITORY_URL': oc.git.http_url,
       'SOURCE_REPOSITORY_REF': oc.git.ref,
       'SOURCE_IMAGE_STREAM_NAMESPACE': phases[phase].namespace,
-      'SOURCE_IMAGE_STREAM_TAG': 'jenkins:2'
+      'SOURCE_IMAGE_STREAM_TAG': 'jenkins-basic:prod'
     }
   }))
 
