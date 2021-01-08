@@ -1,0 +1,58 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}-nsp-tools
+objects:
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: ExternalNetwork
+  metadata:
+    # This metadata field will be what you see with the command
+    # `oc get externalnetwork` or `kubctl get externalnetwork`.
+    name: all-things-external
+    labels:
+      app: sso
+      namespace: tools
+  spec:
+    # This name will be used internally by Aporeto; it should match
+    # the `name` field in metadata above.
+    description: |
+      specify a custom external network that can be
+      referenced by name.
+    entries:
+      - 0.0.0.0/0
+    servicePorts:
+      - "tcp/80"
+      - "tcp/443"
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: builder-to-internet
+    labels:
+      app: sso
+      namespace: tools
+  spec:
+    description: |
+      allow the builder pods and Jenkins to communicate with
+      the internet.
+    source:
+      - - $namespace=${NAMESPACE}
+        - '@app:k8s:serviceaccountname=builder'
+      - - $namespace=${NAMESPACE}
+        - 'deploymentconfig=jenkins'
+    destination:
+      - - 'ext:name=all-things-external'
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: NAME
+  required: true
+  value: sso
+- description: A suffix appended to most objects
+  displayName: Application Suffix
+  name: SUFFIX
+  value: ""
+- description: The namespace
+  displayName: Namespace
+  name: NAMESPACE
+  required: true
+  value: sso-tools
