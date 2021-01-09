@@ -38,39 +38,71 @@ oc delete all -l !shared,github-repo=ocp-sso,env-id=pr-9
 # Manual Installation
 If you are just looking for quickly spin up an instance of RH-SSO
 
-1. Switch to project
-```
-oc project devops-sso-sandbox
+1. Setup
+```shell
+# Please note that:
+# 6d70e7-* are the namespaces for SSO in ocp4
+# 3d5c3f-* are the sandbox namespaces for SSO in ocp4
+
+# Create Network Security Policy
+oc -n 6d70e7-tools process -f openshift/nsp.yaml -p 'NAMESPACE=6d70e7-tools' | oc -n 6d70e7-tools create -f -
+oc -n 3d5c3f-dev process -f openshift/nsp.yaml -p 'NAMESPACE=3d5c3f-dev' | oc -n 3d5c3f-dev create -f -
 ```
 
-2. Create PostgreSQL
-```
-oc process -f openshift/sso74-x509-postgresql-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template  | oc apply -f -
-
-oc process -f openshift/sso74-x509-postgresql.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template | oc apply -f -
-```
-
-3. Import Image
+2. Import Images
 The template requires an ImageStream in the same namespace
-- check for available images here: https://catalog.redhat.com/software/containers/search
+- check for available RedHat images here: https://catalog.redhat.com/software/containers/search
 - Please note that sso7.4 image is now on registry.redhat.io which requires auth
 
+***RH SSO Base Image***
 ```shell
 # login:
 docker login https://registry.redhat.io -u <username> -p <password>
 
-# make sure the image stream secret exists, otherwise we will need to import it to openshift namespace first
-oc -n devops-sso-tools get secret imagestreamsecret
-
-# if not, then import to openshift namespace first
-oc --as=<service_account> -n openshift import-image sso74-openshift-rhel8 --confirm
-oc --as=<service_account> -n openshift import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 # for a specific version
-
 # if secret exists, just import here directly
-oc -n devops-sso-tools import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 --confirm
+oc -n 6d70e7-tools import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 --confirm
 
-# import to current namespace
-oc tag devops-sso-tools/sso74-openshift-rhel8:7.4 sso74-openshift-rhel8:7.4
+# import to deployment namespace
+oc tag 6d70e7-tools/sso74-openshift-rhel8:7.4 3d5c3f-dev/sso74-openshift-rhel8:7.4
+```
+
+Currently we are on postgres v10, will need to update DB version after OCP4 migration is completed
+***Patroni v10 Base Image***
+```shell
+# create bc
+oc -n 6d70e7-tools process -f openshift/build.yaml \
+ -p "GIT_URI=https://github.com/BCDevOps/platform-services" \
+ -p "GIT_REF=master" \
+ -p SUFFIX=-pg10 \
+ -p OUT_VERSION=v10-latest \
+ -p PG_VERSION=10 | oc -n 6d70e7-tools create -f -
+
+# build image
+oc -n 6d70e7-tools start-build patroni-pg10
+
+# import to deployment namespace
+oc tag 6d70e7-tools/patroni:v10-latest 3d5c3f-dev/patroni:v10-latest
+```
+
+3. Create PostgreSQL
+```shell
+oc project 3d5c3f-dev
+
+# create secret
+oc process -f openshift/sso74-x509-postgresql-secrets.yaml \
+-p NAME=sso-pgsql-patroni \
+-p SUFFIX=-dev \
+-l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template  | oc apply -f -
+
+# deploy
+oc process -f openshift/sso74-x509-postgresql.yaml \
+-p NAME=sso-pgsql-patroni \
+-p SUFFIX=-dev \
+-p IMAGE_REGISTRY=image-registry.openshift-image-registry.svc:5000 \
+-p IMAGE_STREAM_NAMESPACE=6d70e7-tools \
+-p IMAGE_STREAM_TAG=patroni:v10-latest \
+-p STORAGE_CLASS=netapp-block-standard \
+-l app=rh-sso-sandbox,name=postgresql,component=database,part-of=rh-sso,managed-by=template | oc apply -f -
 ```
 
 4. Create Keycloak/RH-SSO
