@@ -1,5 +1,5 @@
 'use strict';
-const options= require('pipeline-cli').Util.parseArguments()
+const options= require('@bcgov/pipeline-cli').Util.parseArguments()
 const phases = require('./lib/config.js')
 const clean = require('./lib/clean.js')
 
