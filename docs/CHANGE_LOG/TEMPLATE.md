@@ -2,6 +2,7 @@
 # ISO DATE FORMAT YYYY-MM-DD
 date: 
 version: v1
+title:
 ---
 
 ## <Date>
