@@ -59,8 +59,8 @@ objects:
           from:
             kind: DockerImage
             name: 'registry.redhat.io/ubi8/go-toolset'
-          pullSecret:
-            name: redhat-registry-puller-secret
+          # pullSecret:
+          #   name: ${PULL_SECRET_NAME}
         type: Source
       triggers:
         - type: ConfigChange
@@ -160,3 +160,5 @@ parameters:
   value: https://github.com/bcgov/ocp-sso
   displayName: Git URL
   description: the git repo the build is based off of
+- name: PULL_SECRET_NAME
+  value: redhat-registry-puller-secret
