@@ -1,11 +1,12 @@
 'use strict';
-const {OpenShiftClientX} = require('@bcgov/pipeline-cli')
+const { OpenShiftClientX } = require('@bcgov/pipeline-cli');
 
-module.exports = (settings)=>{
-  const phases = settings.phases
-  const options = settings.options
-  const oc=new OpenShiftClientX({'namespace':phases.build.namespace});
-  const target_phase=options.env
+module.exports = (settings) => {
+  const phases = settings.phases;
+  const options = settings.options;
+  const phase = options.env;
+  const oc = new OpenShiftClientX(Object.assign({ namespace: phases[phase].namespace }, options));
+  const target_phase=options.env;
 
   //console.log(`target_phase=${target_phase}`)
 

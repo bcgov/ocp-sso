@@ -1,14 +1,14 @@
 'use strict';
-const {OpenShiftClientX} = require('@bcgov/pipeline-cli')
+const { OpenShiftClientX } = require('@bcgov/pipeline-cli');
 const path = require('path');
 
-module.exports = (settings)=>{
-  const phases = settings.phases
-  const options= settings.options
-  const phase='build'
+module.exports = (settings) => {
+  const phases = settings.phases;
+  const options = settings.options;
   const oc = new OpenShiftClientX(Object.assign({ namespace: phases.build.namespace }, options));
-  let objects = []
-  const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
+  const phase = 'build';
+  let objects = [];
+  const templatesLocalBaseUrl = oc.toFileUrl(path.resolve(__dirname, '../../openshift'));
 
   objects = objects.concat(oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/jenkins.bc.json`, {
     'param':{
