@@ -106,28 +106,65 @@ oc process -f openshift/sso74-x509-postgresql.yaml \
 ```
 
 4. Create Keycloak/RH-SSO
-```
-oc tag sso74-openshift-rhel8:7.4 rh-sso:7.4
+```shell
+oc tag sso74-openshift-rhel8:7.4 sso:7.4
 
-oc process -f openshift/sso74-x509-secrets.yaml -p NAME=rh-sso -p SUFFIX=-dev -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
+oc process -f openshift/sso74-x509-secrets.yaml \
+-p NAME=sso \
+-p SUFFIX=-dev \
+-l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc process -f openshift/sso74-x509.yaml -p NAME=rh-sso -p SUFFIX=-dev -p VERSION=7.4 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/sso74-x509-configmap.yaml \
+-p NAME=sso \
+-p SUFFIX=-dev \
+-l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
+
+oc4 process -f openshift/sso74-x509.yaml \
+-p NAME=sso \
+-p SUFFIX=-dev \
+-p VERSION=7.4 \
+-p DB_SECRET_NAME=sso-pgsql-patroni-dev \
+-p DB_SECRET_DATABASE_KEY=app-db-name \
+-p DB_SECRET_USERNAME_KEY=app-db-username \
+-p DB_SECRET_PASSWORD_KEY=app-db-password \
+-p DB_SERVICE_HOST=sso-pgsql-patroni-master-dev \
+-p CPU_REQUEST=250m \
+-p CPU_LIMIT=1 \
+-l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc4 apply -f -
+
+# note that if you are starting a brand new database, you will need to run step 5 to initialize DB first
+oc scale dc sso-dev --replicas=0
 ```
 
 5. Initialize the SSO instance
 Starting from SSO 7.4, there is a need to initialize a brand new SSO instance. Use the job to complete the DB initialization work, then scale up SSO dc.
 
 ```shell
-oc process -f openshift/job-to-initialize-sso74.yaml -p SUFFIX=-dev -p IMAGE=rh-sso:7.4 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+oc process -f openshift/job-to-initialize-sso74.yaml \
+-p DC_NAME=sso \
+-p SUFFIX=-dev \
+-p IMAGE=image-registry.openshift-image-registry.svc:5000/3d5c3f-dev/sso:7.4 \
+-p DB_SECRET_NAME=sso-pgsql-patroni-dev \
+-p DB_SECRET_DATABASE_KEY=app-db-name \
+-p DB_SECRET_USERNAME_KEY=app-db-username \
+-p DB_SECRET_PASSWORD_KEY=app-db-password \
+-p DB_SERVICE_HOST=sso-pgsql-patroni-master-dev \
+-l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
+
 # check sso dc is scaled to 0, then run job
 oc scale job/job-to-initiate-sso-74 --replicas=1
+
 # after it's complete, scale down job pod and scale up sso dc
 oc scale job/job-to-initiate-sso-74 --replicas=0
+
+# bring back sso dc:
+oc scale dc sso-dev --replicas=3
 ```
 
 6. Delete everything
 ```
-oc delete rc,svc,dc,route,pvc,secret -l app=rh-sso-sandbox
+oc get statefulset,dc,svc,route,pvc,secret,configmap,pdb -l app=rh-sso-sandbox
+oc delete statefulset,dc,svc,route,pvc,secret,configmap,pdb -l app=rh-sso-sandbox
 ```
 
 # Reference:
