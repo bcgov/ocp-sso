@@ -3,6 +3,8 @@
 date: 
 version: v1
 title:
+# < 140 char summary
+description:
 ---
 
 ## <Date>
