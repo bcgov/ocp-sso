@@ -272,7 +272,7 @@
                                     {
                                         "name": "jenkins-jobs",
                                         "readOnly": false,
-                                        "mountPath": "/var/lib/jenkins/jobs"
+                                        "mountPath": "/var/jenkins-data"
                                     },
                                     {
                                         "name": "pod-metadata",
