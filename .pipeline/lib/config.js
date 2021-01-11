@@ -3,7 +3,7 @@ const options = require('@bcgov/pipeline-cli').Util.parseArguments();
 const changeId = options.pr; //aka pull-request
 const version = '7.4';
 const name = 'sso';
-const sandboxNamespace = '3d5c3f-test';
+const sandboxNamespace = '3d5c3f-prod';
 
 const phases = {
   build: {
