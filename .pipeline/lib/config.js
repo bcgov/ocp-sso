@@ -3,6 +3,7 @@ const options = require('@bcgov/pipeline-cli').Util.parseArguments();
 const changeId = options.pr; //aka pull-request
 const version = '7.4';
 const name = 'sso';
+const sandboxNamespace = '3d5c3f-test';
 
 const phases = {
   build: {
@@ -16,7 +17,7 @@ const phases = {
     tag: `${version}-${changeId}`,
   },
   sbox: {
-    namespace: '3d5c3f-dev',
+    namespace: sandboxNamespace,
     name: `${name}`,
     phase: 'sbox',
     changeId: changeId,
@@ -24,7 +25,7 @@ const phases = {
     instance: `${name}-sbox-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `sbox-${version}-${changeId}`,
-    host: `sso-${changeId}-3d5c3f-dev.apps.silver.devops.gov.bc.ca`,
+    host: `sso-${changeId}-${sandboxNamespace}.apps.silver.devops.gov.bc.ca`,
   },
   dev: {
     namespace: '6d70e7-dev',
