@@ -1,0 +1,11 @@
+---
+# ocp namespace vars:
+SOURCE_CLUSTER_SERVER_URL: https://console.pathfinder.gov.bc.ca:8443
+DEST_CLUSTER_SERVER_URL: https://api.silver.devops.gov.bc.ca:6443
+SOURCE_BACKUP_CONTAINER: deployment=backup-2
+DEST_BACKUP_CONTAINER:
+SOURCE_PATRONI_SERVICE_SELECTOR:
+DEST_PATRONI_SERVICE_SELECTOR:
+SOURCE_NAMESPACE:
+DEST_NAMESPACE:
+
