@@ -132,12 +132,12 @@ oc4 process -f openshift/sso74-x509.yaml \
 -p CPU_LIMIT=1 \
 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc4 apply -f -
 
-# note that if you are starting a brand new database, you will need to run step 5 to initialize DB first
+# note that if starting a brand new instance fails, you will need to run step 5 to initialize DB
 oc scale dc sso-dev --replicas=0
 ```
 
 5. Initialize the SSO instance
-Starting from SSO 7.4, there is a need to initialize a brand new SSO instance. Use the job to complete the DB initialization work, then scale up SSO dc.
+Use the job to complete the DB initialization work when needed, then scale up SSO dc.
 
 ```shell
 oc process -f openshift/job-to-initialize-sso74.yaml \
