@@ -43,7 +43,7 @@ objects:
     name: ${NAME}${SUFFIX}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     storageClassName: netapp-file-standard
     resources:
       requests:
