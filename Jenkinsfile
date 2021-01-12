@@ -13,7 +13,7 @@ pipeline {
                 script {
                     // only continue build if changes are relevant to the BCGov SSO KeyCloak app
                     // TODO: restructure OCP folders
-                    def filesInThisCommitAsString = sh(script:"git diff --name-only HEAD~1..HEAD | grep -e '^docker/' -e '^extensions/' -e '^openshift/sso*' -e '^.pipeline/' || echo -n ''", returnStatus: false, returnStdout: true).trim()
+                    def filesInThisCommitAsString = sh(script:"git diff --name-only HEAD~1..HEAD | grep '^.pipeline/' || echo -n ''", returnStatus: false, returnStdout: true).trim()
                     def hasChangesInPath = (filesInThisCommitAsString.length() > 0)
                     echo "Changes including:"
                     echo "${filesInThisCommitAsString}"
