@@ -36,74 +36,37 @@ static Map exec(List args, File workingDirectory=null, Appendable stdout=null, A
         String ghEventType = build.buildVariableResolver.resolve("x_github_event")
         String buildNumber = build.getNumber()
         String fullName = build.getProject().getFullName()
-
-        println "GitHub Event: ${ghEventType}"
-
-        //println "ghPayload:"
-        //println "${ghPayload}"
-
-        //binding.variables.each{ 
-        //  println "${it.key}:${it.value}"
-        //}
+        
         File workDir = new File("/tmp/jenkins/on-gh-event/${fullName}/${buildNumber}")
         try{
             if ("pull_request" == ghEventType){
                 def payload = new JsonSlurper().parseText(ghPayload)
-                println "GitHub Action: ${payload.action}"
                 if ("closed" == payload.action){
                     File gitWorkDir = workDir
                     def ghRepo=com.cloudbees.jenkins.GitHubRepositoryName.create(payload.repository.clone_url).resolveOne()
                     boolean isFromCollaborator=ghRepo.root.retrieve().asHttpStatusCode(ghRepo.getApiTailUrl("collaborators/${payload.pull_request.user.login}")) == 204
                     String cloneUrl = payload.repository.clone_url
                     String sourceBranch = isFromCollaborator?"refs/pull/${payload.number}/head":"refs/heads/${payload.pull_request.base.ref}"
-                    String repoName = payload.repository.name.toLowerCase()
-                    String repoOwner = payload.repository.owner.login.toLowerCase()
-
                     println "Is Collaborator:${isFromCollaborator} (${payload.pull_request.user.login})"
                     println "Clone Url:${cloneUrl}"
                     println "Checkout Branch:${sourceBranch}"
 
-                    String selector = "env-id=${payload.number},env-name!=prod,github-owner=${repoOwner},github-repo=${repoName},!shared"
-                    // removed dev clean up:
-                    ['6d70e7-tools'].each({ namespace ->
-                        //BuildConfig Output Images
-                        def ocGetBcRet = exec(['oc',"--namespace=${namespace}",'get','bc','-l',selector, '-o', 'jsonpath={range .items[*]}{.spec.output.to.namespace}/{.spec.output.to.name}{"\\n"}{end}'])
-                        println ocGetBcRet
-                        if (ocGetBcRet.status == 0 ){
-                            ocGetBcRet.out.toString().trim().split('\n').each({ item ->
-                                if (item.length() > 3){
-                                    def reference=item.split('/')
-                                    if (reference[0].length()==0){
-                                        reference[0]=namespace
-                                    }
-                                    println exec(['oc', "--namespace=${reference[0]}", 'tag', "${reference[1]}", '--delete=true'])
-                                }
-                            })
-                        }
-
-                        //DeploymentConfig Images
-                        def ocGetDcRet = exec(['oc',"--namespace=${namespace}",'get','dc','-l',selector, '-o', 'jsonpath={range .items[*]}{range .spec.triggers[*]}{.imageChangeParams.from.namespace}/{.imageChangeParams.from.name}{"\\n"}{end}{end}'])
-                        println ocGetDcRet
-                        if (ocGetDcRet.status == 0 ){
-                            ocGetDcRet.out.toString().trim().split('\n').each({ item ->
-                                if (item.length() > 3){
-                                    def reference=item.split('/')
-                                    if (reference[0].length()==0){
-                                        reference[0]=namespace
-                                    }
-                                    println exec(['oc', "--namespace=${reference[0]}", 'tag', "${reference[1]}", '--delete=true'])
-                                }
-                            })
-                        }
-
-                        //oc get dc -l 'env-id=pr-19,env-name!=prod' -o 'jsonpath={range .items[*]}{range .spec.triggers[*]}{.imageChangeParams.from.namespace}/{.imageChangeParams.from.name}{"\n"}{end}{end}'
-                        println exec(['oc', "--namespace=${namespace}", 'delete', 'all', '-l', selector])
-                        println exec(['oc', "--namespace=${namespace}", 'delete', 'PersistentVolumeClaim,Secret,ConfigMap,RoleBinding', '-l', selector])
-                    })
+                    println exec(['mkdir', '-p', gitWorkDir.getAbsolutePath()])
+                    println exec(['rm', '-rf', gitWorkDir.getAbsolutePath()])
+                    println exec(['git', 'init', gitWorkDir.getAbsolutePath()])
+                    println exec(['git', 'remote', 'add', 'origin', payload.repository.clone_url], gitWorkDir)
+                    println exec(['git', 'fetch', '--no-tags', payload.repository.clone_url, "+${sourceBranch}:PR-${payload.number}"], gitWorkDir)
+                    println exec(['git', 'checkout', "PR-${payload.number}"] , gitWorkDir)
+                    
+                    def pipelines = new FileNameFinder().getFileNames(gitWorkDir.getAbsolutePath(), '**/.pipeline/package.json')
+                    pipelines.each {
+                        def pipelineWorkDir = new File(it).getParentFile()
+                        println exec(['./npmw', 'ci'], pipelineWorkDir)
+                        println exec(['./npmw', 'run', 'clean' ,'--' ,"--pr=${payload.number}", '--env=transient'], pipelineWorkDir)
+                    }
                 }
             }else if ("issue_comment" == ghEventType){
                 def payload = new JsonSlurper().parseText(ghPayload)
-                println "GitHub Action: ${payload.action}"
                 if ("created" == payload.action && payload.issue.pull_request !=null ){
                     String comment = payload.comment.body.trim()
 

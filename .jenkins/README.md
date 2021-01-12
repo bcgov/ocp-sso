@@ -1,13 +1,16 @@
-## Create secrets
-Use the provided `openshift/secrets.json` as follow:
-```
-oc -n bcgov-tools process -f 'openshift/secrets.json' -p 'GH_USERNAME=' -p 'GH_PASSWORD=' | oc  -n bcgov-tools create -f -
-```
+# Overview
 
-# Get Jenkins Base Image
-```
-curl https://raw.githubusercontent.com/BCDevOps/openshift-components/master/cicd/jenkins-basic/openshift/build.yaml | oc process -f - -p VERSION=prod | oc apply -f -
-```
+For running locally, it is recommended to use locally installed npm/node. The command snippets provide bellow assume you have npm/node installed. Also, the command lines are provided as subshell (within parthnesis) so that it will work regardless of of your current shell work directory, as long as it is within the git working directory.
+
+For running from a Jenkinsfile, it is recommened to replace `npm` with the provided `npmw` as it will download and install node/npm using `nvm`.
+
+Before running in any of your projects ensure that you have created proper GitHub and Slave User secrets below:
+template.<Your Jenkins>-github
+template.<Your Jenkins>-slave-user
+
+Github Webhooks are only created during the PROD deployment.
+
+Windows users can just do the `cd` manually to the root folder of their repo and remove `$(git rev-parse --show-toplevel)/` from the commands below.
 
 # Build
 ```
@@ -19,29 +22,13 @@ Where:
 
 # Deploy to DEV
 ```
-( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run deploy -- --pr=0 --env=dev --description="deployment description" )
+( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run deploy -- --pr=0 --env=dev )
 ```
 
 # Deploy to PROD
 ```
 ( cd "$(git rev-parse --show-toplevel)/.jenkins/.pipeline" && npm run deploy -- --pr=0 --env=prod )
 ```
-
-## Grant Admin access to Jenkins Service Account in each managed namespace
-```
-oc -n <namespace>-<env> policy add-role-to-user 'admin' 'system:serviceaccounts:<namespace>-tools:jenkins'
-oc -n <namespace>-tools policy add-role-to-group 'system:image-puller' 'system:serviceaccounts:<namespace>-<env>'
-```
-
-## Create the Jenkins Configuration for your application job in Jenkins
-
-- copy the folder .jenkins/docker/contrib/jenkins/configuration/jobs/_jenkins/ and name it with your app's name
-- Update the configuration in `config.xml`
-  - under the section `jenkins.branch.BranchSource`
-    - id
-    - repoOwner
-    - repository
-  - scriptPath
 
 # Clean
 The clean script can run against each persistent environment, starting from `build`.

@@ -29,7 +29,7 @@
     <data>
       <jenkins.branch.BranchSource>
         <source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@2.3.6">
-          <id>08659502-ae8e-4300-a3b4-be5ec7fb9bd7</id>
+          <id>08659502-ae8e-4300-a3b4-be5ec7fb9bd1</id>
           <credentialsId>github-account</credentialsId>
           <repoOwner>bcgov</repoOwner>
           <repository>ocp-sso</repository>
