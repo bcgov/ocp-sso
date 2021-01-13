@@ -8,3 +8,4 @@ node_modules
 target/
 .node
 ops/group_vars/all/vars.yml
+.nvm
