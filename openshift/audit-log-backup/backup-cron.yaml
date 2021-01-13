@@ -10,6 +10,8 @@ objects:
     name: ${NAME}-cron-secret
   metadata:
     name: ${NAME}-cron-secret
+    labels:
+      app: "${NAME}"
     annotations:
       as-copy-of: "template.${NAME}-cron-secret"
   type: Opaque
@@ -19,6 +21,8 @@ objects:
   apiVersion: batch/v1beta1
   metadata:
     name: "${NAME}-cron"
+    labels:
+      app: "${NAME}"
   spec:
     schedule: ${SCHEDULE}
     concurrencyPolicy: Forbid
@@ -31,7 +35,7 @@ objects:
           spec:
             containers:
             - name: backup
-              image: "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${SOURCE_IMAGE_NAME}:${TAG_NAME}"
+              image: "image-registry.openshift-image-registry.svc:5000/${IMAGE_NAMESPACE}/${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               env:
                 - name: NAMESPACE_NAME
                   valueFrom:
@@ -78,7 +82,7 @@ parameters:
   displayName: "Image Namespace"
   description: "The namespace of the OpenShift project containing the imagestream for the application."
   required: true
-  value: "devops-sso-tools"
+  value: "6d70e7-tools"
 - name: "TAG_NAME"
   displayName: "Environment TAG name"
   description: "The TAG name for this environment, e.g., dev, test, prod"

@@ -8,6 +8,8 @@ objects:
   apiVersion: v1
   metadata:
     name: "${NAME}"
+    labels:
+      app: "${NAME}"
 - kind: BuildConfig
   apiVersion: v1
   metadata:
@@ -60,12 +62,12 @@ parameters:
   displayName: Source Image Name
   description: The name of the source image.
   required: true
-  value: docker-registry.default.svc:5000/openshift/alpine
+  value: image-registry.openshift-image-registry.svc:5000/6d70e7-tools/alpine
 - name: SOURCE_IMAGE_TAG
   displayName: Source Image Tag
   description: The tag of the source image.
   required: true
-  value: '3.7'
+  value: '3.10'
 - name: OUTPUT_IMAGE_TAG
   displayName: Output Image Tag
   description: The tag given to the built image.
