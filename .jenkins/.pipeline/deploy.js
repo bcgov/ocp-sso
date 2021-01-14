@@ -1,6 +1,5 @@
 'use strict';
-const options= require('pipeline-cli').Util.parseArguments()
-const phases = require('./lib/config.js')
-const deploy = require('./lib/deploy.js')
+const settings = require('./lib/config.js')
+const task = require('./lib/deploy.js')
 
-deploy({phases:phases, options:options})
+task(Object.assign(settings, { phase: settings.options.env}));

@@ -97,9 +97,9 @@ parameters:
 - name: IMAGE_TAG
   value: sso-k6:latest
 - name: IMAGE_NAMESPACE
-  value: devops-sso-tools
+  value: 6d70e7-tools
 - name: IMAGE_REGISTRY
-  value: docker-registry.default.svc:5000
+  value: image-registry.openshift-image-registry.svc:5000
 - name: LOG_OUTPUT_PATH
   description: the path json logs are written to inside of the pod
   value: /tmp/logs

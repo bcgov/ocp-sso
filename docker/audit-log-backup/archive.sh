@@ -33,6 +33,6 @@ EXPIRY_OLDER_THAN=$(date -d "${EXPIRY_LENGTH}" '+%Y%m%d')
 find . -maxdepth 1 -name '*.tar.gz' | xargs -I {} basename -s '.tar.gz' {} | awk -v "ref=${EXPIRY_OLDER_THAN}" '{r=ref +0; b=gensub(/\-/,"", "g", $1) + 0; if (b < r) print $1;}' | xargs -I {} rm -v '{}.tar.gz'
 
 # Send notification
-channelNotification "Last Archive 10 Files:\n$(find . -maxdepth 1 -name '*.tar.gz' | sort | tail -n 10 | xargs ls -lah)"
+channelNotification "Audit Log Last Archive 10 Files:\n$(find . -maxdepth 1 -name '*.tar.gz' | sort | tail -n 10 | xargs ls -lah)"
 
 echo 'Done'

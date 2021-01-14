@@ -12,15 +12,22 @@ Find Dockerfile and log backup scripts [here](../../docker/audit-log-backup/).
 - the path to find and mount the logs: MOUNT_PATH
 
 ### To run the cronjob:
-```
+```shell
 # Build in the tools namespace:
 oc process -f audit-log-backup/backup-bc.yaml | oc apply -f -
 
 # Setup Rocketchat webhook secret:
 oc process -f audit-log-backup/backup-cron-secret-template.yaml | oc apply -f -
 
+# Get the PVC containing logs:
+oc get pvc | grep -i logs
+
 # Start the cronjob:
 # 1. Setup the cronjob configurations in backup-cron.yaml
 # 2. Apply the cronjob:
-oc process -f audit-log-backup/backup-cron.yaml | oc apply -f -
+oc process -f audit-log-backup/backup-cron.yaml -p CLAIM_NAME=<pvc_name> | oc apply -f -
+
+# Testing:
+oc create job audit-logs-backup-cron --from=cronjob/audit-logs-backup-cron
+oc delete job audit-logs-backup-cron
 ```

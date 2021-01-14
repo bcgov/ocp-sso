@@ -3,10 +3,11 @@ const options = require('@bcgov/pipeline-cli').Util.parseArguments();
 const changeId = options.pr; //aka pull-request
 const version = '7.4';
 const name = 'sso';
+const sandboxNamespace = '3d5c3f-prod';
 
 const phases = {
   build: {
-    namespace: 'devops-sso-tools',
+    namespace: '6d70e7-tools',
     name: `${name}`,
     phase: 'build',
     changeId: changeId,
@@ -16,7 +17,7 @@ const phases = {
     tag: `${version}-${changeId}`,
   },
   sbox: {
-    namespace: 'devops-sso-sandbox',
+    namespace: sandboxNamespace,
     name: `${name}`,
     phase: 'sbox',
     changeId: changeId,
@@ -24,10 +25,10 @@ const phases = {
     instance: `${name}-sbox-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `sbox-${version}-${changeId}`,
-    host: `sso-${changeId}-devops-sso-sandbox.pathfinder.gov.bc.ca`,
+    host: `sso-${changeId}-${sandboxNamespace}.apps.silver.devops.gov.bc.ca`,
   },
   dev: {
-    namespace: 'devops-sso-dev',
+    namespace: '6d70e7-dev',
     name: `${name}`,
     phase: 'dev',
     changeId: changeId,
@@ -35,10 +36,10 @@ const phases = {
     instance: `${name}-dev`,
     version: `${version}-${changeId}`,
     tag: `dev-${version}`,
-    host: 'sso-dev.pathfinder.gov.bc.ca',
+    host: 'sso-dev.apps.silver.devops.gov.bc.ca',
   },
   test: {
-    namespace: 'devops-sso-test',
+    namespace: '6d70e7-test',
     name: `${name}`,
     phase: 'test',
     changeId: changeId,
@@ -46,10 +47,10 @@ const phases = {
     instance: `${name}-test`,
     version: `${version}-${changeId}`,
     tag: `test-${version}`,
-    host: 'sso-test.pathfinder.gov.bc.ca',
+    host: 'sso-test.apps.silver.devops.gov.bc.ca',
   },
   prod: {
-    namespace: 'devops-sso-prod',
+    namespace: '6d70e7-prod',
     name: `${name}`,
     phase: 'prod',
     changeId: changeId,
@@ -57,7 +58,7 @@ const phases = {
     instance: `${name}-prod`,
     version: `${version}-${changeId}`,
     tag: `prod-${version}`,
-    host: 'sso.pathfinder.gov.bc.ca',
+    host: 'sso.apps.silver.devops.gov.bc.ca',
   },
 };
 

@@ -3,8 +3,8 @@ kind: Template
 metadata:
   name: job-to-initiate-sso-74
 parameters:
-- description: The name for the application.
-  displayName: Application Name
+- description: The name for the Job.
+  displayName: Job Name
   name: NAME
   required: true
   value: job-to-initiate-sso-74
@@ -15,7 +15,17 @@ parameters:
 - description: base image
   displayName: imagestream tag
   name: IMAGE
-  value: docker-registry.default.svc:5000/<namespace>/sso@sha256:<sha_value>
+  value: image-registry.openshift-image-registry.svc:5000/<namespace>/<istag>
+- description: The name for the application.
+  displayName: Application Name
+  name: DC_NAME
+  required: true
+  value: sso
+- name: DB_SERVICE_HOST
+- name: DB_SECRET_NAME
+- name: DB_SECRET_DATABASE_KEY
+- name: DB_SECRET_USERNAME_KEY
+- name: DB_SECRET_PASSWORD_KEY
 objects:
 - apiVersion: batch/v1
   kind: Job
@@ -32,7 +42,7 @@ objects:
         containers:
         - env:
           - name: DB_POSTGRESQL_SERVICE_HOST
-            value: sso-pgsql-master${SUFFIX}
+            value: ${DB_SERVICE_HOST}
           - name: DB_POSTGRESQL_SERVICE_PORT
             value: "5432"
           - name: DB_SERVICE_PREFIX_MAPPING
@@ -42,18 +52,18 @@ objects:
           - name: DB_USERNAME
             valueFrom:
               secretKeyRef:
-                key: app-db-username
-                name: sso-pgsql${SUFFIX}
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_USERNAME_KEY}"
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: app-db-password
-                name: sso-pgsql${SUFFIX}
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_PASSWORD_KEY}"
           - name: DB_DATABASE
             valueFrom:
               secretKeyRef:
-                key: app-db-name
-                name: sso-pgsql${SUFFIX}
+                  name: "${DB_SECRET_NAME}"
+                  key: "${DB_SECRET_DATABASE_KEY}"
           - name: TX_DATABASE_PREFIX_MAPPING
             value: db-postgresql=DB
           - name: DB_MIN_POOL_SIZE
@@ -72,18 +82,18 @@ objects:
           - name: JGROUPS_CLUSTER_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: password
-                name: sso-jgroups${SUFFIX}
+                  name: "${DC_NAME}-jgroups${SUFFIX}"
+                  key: "password"
           - name: SSO_ADMIN_USERNAME
             valueFrom:
               secretKeyRef:
-                key: username
-                name: sso-admin${SUFFIX}
+                  name: "${DC_NAME}-admin${SUFFIX}"
+                  key: "username"
           - name: SSO_ADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: password
-                name: sso-admin${SUFFIX}
+                  name: "${DC_NAME}-admin${SUFFIX}"
+                  key: "password"
           - name: SSO_REALM
           - name: SSO_SERVICE_USERNAME
           - name: SSO_SERVICE_PASSWORD

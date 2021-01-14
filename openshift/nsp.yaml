@@ -1,0 +1,56 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}-nsp
+objects:
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: egress-internet
+    labels:
+      app: sso
+  spec:
+    description: "allow ${NAMESPACE} namespace to talk to the internet."
+    source:
+      - - $namespace=${NAMESPACE}
+    destination:
+      - - ext:network=any
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: intra-namespace-comms
+    labels:
+      app: sso
+  spec:
+    description: "allow ${NAMESPACE} namespace to talk to itself"
+    source:
+      - - $namespace=${NAMESPACE}
+    destination:
+      - - $namespace=${NAMESPACE}
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: int-cluster-k8s-api-comms
+    labels:
+      app: sso
+  spec:
+    description: "allow ${NAMESPACE} pods to talk to the k8s api"
+    destination:
+    - - int:network=internal-cluster-api-endpoint
+    source:
+    - - $namespace=${NAMESPACE}
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: NAME
+  required: true
+  value: sso
+- description: A suffix appended to most objects
+  displayName: Application Suffix
+  name: SUFFIX
+  value: ""
+- description: The namespace
+  displayName: Namespace
+  name: NAMESPACE
+  required: true
+  value: sso-tools

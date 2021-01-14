@@ -85,9 +85,12 @@ module.exports = (settings) => {
         NAME: `${phases[phase].name}-pgsql`,
         SUFFIX: phases[phase].suffix,
         INSTANCE: `${phases[phase].name}-pgsql${phases[phase].suffix}`,
-        IMAGE_STREAM_NAMESPACE: 'bcgov',
-        //      'OPENSHIFT_IMAGE_REGISTRY': '172.30.1.1:5000',
-        IMAGE_STREAM_TAG: 'patroni:v10-stable',
+        // OCP4-TODO: DB version update when migration is complete (the current one is build separately)
+        IMAGE_REGISTRY: 'image-registry.openshift-image-registry.svc:5000',
+        IMAGE_STREAM_NAMESPACE: '6d70e7-tools',
+        IMAGE_STREAM_TAG: 'patroni:v10-latest',
+        // OCP4-TODO: need extra nsp for patorni, there are aporeto logs currently ignored - https://github.com/BCDevOps/platform-services/pull/732
+        STORAGE_CLASS: 'netapp-block-standard',
       },
     }),
   );
