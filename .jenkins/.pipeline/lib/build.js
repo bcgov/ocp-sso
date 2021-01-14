@@ -7,6 +7,7 @@ module.exports = (settings)=>{
   const options = settings.options
   const oc=new OpenShiftClientX(Object.assign({'namespace':phases.build.namespace}, options));
   const phase='build'
+  const jenkinsBaseImage = 'jenkins-basic:prod';
   var objects = []
 
   const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
@@ -19,7 +20,7 @@ module.exports = (settings)=>{
       'SOURCE_REPOSITORY_URL': oc.git.http_url,
       'SOURCE_REPOSITORY_REF': oc.git.ref,
       'SOURCE_IMAGE_STREAM_NAMESPACE': phases[phase].namespace,
-      'SOURCE_IMAGE_STREAM_TAG': 'jenkins-basic:prod'
+      'SOURCE_IMAGE_STREAM_TAG': jenkinsBaseImage
     }
   }));
 
@@ -29,7 +30,7 @@ module.exports = (settings)=>{
       'SUFFIX': phases[phase].suffix,
       'VERSION': phases[phase].tag,
       'SOURCE_IMAGE_STREAM_NAMESPACE': phases[phase].namespace,
-      'SOURCE_IMAGE_STREAM_TAG': 'jenkins-basic:prod',
+      'SOURCE_IMAGE_STREAM_TAG': jenkinsBaseImage,
       'SLAVE_NAME':'main'
     }
   }));
