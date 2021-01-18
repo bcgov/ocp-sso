@@ -119,7 +119,7 @@ oc process -f openshift/sso74-x509-configmap.yaml \
 -p SUFFIX=-dev \
 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
-oc4 process -f openshift/sso74-x509.yaml \
+oc process -f openshift/sso74-x509.yaml \
 -p NAME=sso \
 -p SUFFIX=-dev \
 -p VERSION=7.4 \
@@ -130,7 +130,7 @@ oc4 process -f openshift/sso74-x509.yaml \
 -p DB_SERVICE_HOST=sso-pgsql-patroni-master-dev \
 -p CPU_REQUEST=250m \
 -p CPU_LIMIT=1 \
--l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc4 apply -f -
+-l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 
 # note that if starting a brand new instance fails, you will need to run step 5 to initialize DB
 oc scale dc sso-dev --replicas=0
