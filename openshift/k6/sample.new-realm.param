@@ -1,0 +1,9 @@
+#==================== This is a sample! ====================
+# It should be obtained from https://github.com/BCDevOps/keycloak-admin/tree/master/keycloak_realm_builder/scripts/custom_usage
+#====================
+SSO_BASE_URL=
+SSO_REALM_X=
+SSO_CLIENT=
+USER_PASSWORD=
+SSO_SA_CLIENT_ID=
+SSO_SA_CLIENT_PASSWORD_X=
