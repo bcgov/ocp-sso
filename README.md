@@ -54,7 +54,7 @@ The template requires an ImageStream in the same namespace
 - check for available RedHat images here: https://catalog.redhat.com/software/containers/search
 - Please note that sso7.4 image is now on registry.redhat.io which requires auth
 
-***RH SSO Base Image***
+- *RH SSO Base Image*
 ```shell
 # login:
 docker login https://registry.redhat.io -u <username> -p <password>
@@ -67,7 +67,8 @@ oc tag 6d70e7-tools/sso74-openshift-rhel8:7.4 3d5c3f-dev/sso74-openshift-rhel8:7
 ```
 
 Currently we are on postgres v10, will need to update DB version after OCP4 migration is completed
-***Patroni v10 Base Image***
+
+- *Patroni v10 Base Image*
 ```shell
 # create bc
 oc -n 6d70e7-tools process -f openshift/build.yaml \
@@ -107,8 +108,10 @@ oc process -f openshift/sso74-x509-postgresql.yaml \
 
 4. Create Keycloak/RH-SSO
 ```shell
+# skipping BCGov chain builds and use RHSSO image directly
 oc tag sso74-openshift-rhel8:7.4 sso:7.4
 
+# Create secrets and configmap
 oc process -f openshift/sso74-x509-secrets.yaml \
 -p NAME=sso \
 -p SUFFIX=-dev \
@@ -119,6 +122,7 @@ oc process -f openshift/sso74-x509-configmap.yaml \
 -p SUFFIX=-dev \
 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template  | oc apply -f -
 
+# deploy
 oc process -f openshift/sso74-x509.yaml \
 -p NAME=sso \
 -p SUFFIX=-dev \
@@ -133,13 +137,16 @@ oc process -f openshift/sso74-x509.yaml \
 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 
 # note that if starting a brand new instance fails, you will need to run step 5 to initialize DB
-oc scale dc sso-dev --replicas=0
 ```
 
 5. Initialize the SSO instance
 Use the job to complete the DB initialization work when needed, then scale up SSO dc.
 
 ```shell
+# scale down sso dc
+oc scale dc sso-dev --replicas=0
+
+# create job
 oc process -f openshift/job-to-initialize-sso74.yaml \
 -p DC_NAME=sso \
 -p SUFFIX=-dev \
