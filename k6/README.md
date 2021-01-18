@@ -15,7 +15,7 @@ To have the above setup, refer to [doc](https://github.com/BCDevOps/keycloak-adm
 ## Running the Test Cases
 
 ### Environment Variables
-All of the following env vars are required.
+All of the following env vars are required. If you use the Ansible Playbook from https://github.com/BCDevOps/keycloak-admin to create K6 realms, copy over the ***output param file directly***, which covers the sso realm config. Otherwise, you'll need to collect the following information for the three k6 testing realms.
 
 - `LOG_OUTPUT_PATH`: string of the path to where json output files will be written to (defaults to /tmp)
 - `SSO_BASE_URL`: string of the SSO base url
@@ -37,20 +37,29 @@ and then running `docker run  -e SSO_BASE_URL=<sso_base_url> -e ... sso-k6:lates
 
 ## Running on OpenShift
 ```shell
-# build mage:
+# Build image:
 oc -n <tools_namespace> process -f bc.yaml | oc apply -f -
 
-# setup prep configmap and secret:
+# Setup prep configmap and secret
+# option 1. with the param file (ignore output warning for already defined values):
+oc -n <job_namespace> process -f prep.yaml \
+--param-file=new-realm-<realm_name>0.param \
+--param-file=new-realm-<realm_name>1.param \
+--param-file=new-realm-<realm_name>2.param | oc -n <job_namespace> apply -f -
+
+# option 2. no param fil, direct input:
 oc -n <job_namespace> process -f prep.yaml \
 -p SSO_BASE_URL=<sso_base_url> -p SSO_REALM=<realm> \
 -p SSO_CLIENT=<client> -p USER_PASSWORD=<password> \
 -p SSO_SA_CLIENT_ID=<c_id> -p SSO_SA_CLIENT_PASSWORD=<c_psw> | oc -n <job_namespace> apply -f -
 
-# delete existing job then deploy it:
+# Create job:
 oc -n <job_namespace> delete job <job_name>
 oc -n <job_namespace> process -f job.yaml | oc -n <job_namespace> apply -f -
 
-# delete job:
+# Please note that you can modify the configmap to increase/decrease testing load!
+
+# Delete job:
 oc get all,configmap,secret,pvc -l group=sso-k6
 oc delete all,configmap,secret,pvc -l group=sso-k6
 ```
