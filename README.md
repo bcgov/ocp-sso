@@ -70,6 +70,10 @@ Currently we are on postgres v10, will need to update DB version after OCP4 migr
 
 - *Patroni v10 Base Image*
 ```shell
+# clone the platform-services repo with the oc templates, and go to openshift folder:
+git clone https://github.com/BCDevOps/platform-services.git
+cd apps/pgsql/patroni/openshift
+
 # create bc
 oc -n 6d70e7-tools process -f openshift/build.yaml \
  -p "GIT_URI=https://github.com/BCDevOps/platform-services" \
