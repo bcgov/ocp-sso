@@ -140,7 +140,7 @@ oc process -f openshift/sso74-x509.yaml \
 -p CPU_LIMIT=1 \
 -l app=rh-sso-sandbox,name=keycloak,component=keycloak,part-of=rh-sso,managed-by=template | oc apply -f -
 
-# note that if starting a brand new instance fails, you will need to run step 5 to initialize DB
+# note that if starting a brand new instance fails with error "failed to initialize DB", then you will need to run step 5. Otherwise you are good!
 ```
 
 5. Initialize the SSO instance
