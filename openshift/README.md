@@ -38,13 +38,13 @@ oc create -f sso74-x509-secrets.json --dry-run=true -o yaml > sso74-x509-secrets
 
 ## Project setup
 ```
-printf "tools\ndev\ntest\nprod" | xargs -I {} oc new-project 'devops-sso-{}' > /dev/null
+printf "tools\ndev\ntest\nprod" | xargs -I {} oc new-project '<namespace_prefix>-{}' > /dev/null
 
-printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-group system:image-puller 'system:serviceaccounts:devops-sso-{}' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-group system:image-puller 'system:serviceaccounts:<namespace_prefix>-{}' -n <namespace_prefix>-tools --rolebinding-name='cross-project-image-pull'
 
-printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:devops-sso-{}:default' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:<namespace_prefix>-{}:default' -n <namespace_prefix>-tools --rolebinding-name='cross-project-image-pull'
 
-printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:devops-sso-{}:builder' -n devops-sso-tools --rolebinding-name='cross-project-image-pull'
+printf "dev\ntest\nprod" | xargs -I {} oc policy add-role-to-user system:image-puller 'system:serviceaccount:<namespace_prefix>-{}:builder' -n <namespace_prefix>-tools --rolebinding-name='cross-project-image-pull'
 
 ```
 
