@@ -173,9 +173,13 @@ oc scale dc sso-dev --replicas=3
 ```
 
 6. Delete everything
-```
+```shell
 oc get statefulset,dc,svc,route,pvc,secret,configmap,pdb -l app=rh-sso-sandbox
 oc delete statefulset,dc,svc,route,pvc,secret,configmap,pdb -l app=rh-sso-sandbox
+
+# please note that DB PVCs will not be deleted as it contains app data. you will need to delete them separately:
+oc get pvc
+oc delete pvc <ss_pvc_name>_0 <ss_pvc_name>_1 <ss_pvc_name>_2
 ```
 
 # Reference:
