@@ -1,0 +1,14 @@
+## Waits for a statefulset or deploymentconfig to reach a desired set of replicas
+
+## Vars:
+# KIND: string
+# delay: number
+# POD_SELECTOR: string ie deploymentConfig=foo
+# TARGET_NAMESPACE
+
+- name: Wait for POD "{{ POD_SELECTOR }}" to be scaled to 0 
+  shell: oc -n {{ TARGET_NAMESPACE }} get pod -l {{ POD_SELECTOR }} -o name 
+  register: result
+  until: result.stdout_lines|length == 0
+  delay: "{{ delay | default(15) }}"
+  retries: 45

@@ -1,0 +1,14 @@
+## Waits for a statefulset or deploymentconfig to reach a desired set of replicas
+
+## Vars:
+# KIND: string
+# delay: number
+# TARGET_NAMESPACE: string
+# OBJECT_NAME: string
+
+- name: Wait for {{ KIND }} {{ OBJECT_NAME }} pods to be scaled up into a ready state in {{ TARGET_NAMESPACE }} 
+  shell: oc get {{ KIND }}/{{ OBJECT_NAME }} -o json -n {{ TARGET_NAMESPACE }}
+  register: result
+  until: ((result.stdout|from_json).status.readyReplicas is defined) and ((result.stdout|from_json).status.readyReplicas|int == (result.stdout|from_json).spec.replicas|int) 
+  delay: "{{ delay | default(15) }}"
+  retries: 45

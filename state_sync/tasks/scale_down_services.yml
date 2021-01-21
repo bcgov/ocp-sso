@@ -1,0 +1,18 @@
+---
+# VARS
+# SSO_DC_NAME
+# SSO_BACKUP_NAME
+# TARGET_NAMESPACE
+# SSO_HPA_NAME
+# CLUSTER_SERVER_URL 
+
+- name: Scaling Backup Container {{ SSO_BACKUP_NAME }} to 0 Pods
+  shell: oc -n {{ TARGET_NAMESPACE }} scale dc/{{ SSO_BACKUP_NAME }} --replicas=0
+- name: Wait for Backup Container to roll to 0 replicas
+  include_tasks: ../../ops/tasks/wait_for_scale_down.yml 
+  vars:
+    POD_SELECTOR: deploymentConfig={{ SSO_BACKUP_NAME }}
+- name: Scaling DeploymentConfig {{ SSO_DC_NAME }} to 0 Pods
+  include_tasks: ../../ops/tasks/scale_down_sso.yml
+  vars:
+    HPA_NAME: "{{ SSO_HPA_NAME }}"

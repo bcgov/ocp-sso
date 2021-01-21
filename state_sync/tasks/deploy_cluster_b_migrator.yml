@@ -1,0 +1,36 @@
+---
+- name: Login to Cluster B
+  shell: oc config use-context {{ migrator_vars.cluster_b.context }}
+
+- name: Checking if migrator image exists
+  shell: oc get -n {{ migrator_vars.cluster_b.migrator.namespace }} imagestreamtag {{ migrator_vars.cluster_b.migrator.name }}:{{ migrator_vars.cluster_b.migrator.tag }} 
+  register: imagestreamtag
+  ignore_errors: yes 
+
+- name: Building migrator image in {{ migrator_vars.cluster_b.migrator.namespace }}
+  shell: |
+    curl https://raw.githubusercontent.com/BCDevOps/StorageMigration/master/openshift/templates/pvc-migrator-build.yaml |
+    oc process -f - -n {{ migrator_vars.cluster_b.migrator.namespace }} |
+    oc apply -f - -n {{ migrator_vars.cluster_b.migrator.namespace }}
+  when: imagestreamtag.stdout in 'NotFound'
+
+- name: Deploying Migrator Image
+  shell: |
+    curl https://raw.githubusercontent.com/BCDevOps/StorageMigration/master/cross-cluster/target-migrator-tmpl.yaml |
+    oc process -f - -n {{ migrator_vars.cluster_b.namespace }} \
+    -p DESTINATION_PVC={{ migrator_vars.cluster_b.pvc }} \
+    -p DST_IMAGE_NAME={{ migrator_vars.cluster_b.migrator.name }} \ 
+    -p TAG_NAME={{ migrator_vars.cluster_b.migrator.tag }} \  
+    -p DST_IMAGE_NAMESPACE={{ migrator_vars.cluster_b.migrator.namespace }} \  
+    -p DST_IMAGE_REGISTRY={{ migrator_vars.cluster_b.image_registry }} \
+    -p NAME={{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }} |
+    oc apply -f - -n {{ migrator_vars.cluster_b.namespace }}
+
+
+- name: Wait for migrator pod to be ready
+  include_tasks: ../../ops/tasks/wait_for_scale_up.yml
+  vars:
+    TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
+    KIND: Deployment
+    OBJECT_NAME: "{{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }}"
+  

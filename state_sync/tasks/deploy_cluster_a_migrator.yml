@@ -1,0 +1,10 @@
+---
+- name: Login to Cluster A
+  shell: oc config use-context {{ migrator_vars.cluster_a.context }}
+- name: Checking if migrator image exists
+  shell: oc get -n {{ migrator_vars.cluster_a.migrator.namespace }} imagestreamtag {{ migrator_vars.cluster_a.migrator.name }}:{{ migrator_vars.cluster_a.migrator.tag }} 
+  register: imagestreamtag
+  failed_when: imagestreamtag.stdout in 'NotFound'
+
+- name: Deploying Migrator Image
+  

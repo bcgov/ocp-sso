@@ -1,11 +1,14 @@
 ---
 # ocp namespace vars:
+SOURCE_CLUSTER_CONTEXT: devops-sso-test/console-pathfinder-gov-bc-ca:8443/patricksimonian
 SOURCE_CLUSTER_SERVER_URL: https://console.pathfinder.gov.bc.ca:8443
-DEST_CLUSTER_SERVER_URL: https://api.silver.devops.gov.bc.ca:6443
-SOURCE_BACKUP_CONTAINER: deployment=backup-2
-DEST_BACKUP_CONTAINER:
+TARGET_CLUSTER_CONTEXT: 3d5c3f-dev/api-silver-devops-gov-bc-ca:6443/patricksimonian@github
+TARGET_CLUSTER_SERVER_URL: https://api.silver.devops.gov.bc.ca:6443
+SOURCE_BACKUP_CONTAINER_SELECTOR: deployment=backup-2
+TARGET_BACKUP_CONTAINER_SELECTOR:
 SOURCE_PATRONI_SERVICE_SELECTOR:
-DEST_PATRONI_SERVICE_SELECTOR:
+TARGET_PATRONI_SERVICE_SELECTOR:
 SOURCE_NAMESPACE:
-DEST_NAMESPACE:
-
+TARGET_NAMESPACE:
+SOURCE_SSO_DC_NAME:
+TARGET_SSO_DC_NAME:
