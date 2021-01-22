@@ -157,7 +157,7 @@
                     "value": "${BACKUP_PERIOD}"
                   },
                   {
-                    "name": "SSO_PGSQL_MASTER_SBOX_148_USER",
+                    "name": "SSO_PGSQL_MASTER_USER",
                     "valueFrom": {
                       "secretKeyRef": {
                         "name": "${DATABASE_DEPLOYMENT_NAME}",
@@ -166,7 +166,7 @@
                     }
                   },
                   {
-                    "name": "SSO_PGSQL_MASTER_SBOX_148_PASSWORD",
+                    "name": "SSO_PGSQL_MASTER_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
                         "name": "${DATABASE_DEPLOYMENT_NAME}",
