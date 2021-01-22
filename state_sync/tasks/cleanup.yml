@@ -1,0 +1,11 @@
+---
+# VARS
+# MIGRATOR_POD_SELECTOR
+# TARGET_NAMESPACE
+- name: "Killing Migrator with selector {{ MIGRATOR_POD_SELECTOR }}"
+  shell: "oc -n {{ TARGET_NAMESPACE }} delete all -l {{ MIGRATOR_POD_SELECTOR }}"
+
+- name: Wait for Migrator Pod to roll to 0 replicas
+  include_tasks: ../../ops/tasks/wait_for_scale_down.yml 
+  vars:
+    POD_SELECTOR: "{{ MIGRATOR_POD_SELECTOR }}"

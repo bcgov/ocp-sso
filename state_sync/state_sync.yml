@@ -45,17 +45,49 @@
       - debug:
           msg: Beginning Migration Process
       
-      # - name: Deploying Source Migrator to Cluster A
-      #   include_tasks: ./tasks/deploy_cluster_a_migrator.yml
       - name: Deploying Source Migrator to Cluster B
         include_tasks: ./tasks/deploy_cluster_b_migrator.yml
 
-      # - name: Scaling SSO to 0 Pods 
-      #   vars:
-      #     SSO_DC_NAME: "{{ SOURCE_SSO_DC_NAME }}"
-      #   include_tasks: ../ops/tasks/scale_down_sso.yml
-      #   when: backup_run | bool
+      # FACTS SET AT THIS POINT:
+      # - CLUSTER_B_SA_SECRET: ansible built in file path that contains secret manifest
+      # - CLUSTER_B_SA_SECRET_NAME: the secret name that can be queried when the manifest is applied
+      - name: Deploying Source Migrator to Cluster A
+        include_tasks: ./tasks/deploy_cluster_a_migrator.yml
+      # FACTS SET AT THIS POINT:
+      # - CLUSTER_A_MIGRATOR_POD: the pod name to be used as host in later plays
+      # - CLUSTER_B_MIGRATOR_POD: the pod name to be used as host in later plays
+      - name: Getting host for migrator pod
+        include_tasks: ./tasks/get_cluster_hosts.yml
       
-      # - debug: 
-      #     msg: "Unable to continue until you have completed a backup"
-      #   when: not backup_run | bool
+      - name: Rsync'n the state between Cluster A and Cluster B
+        include_tasks: tasks/rsync.yml
+
+      - name: Login to Cluster A
+        shell: oc config use-context {{ migrator_vars.cluster_a.context }}
+      - name: Killing Migrator Pods
+        include_tasks: ./tasks/cleanup.yml
+        vars:
+          TARGET_NAMESPACE: "{{ migrator_vars.cluster_a.namespace }}"
+          MIGRATOR_POD_SELECTOR: "app={{ migrator_vars.cluster_a.migrator.name }}-{{ migrator_vars.cluster_a.name }}"
+      - name: Bring up backup container
+        include_tasks: tasks/scale_up_backup_container.yml
+        vars:
+          TARGET_NAMESPACE: "{{ migrator_vars.cluster_a.namespace }}"
+          SSO_BACKUP_NAME: "{{ migrator_vars.cluster_a.backup_deployment_config }}"
+      - debug:
+          msg: Completed cleanup of Cluster A. Migrator Deployment deleted and Backup brough back up
+
+      - name: Login to Cluster B
+        shell: oc config use-context {{ migrator_vars.cluster_b.context }}
+      - name: Killing Migrator Pods
+        include_tasks: tasks/cleanup.yml
+        vars:
+          TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
+          MIGRATOR_POD_SELECTOR: "app={{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }}"
+      - name: Bring up backup container
+        include_tasks: tasks/scale_up_backup_container.yml
+        vars:
+          TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
+          SSO_BACKUP_NAME: "{{ migrator_vars.cluster_b.backup_deployment_config }}"
+      - debug:
+          msg: Completed cleanup of Cluster B. Migrator Deployment deleted and Backup brough back up

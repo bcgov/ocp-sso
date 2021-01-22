@@ -31,7 +31,7 @@ migrator_vars:
     pvc: sso-pgsql-sbox-148-backup
     namespace: 3d5c3f-test
     migrator:
-      namespace: 3d5c3f-test
+      namespace: 3d5c3f-test  # where migrator image should be built
       name: pvc-migrator
       tag: latest
 
