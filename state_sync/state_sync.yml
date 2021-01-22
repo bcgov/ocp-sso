@@ -92,6 +92,12 @@
       - debug:
           msg: Completed cleanup of Cluster B. Migrator Deployment deleted and Backup brough back up
 
+      - debug:
+          msg:
+            - Backup now requires a restore maneuver. This must be done manually.
+            - run 
+            - BACKUP_POD=$(oc -n {{ migrator_vars.cluster_b.namespace }} get pods -o name | grep {{ migrator_vars.cluster_b.backup_deployment_config  }} | head -n 1 |  awk '{print $1}')
+            - oc rsh -n {{ migrator_vars.cluster_b.namespace }} $BACKUP_POD
       # - debug:
       #     msg: Performing Backup Restore in Cluster B's Patroni Instance
       
