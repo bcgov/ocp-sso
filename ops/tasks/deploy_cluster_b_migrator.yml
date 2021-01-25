@@ -1,0 +1,68 @@
+---
+- name: Login to Cluster B
+  shell: oc config use-context {{ migrator_vars.cluster_b.context }}
+
+- name: Checking if migrator image exists
+  shell: oc get -n {{ migrator_vars.cluster_b.migrator.namespace }} imagestreamtag {{ migrator_vars.cluster_b.migrator.name }}:{{ migrator_vars.cluster_b.migrator.tag }} 
+  register: imagestreamtag
+  ignore_errors: yes 
+
+- name: Building migrator image in {{ migrator_vars.cluster_b.migrator.namespace }}
+  shell: |
+    curl https://raw.githubusercontent.com/BCDevOps/StorageMigration/master/openshift/templates/pvc-migrator-build.yaml |
+    oc process -f - -n {{ migrator_vars.cluster_b.migrator.namespace }} |
+    oc apply -f - -n {{ migrator_vars.cluster_b.migrator.namespace }}
+  when: imagestreamtag.stdout in 'NotFound'
+
+- name: Deploying Migrator Image
+  shell: |
+    curl https://raw.githubusercontent.com/BCDevOps/StorageMigration/master/cross-cluster/target-migrator-tmpl.yaml |
+    oc process -f - -n {{ migrator_vars.cluster_b.namespace }} \
+    -p DESTINATION_PVC={{ migrator_vars.cluster_b.pvc }} \
+    -p DST_IMAGE_NAME={{ migrator_vars.cluster_b.migrator.name }} \ 
+    -p TAG_NAME={{ migrator_vars.cluster_b.migrator.tag }} \  
+    -p DST_IMAGE_NAMESPACE={{ migrator_vars.cluster_b.migrator.namespace }} \  
+    -p DST_IMAGE_REGISTRY={{ migrator_vars.cluster_b.image_registry }} \
+    -p NAME={{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }} |
+    oc apply -f - -n {{ migrator_vars.cluster_b.namespace }}
+
+
+- name: Wait for migrator pod to be ready
+  include_tasks: ./wait_for_scale_up.yml
+  vars:
+    TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
+    KIND: Deployment
+    OBJECT_NAME: "{{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }}"
+  
+- name: Extract a service account token to pass to cluster A
+  shell: |
+    oc get secret -n {{ migrator_vars.cluster_b.namespace }} -o json | 
+    jq '.items[] | select(.type == "kubernetes.io/service-account-token") | .metadata.name' |
+    grep '{{ migrator_vars.cluster_b.migrator.name }}-{{ migrator_vars.cluster_b.name }}' |
+    head -1 |
+    awk '{print $1}'
+  register: cluster_b_sa_token
+
+- name: Create a temporary place to store token for cluster a
+  ansible.builtin.tempfile:
+    state: file
+    suffix: "{{ migrator_vars.cluster_b.name }}-sa-secret"
+  register: temp_sa_secret
+
+- name: Setting Secret Name for use in Cluster A
+  set_fact:
+    CLUSTER_B_SA_SECRET_NAME: "{{ migrator_vars.cluster_b.name }}-sa-token"
+- name: Get Token for use in secret Manifest
+  shell: |
+    oc -n {{ migrator_vars.cluster_b.namespace }} get secret {{ cluster_b_sa_token.stdout }} -o json  | 
+    jq -r '.data.token' | 
+    base64 -d
+  register: token
+
+- name: Create secret manifest
+  shell: |
+    oc -n {{ migrator_vars.cluster_b.namespace }} create secret generic {{ CLUSTER_B_SA_SECRET_NAME }} --from-literal=token={{ token.stdout }} --dry-run -o json | jq -r '.metadata.namespace = "{{ migrator_vars.cluster_a.namespace  }}"' > {{ temp_sa_secret.path }}
+
+- name: Setting fact for secret manifest path
+  set_fact:
+    CLUSTER_B_SA_SECRET: "{{ temp_sa_secret.path }}"

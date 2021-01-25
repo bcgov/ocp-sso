@@ -1,0 +1,11 @@
+---
+- name: Login to Cluster A
+  shell: oc config use-context {{ migrator_vars.cluster_a.context }}
+
+- name: Rsync from source to target
+  shell: | 
+    oc -n {{ migrator_vars.cluster_a.namespace }} exec {{ CLUSTER_A_MIGRATOR_POD }} -- bash -c \
+    "
+      cd /source
+      oc rsync --no-perms --kubeconfig=/target/tkube/KUBECONFIG . {{ CLUSTER_B_MIGRATOR_POD }}:/target
+    "
