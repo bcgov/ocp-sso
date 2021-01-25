@@ -1,0 +1,23 @@
+---
+- name: Create route for docker registry
+  k8s:
+    state: present
+    namespace: "{{ TARGET_NAMESPACE }}"
+    definition:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: "oidc-{{ SSO_SVC_NAME }}"
+      spec:
+        host: "{{ SSO_ROUTE_PREFIX }}.gov.bc.ca"
+        tls:
+          insecureEdgeTerminationPolicy: Redirect
+          termination: reencrypt
+          caCertificate: "{{ caCertificate_value }}"
+          certificate: "{{ certificate_value }}"
+          key: "{{ key_value }}"
+        to:
+          kind: Service
+          name: "{{ SSO_SVC_NAME }}"
+          weight: 100
+        wildcardPolicy: None

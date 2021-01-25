@@ -1,0 +1,33 @@
+# create SSO routes with SSL Certificates
+# vars needed:
+# - TARGET_NAMESPACE
+# - SSL_CERT_SECRET_NAME
+# - SSO_ROUTE_PREFIX
+# - SSO_SVC_NAME
+---
+  - hosts: localhost
+    gather_facts: no
+    vars_files:
+      - group_vars/all/vars.yml
+    tasks:
+    - name: Get ssl cert from secrets - caCertificate
+      shell: |
+        oc -n {{ TARGET_NAMESPACE }} get secret {{ SSL_CERT_SECRET_NAME }} -o json | jq '.data.caCertificate'
+      register: caCertificate_secret
+    - name: Get ssl cert from secrets - certificate
+      shell: |
+        oc -n {{ TARGET_NAMESPACE }} get secret {{ SSL_CERT_SECRET_NAME }} -o json | jq '.data.certificate'
+      register: certificate_secret
+    - name: Get ssl cert from secrets - key
+      shell: |
+        oc -n {{ TARGET_NAMESPACE }} get secret {{ SSL_CERT_SECRET_NAME }} -o json | jq '.data.key'
+      register: key_secret
+
+    - name: Set cert decoded value
+      set_fact:
+        caCertificate_value: "{{ caCertificate_secret.stdout | b64decode }}"
+        certificate_value: "{{ certificate_secret.stdout | b64decode }}"
+        key_value: "{{ key_secret.stdout | b64decode }}"
+
+    - name: Include docker tasks
+      include_tasks: "tasks/create-route.yml"
