@@ -105,3 +105,20 @@
       # - backup restore
       # - check patroni for lag
       # - scale up redhat sso 
+
+      - pause:
+          prompt: Have you completed a backup restore and would like to continue with scaling up the redhat sso service (yes/no)
+        register: should_continue
+
+      - name: Logging back into Cluster B to scale up SSO Service 
+        shell: oc config  use-context {{ migrator_vars.cluster_b.context }}
+        when: mypause.user_input | bool
+
+      - name: Scaling SSO Service up in Cluster B
+        include_tasks: ../ops/tasks/scale_up_sso.yml
+        vars:
+          TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
+          SSO_DC_NAME: "{{ migrator_vars.cluster_b.sso_deployment_config }}"
+          include_hpa: false
+        when: mypause.user_input | bool
+        
