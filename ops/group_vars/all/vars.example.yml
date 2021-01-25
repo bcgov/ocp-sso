@@ -10,6 +10,10 @@ BACKUP_DC_NAME: backup-<env>
 PATRONI_SS_NAME: sso-pgsql-<env>
 TARGET_NAMESPACE: devops-sso-<env>
 HPA_NAME: matt_damon
+# vars for creating sso route
+SSO_SVC_NAME: sso-<env>
+SSO_ROUTE_PREFIX: <env>.oidc
+SSL_CERT_SECRET_NAME: oidc-wildcard-ssl-cert
 # vars particular to the state_sync playbook
 migrator_vars:
   cluster_a:
