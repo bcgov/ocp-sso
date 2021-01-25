@@ -2,7 +2,7 @@
 # SSO_DC_NAME: string (the stateful set name)
 
 # TARGET_NAMESPACE: string the target namespace to scale down the replicas
-
+# OPENSHIFT_SERVER_URL
 - name: Delete HPA if exists
   include_tasks: create_or_delete_sso_hpa.yml
   vars:
@@ -12,9 +12,6 @@
   shell: oc scale deploymentConfig/{{ SSO_DC_NAME }} --replicas=0 -n {{ TARGET_NAMESPACE }}
 
 - name: wait for {{ SSO_DC_NAME }} to be at 0 replicas 
-  include_tasks: wait_for_rollout.yml
+  include_tasks: wait_for_scale_down.yml
   vars:
-    delay: 10
-    KIND: DeploymentConfig
-    OBJECT_NAME: "{{ SSO_DC_NAME }}" 
-    DESIRED_REPLICAS: 0
+    POD_SELECTOR: deploymentConfig={{ SSO_DC_NAME }}

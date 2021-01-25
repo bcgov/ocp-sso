@@ -9,7 +9,7 @@
   when: not include_hpa
 
 - name: wait for {{ SSO_DC_NAME }} to be at 5 replicas 
-  include_tasks: wait_for_rollout.yml
+  include_tasks: wait_for_scale_up.yml
   vars:
     delay: 45
     KIND: DeploymentConfig

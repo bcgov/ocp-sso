@@ -4,10 +4,48 @@ OPENSHIFT_SERVER_URL: https://console.pathfinder.gov.bc.ca:8443
 TEST_NAMESPACE: devops-sso-test
 DEV_NAMESPACE: devops-sso-dev
 PROD_NAMESPACE: devops-sso-prod
-
 # SSO env vars:
 SSO_DC_NAME: sso-<env>
 BACKUP_DC_NAME: backup-<env>
 PATRONI_SS_NAME: sso-pgsql-<env>
 TARGET_NAMESPACE: devops-sso-<env>
 HPA_NAME: matt_damon
+# vars particular to the state_sync playbook
+migrator_vars:
+  cluster_a:
+    # cluster name
+    name: pathfinder
+    oc_path: /Users/patricksimonian/Tools//oc
+    server_url: https://console.pathfinder.gov.bc.ca:8443
+    context: devhub-prod/console-pathfinder-gov-bc-ca:8443/patricksimonian
+    backup_deployment_config: backup-sbox-125
+    sso_deployment_config: sso-sbox-125
+    sso_stateful_set: sso-pgsql-sbox-125
+    sso_hpa_name: null
+    image_registry: docker-registry.default.svc:5000
+    pvc: bk-devops-sso-sandbox-mywjpnj5chay
+    namespace: devops-sso-sandbox
+    migrator: 
+    # The pvc migrator image details. 
+    # If it is not found in config'd location it will be built there
+      namespace: devops-sso-tools
+      name: pvc-migrator
+      tag: latest
+  cluster_b:
+    # cluster name
+    name: silver
+    oc_path: /Users/patricksimonian/Tools//oc
+    server_url: https://api.silver.devops.gov.bc.ca:6443
+    context: de0974-test/api-silver-devops-gov-bc-ca:6443/patricksimonian@github
+    backup_deployment_config: backup
+    sso_deployment_config: sso-sbox-148
+    sso_stateful_set: sso-pgsql-sbox-148  
+    sso_hpa_name: null
+    image_registry: image-registry.openshift-image-registry.svc:5000
+    pvc: sso-pgsql-sbox-148-backup
+    namespace: 3d5c3f-test
+    migrator:
+      namespace: 3d5c3f-test  
+      name: pvc-migrator
+      tag: latest
+
