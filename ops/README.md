@@ -19,3 +19,4 @@ describing the automation process. All of this is meant to run on a local machin
   - scale down SSO dc
   - add hpa for SSO dc
   - take a DB backup
+  - state_sync (db backup pvc migration between two clusters) see [STATE_SYNC.md](./STATE_SYNC.md)
