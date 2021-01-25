@@ -10,3 +10,4 @@ target/
 ops/group_vars/all/vars.yml
 .nvm
 *new-realm*
+*tmp-config.yaml

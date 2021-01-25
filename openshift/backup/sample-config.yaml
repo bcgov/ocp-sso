@@ -1,0 +1,39 @@
+# - replace <env> with the actual env
+# - replace <backup_container_image_name> with the build image name
+# - replace <db_name> with the DB name, can be found from db secret
+# - replace <db_service_name> with the DB service name
+# - replace <db_secret_name> with the DB secret name
+# - replace <webhook_id_token> with RC chat channel webhook url
+image:
+  repository: image-registry.openshift-image-registry.svc:5000/6d70e7-tools/<backup_container_image_name>
+  pullPolicy: Always
+  tag: <env>
+
+persistence:
+  backup:
+    size: 5Gi
+    storageClassName: netapp-file-backup
+  verification:
+    size: 5Gi
+
+db:
+  secretName: <db_secret_name>
+  usernameKey: superuser-username
+  passwordKey: superuser-password
+
+env:
+  DATABASE_SERVICE_NAME:
+    value: <db_service_name>
+  ENVIRONMENT_FRIENDLY_NAME:
+    value: "SSO <env> DB Backups"
+  ENVIRONMENT_NAME:
+    value: "<env>"
+  WEBHOOK_URL:
+      value: "<webhook_id_token>"
+
+backupConfig: |
+  postgres=<db_service_name>:5432/<db_name>
+
+  0 1 * * * default ./backup.sh -s
+  # 0 4 * * * default ./backup.sh -s -v all
+# TODO: Please note that we are currently disabling verification due to some issue with the base image.
