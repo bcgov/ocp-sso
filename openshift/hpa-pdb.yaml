@@ -4,8 +4,8 @@ objects:
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     spec:
-      maxReplicas: 5
-      minReplicas: 3
+      maxReplicas: 7
+      minReplicas: 5
       scaleTargetRef:
         apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
@@ -16,8 +16,20 @@ objects:
       labels:
         app: ${TARGET_DC_NAME}
       name: ${NAME}
+  - apiVersion: policy/v1beta1
+    kind: PodDisruptionBudget
+    metadata:
+      annotations: {}
+      labels:
+        app: ${TARGET_DC_NAME}
+      name: ${NAME}
+    spec:
+      minAvailable: 1
+      selector:
+        matchLabels:
+          deploymentconfig: ${TARGET_DC_NAME}
 parameters:
 - name: NAME 
-  value: sso-prod-hpa
+  value: sso-prod
 - name: TARGET_DC_NAME
   value: sso-prod

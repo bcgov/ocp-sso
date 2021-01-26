@@ -280,16 +280,6 @@ objects:
           name: "${NAME}:${IMAGE_TAG}"
       type: ImageChange
     - type: ConfigChange
-- apiVersion: policy/v1beta1
-  kind: PodDisruptionBudget
-  metadata:
-    creationTimestamp: null
-    name: ${NAME}${SUFFIX}
-  spec:
-    maxUnavailable: 1
-    selector:
-      matchLabels:
-        deploymentconfig: ${NAME}${SUFFIX}
 parameters:
 - description: The name for the application.
   displayName: Application Name
