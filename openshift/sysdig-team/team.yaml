@@ -1,0 +1,18 @@
+apiVersion: ops.gov.bc.ca/v1alpha1
+kind: SysdigTeam
+metadata:
+  name: devops-sso-prod-sysdigteam
+spec:
+  team: 
+    description: The Sysdig Team for the SSO Prod Namespaces
+    users:
+    - name: ConradBoydElliottGustafson
+      role: ROLE_TEAM_EDIT 
+    - name: patricksimonian
+      role: ROLE_TEAM_MANAGER
+    - name: ShellyXueHan
+      role: ROLE_TEAM_MANAGER
+    - name: nvunnamm
+      role: ROLE_TEAM_MANAGER
+    - name: arcshiftsolutions
+      role: ROLE_TEAM_EDIT 
