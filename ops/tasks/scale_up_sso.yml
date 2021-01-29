@@ -1,7 +1,8 @@
 # vars 
 # SSO_DC_NAME: string (the stateful set name)
 # TARGET_NAMESPACE: string the target namespace to scale down the replicas
-# HPA_PDB_NAME: string
+# PDB_NAME: string
+# HPA_NAME: string
 # include_hpa: bool
 
 - name: Scaling {{ SSO_DC_NAME }} to 5 pods manually

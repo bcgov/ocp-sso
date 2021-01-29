@@ -31,7 +31,8 @@
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_a.namespace }}"
           SSO_DC_NAME: "{{ migrator_vars.cluster_a.sso_deployment_config }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_a.backup_deployment_config }}"
-          SSO_HPA_PDB_NAME: "{{ migrator_vars.cluster_a.sso_hpa_pdb_name }}"
+          SSO_PDB_NAME: "{{ migrator_vars.cluster_a.sso_pdb_name }}"
+          SSO_HPA_NAME: "{{ migrator_vars.cluster_a.sso_hpa_name }}"
 
       - name: Login to Cluster B
         shell: oc config use-context {{ migrator_vars.cluster_b.context }}
@@ -41,7 +42,8 @@
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
           SSO_DC_NAME: "{{ migrator_vars.cluster_b.sso_deployment_config }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_b.backup_deployment_config }}"
-          SSO_HPA_PDB_NAME: "{{ migrator_vars.cluster_b.sso_hpa_pdb_name }}"
+          SSO_PDB_NAME: "{{ migrator_vars.cluster_b.sso_pdb_name }}"
+          SSO_HPA_NAME: "{{ migrator_vars.cluster_b.sso_hpa_name }}"
       - debug:
           msg: Beginning Migration Process
       
