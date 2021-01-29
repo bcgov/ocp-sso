@@ -26,6 +26,7 @@ migrator_vars:
     context: devhub-prod/console-pathfinder-gov-bc-ca:8443/patricksimonian
     backup_deployment_config: backup-sbox-125
     backup_kind: DeploymentConfig
+    backup_pod_selector: foo=foo
     sso_deployment_config: sso-sbox-125
     sso_stateful_set: sso-pgsql-sbox-125
     sso_hpa_name: matt_damon
@@ -47,6 +48,7 @@ migrator_vars:
     context: de0974-test/api-silver-devops-gov-bc-ca:6443/patricksimonian@github
     backup_deployment_config: backup
     backup_kind: DeploymentConfig
+    backup_pod_selector: foo=foo
     sso_deployment_config: sso-sbox-148
     sso_stateful_set: sso-pgsql-sbox-148  
     sso_hpa_name: matt_damon

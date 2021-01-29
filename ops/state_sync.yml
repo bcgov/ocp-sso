@@ -44,6 +44,7 @@
           SSO_DC_NAME: "{{ migrator_vars.cluster_b.sso_deployment_config }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_b.backup_deployment_config }}"
           SSO_BACKUP_KIND: "{{ migrator_vars.cluster_b.backup_kind }}"
+          BACKUP_POD_SELECTOR: "{{ migrator_vars.cluster_b.backup_pod_selector }}"
           SSO_PDB_NAME: "{{ migrator_vars.cluster_b.sso_pdb_name }}"
           SSO_HPA_NAME: "{{ migrator_vars.cluster_b.sso_hpa_name }}"
       - debug:
