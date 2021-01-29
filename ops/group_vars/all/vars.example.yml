@@ -9,7 +9,8 @@ SSO_DC_NAME: sso-<env>
 BACKUP_DC_NAME: backup-<env>
 PATRONI_SS_NAME: sso-pgsql-<env>
 TARGET_NAMESPACE: devops-sso-<env>
-HPA_NAME: matt_damon
+# template using the same name for hpa and pdb
+HPA_PDB_NAME: matt_damon
 # vars for creating sso route
 SSO_SVC_NAME: sso-<env>
 SSO_ROUTE_PREFIX: <env>.oidc
@@ -25,7 +26,7 @@ migrator_vars:
     backup_deployment_config: backup-sbox-125
     sso_deployment_config: sso-sbox-125
     sso_stateful_set: sso-pgsql-sbox-125
-    sso_hpa_name: null
+    sso_hpa_pdb_name: null
     image_registry: docker-registry.default.svc:5000
     pvc: bk-devops-sso-sandbox-mywjpnj5chay
     namespace: devops-sso-sandbox
@@ -44,7 +45,7 @@ migrator_vars:
     backup_deployment_config: backup
     sso_deployment_config: sso-sbox-148
     sso_stateful_set: sso-pgsql-sbox-148  
-    sso_hpa_name: null
+    sso_hpa_pdb_name: null
     image_registry: image-registry.openshift-image-registry.svc:5000
     pvc: sso-pgsql-sbox-148-backup
     namespace: 3d5c3f-test

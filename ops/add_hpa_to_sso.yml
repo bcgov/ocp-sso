@@ -7,9 +7,9 @@
       - debug: 
           msg: "--------- Scaling SSO and Patroni in order ---------"
 
-      - name: Adding HPA {{ HPA_NAME }} to {{ SSO_DC_NAME }}
-        include_tasks: ./tasks/create_or_delete_sso_hpa.yml
+      - name: Adding HPA and PDB {{ HPA_PDB_NAME }} to {{ SSO_DC_NAME }}
+        include_tasks: ./tasks/create_or_delete_sso_hpa_pdb.yml
         vars:
           _action: create
-        when: HPA_NAME != 'matt_damon'     
+        when: HPA_PDB_NAME != 'matt_damon'     
 

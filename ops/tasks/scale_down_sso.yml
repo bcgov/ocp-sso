@@ -3,8 +3,8 @@
 
 # TARGET_NAMESPACE: string the target namespace to scale down the replicas
 # OPENSHIFT_SERVER_URL
-- name: Delete HPA if exists
-  include_tasks: create_or_delete_sso_hpa.yml
+- name: Delete HPA and PDB if exists
+  include_tasks: create_or_delete_sso_hpa_pdb.yml
   vars:
     _action: delete
     

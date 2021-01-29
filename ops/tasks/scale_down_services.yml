@@ -3,7 +3,7 @@
 # SSO_DC_NAME
 # SSO_BACKUP_NAME
 # TARGET_NAMESPACE
-# SSO_HPA_NAME
+# SSO_HPA_PDB_NAME
 # CLUSTER_SERVER_URL 
 
 - name: Scaling Backup Container {{ SSO_BACKUP_NAME }} to 0 Pods
@@ -15,4 +15,4 @@
 - name: Scaling DeploymentConfig {{ SSO_DC_NAME }} to 0 Pods
   include_tasks: ./scale_down_sso.yml
   vars:
-    HPA_NAME: "{{ SSO_HPA_NAME }}"
+    HPA_PDB_NAME: "{{ SSO_HPA_PDB_NAME }}"
