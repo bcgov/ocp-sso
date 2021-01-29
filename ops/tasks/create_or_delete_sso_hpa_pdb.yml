@@ -1,11 +1,12 @@
 # VARS
-# HPA_PDB_NAME: string
+# PDB_NAME: string
+# HPA_NAME: string
 # SSO_DC_NAME: string
 # TARGET_NAMESPACE: string
 # _action: string (create|delete)
 - name: creating HPA and PDB
   shell: | 
-    oc -n {{ TARGET_NAMESPACE}} process -f ../openshift/hpa-pdb.yaml -p NAME={{ HPA_PDB_NAME }} -p TARGET_DC_NAME={{ SSO_DC_NAME }} | \
+    oc -n {{ TARGET_NAMESPACE}} process -f ../openshift/hpa-pdb.yaml -p NAME={{ HPA_NAME }} -p TARGET_DC_NAME={{ SSO_DC_NAME }} | \
     oc -n {{ TARGET_NAMESPACE }} apply -f - 
   when: _action == 'create'
 
@@ -14,7 +15,7 @@
   k8s_info:
     api_version: v1
     kind: "HorizontalPodAutoscaler"
-    name: "{{ HPA_PDB_NAME }}"
+    name: "{{ HPA_NAME }}"
     namespace: "{{ TARGET_NAMESPACE }}"
   register: hpa
   when: _action == 'delete'
@@ -23,15 +24,15 @@
   k8s_info:
     api_version: policy/v1beta1
     kind: "PodDisruptionBudget"
-    name: "{{ HPA_PDB_NAME }}"
+    name: "{{ PDB_NAME }}"
     namespace: "{{ TARGET_NAMESPACE }}"
   register: pdb
   when: _action == 'delete'
 
 - name: deleting HPA
-  shell: oc delete hpa/{{ HPA_PDB_NAME }} -n {{ TARGET_NAMESPACE}}
+  shell: oc delete hpa/{{ HPA_NAME }} -n {{ TARGET_NAMESPACE}}
   when: _action == 'delete' and hpa.resources|length > 0
 
 - name: deleting PDB
-  shell: oc delete pdb/{{ HPA_PDB_NAME }} -n {{ TARGET_NAMESPACE}}
+  shell: oc delete pdb/{{ PDB_NAME }} -n {{ TARGET_NAMESPACE}}
   when: _action == 'delete' and pdb.resources|length > 0
