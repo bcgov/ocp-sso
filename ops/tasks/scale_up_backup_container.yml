@@ -1,10 +1,10 @@
 ---
 
 - name: Scaling Backup Container {{ SSO_BACKUP_NAME }} to 1 Pods
-  shell: oc -n {{ TARGET_NAMESPACE }} scale dc/{{ SSO_BACKUP_NAME }} --replicas=1
+  shell: oc -n {{ TARGET_NAMESPACE }} scale {{ SSO_BACKUP_KIND }}/{{ SSO_BACKUP_NAME }} --replicas=1
 
 - name: Waiting for Backup Container to be scaled up
   include_tasks: ./wait_for_scale_up.yml
   vars:
-    KIND: DeploymentConfig
+    KIND: "{{ SSO_BACKUP_KIND }}"
     OBJECT_NAME: "{{ SSO_BACKUP_NAME }}"

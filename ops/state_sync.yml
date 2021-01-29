@@ -31,6 +31,7 @@
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_a.namespace }}"
           SSO_DC_NAME: "{{ migrator_vars.cluster_a.sso_deployment_config }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_a.backup_deployment_config }}"
+          SSO_BACKUP_KIND: "{{ migrator_vars.cluster_a.backup_kind }}"
           SSO_PDB_NAME: "{{ migrator_vars.cluster_a.sso_pdb_name }}"
           SSO_HPA_NAME: "{{ migrator_vars.cluster_a.sso_hpa_name }}"
 
@@ -42,6 +43,7 @@
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
           SSO_DC_NAME: "{{ migrator_vars.cluster_b.sso_deployment_config }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_b.backup_deployment_config }}"
+          SSO_BACKUP_KIND: "{{ migrator_vars.cluster_b.backup_kind }}"
           SSO_PDB_NAME: "{{ migrator_vars.cluster_b.sso_pdb_name }}"
           SSO_HPA_NAME: "{{ migrator_vars.cluster_b.sso_hpa_name }}"
       - debug:
@@ -76,6 +78,7 @@
         vars:
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_a.namespace }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_a.backup_deployment_config }}"
+          SSO_BACKUP_KIND: "{{ migrator_vars.cluster_a.backup_kind }}"
       - debug:
           msg: Completed cleanup of Cluster A. Migrator Deployment deleted and Backup brough back up
 
@@ -91,6 +94,7 @@
         vars:
           TARGET_NAMESPACE: "{{ migrator_vars.cluster_b.namespace }}"
           SSO_BACKUP_NAME: "{{ migrator_vars.cluster_b.backup_deployment_config }}"
+          SSO_BACKUP_KIND: "{{ migrator_vars.cluster_b.backup_kind }}"
       - debug:
           msg: Completed cleanup of Cluster B. Migrator Deployment deleted and Backup brough back up
 

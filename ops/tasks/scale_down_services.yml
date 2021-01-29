@@ -2,13 +2,14 @@
 # VARS
 # SSO_DC_NAME
 # SSO_BACKUP_NAME
+# SSO_BACKUP_KIND
 # TARGET_NAMESPACE
 # SSO_PDB_NAME
 # SSO_HPA_NAME
 # CLUSTER_SERVER_URL 
 
 - name: Scaling Backup Container {{ SSO_BACKUP_NAME }} to 0 Pods
-  shell: oc -n {{ TARGET_NAMESPACE }} scale dc/{{ SSO_BACKUP_NAME }} --replicas=0
+  shell: oc -n {{ TARGET_NAMESPACE }} scale {{ SSO_BACKUP_KIND }}/{{ SSO_BACKUP_NAME }} --replicas=0
 - name: Wait for Backup Container to roll to 0 replicas
   include_tasks: ./wait_for_scale_down.yml 
   vars:
