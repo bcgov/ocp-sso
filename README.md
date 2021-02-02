@@ -60,7 +60,9 @@ The template requires an ImageStream in the same namespace
 docker login https://registry.redhat.io -u <username> -p <password>
 
 # if secret exists, just import here directly
-oc -n 6d70e7-tools import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4 --confirm
+# <the_actual_version>: double check on the actual sso74-openshift-rhel8 image version
+# if using 7.X, it will point to latest in the series but not a specific patch version!!!
+oc -n 6d70e7-tools import-image sso74-openshift-rhel8:7.4 --from=registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:<the_actual_version> --confirm
 
 # import to deployment namespace
 oc tag 6d70e7-tools/sso74-openshift-rhel8:7.4 3d5c3f-dev/sso74-openshift-rhel8:7.4

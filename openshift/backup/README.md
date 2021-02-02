@@ -29,6 +29,9 @@ Here are the details about the chart we are using: https://github.com/bcgov/helm
 # switch to deployment namespace
 oc project <namespace>_<env>
 
+# import image from tools
+oc tag <namespace>_tools/<is_name>:<env> <is_name>:<env>
+
 # first update the configuration:
 cp sample-config.yaml <env>-tmp-config.yaml
 
