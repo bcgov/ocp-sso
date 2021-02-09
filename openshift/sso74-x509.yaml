@@ -335,7 +335,7 @@ parameters:
 - description: Container CPU request.
   displayName: Container CPU Request
   name: CPU_REQUEST
-  value: "1"
+  value: "1250m"
 - description: Set route with specific host.
   displayName: Host route
   name: HOST
