@@ -331,11 +331,11 @@ parameters:
 - description: Container CPU limit.
   displayName: Container CPU Limit
   name: CPU_LIMIT
-  value: 500m
+  value: 750m
 - description: Container CPU request.
   displayName: Container CPU Request
   name: CPU_REQUEST
-  value: 250m
+  value: 500m
 - description: The OpenShift Namespace where the patroni and postgresql ImageStream
     resides.
   displayName: ImageStream Namespace
