@@ -44,11 +44,7 @@ If you are just looking for quickly spin up an instance of RH-SSO
 # 6d70e7-* are the namespaces for SSO in ocp4
 # 3d5c3f-* are the sandbox namespaces for SSO in ocp4
 
-# Create Network Security Policy
-oc -n 6d70e7-tools process -f openshift/nsp.yaml -p 'NAMESPACE=6d70e7-tools' | oc -n 6d70e7-tools create -f -
-oc -n 3d5c3f-dev process -f openshift/nsp.yaml -p 'NAMESPACE=3d5c3f-dev' | oc -n 3d5c3f-dev create -f -
-
-# create Kubernetes Network Security Policy
+# Create Kubernetes Network Security Policy
 oc process -f openshift/knp.yaml -p NAMESPACE=3d5c3f -p ENVIRONMENT=dev | oc apply -f -
 ```
 
