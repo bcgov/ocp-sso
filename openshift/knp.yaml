@@ -1,0 +1,78 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}-nsp
+objects:
+  - kind: NetworkPolicy
+    apiVersion: networking.k8s.io/v1
+    metadata:
+        name: deny-by-default
+    spec:
+        # The default posture for a security first namespace is to deny all traffic.
+      podSelector: {}
+      ingress: []
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+        name: intra-namespace-comms
+    spec:
+        # "allow ${NAMESPACE}-${ENVIRONMENT} namespace to talk to itself"
+        ingress:
+        - from:
+          - namespaceSelector:
+              matchLabels:
+                name: ${NAMESPACE}
+                environment: ${ENVIRONMENT}
+        podSelector: {}
+        policyTypes:
+            - Ingress
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+        namespace: ${NAMESPACE}-${ENVIRONMENT}
+        name: int-cluster-k8s-api-comms
+    spec:
+        # "allow ${NAMESPACE}-${ENVIRONMENT} pods to talk to the k8s api"
+        podSelector:
+          matchLabels:
+            app: sso
+        ingress:
+        - from:
+          - namespaceSelector: {}
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-from-openshift-ingress
+    spec:
+        # This policy allows any pod with a route & service combination
+        # to accept traffic from the OpenShift router pods. This is
+        # required for things outside of OpenShift (like the Internet)
+        # to reach your pods.
+        ingress:
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    network.openshift.io/policy-group: ingress
+        podSelector: {}
+        policyTypes:
+          - Ingress
+parameters:
+  - description: The name for the application.
+    displayName: Application Name
+    name: NAME
+    required: true
+    value: sso
+  - description: A suffix appended to most objects
+    displayName: Application Suffix
+    name: SUFFIX
+    value: ""
+  - description: The namespace
+    displayName: Namespace
+    name: NAMESPACE
+    required: true
+    value: sso-tools
+  - description: The environment
+    displayName: environment
+    name: ENVIRONMENT
+    required: true
+    value: ""
