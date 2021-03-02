@@ -6,13 +6,13 @@ spec:
   team: 
     description: The Sysdig Team for the SSO Prod Namespaces
     users:
-    - name: ConradBoydElliottGustafson
+    - name: c.gustafson@cgi.com
       role: ROLE_TEAM_EDIT 
-    - name: patricksimonian
+    - name: patrick.simonian@gov.bc.ca
       role: ROLE_TEAM_MANAGER
-    - name: ShellyXueHan
+    - name: Shelly.Han@gov.bc.ca
       role: ROLE_TEAM_MANAGER
-    - name: nvunnamm
+    - name: niranv22@gmail.com
       role: ROLE_TEAM_MANAGER
-    - name: arcshiftsolutions
+    - name: arcshiftsolutions@gmail.com
       role: ROLE_TEAM_EDIT 
