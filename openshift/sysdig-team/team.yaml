@@ -8,7 +8,7 @@ spec:
     users:
     - name: c.gustafson@cgi.com
       role: ROLE_TEAM_EDIT 
-    - name: patrick.simonian@gov.bc.ca
+    - name: patricksimonian@gmail.com
       role: ROLE_TEAM_MANAGER
     - name: Shelly.Han@gov.bc.ca
       role: ROLE_TEAM_MANAGER
