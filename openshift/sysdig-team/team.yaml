@@ -1,7 +1,8 @@
 apiVersion: ops.gov.bc.ca/v1alpha1
 kind: SysdigTeam
 metadata:
-  name: devops-sso-prod-sysdigteam
+  name: 6d70e7-team
+  namespace: 6d70e7-tools
 spec:
   team: 
     description: The Sysdig Team for the SSO Prod Namespaces
