@@ -2,7 +2,7 @@
 name: User Story
 about: User stories for the SSO Keycloak application
 title: ''
-labels: Story
+labels: Story, sso
 assignees: ''
 
 ---
