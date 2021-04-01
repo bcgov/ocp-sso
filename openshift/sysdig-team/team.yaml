@@ -19,3 +19,5 @@ spec:
       role: ROLE_TEAM_EDIT 
     - name: bryce.reid@cgi.com
       role: ROLE_TEAM_EDIT 
+    - name: sanreddy461@gmail.com
+      role: ROLE_TEAM_MANAGER
