@@ -6,12 +6,7 @@
   <H1>Incident Submission Form</H1>
   
   
-<script type="text/javascript">
-document.getElementById("mainForm").addEventListener("click", function() {
-  createBody();
-}, false);
-
-
+<script>
 function createBody()
 {
 var theImpact = document.querySelector("input[name='impact']:checked");
@@ -32,11 +27,11 @@ var theSummary = document.getElementById('summary').value;
 
 
 
-var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+thePhone+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
+var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+theTel+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
   document.getElementById('body').value = n;
-  document.getElementById('title').value = theSummary;
-
+  //document.getElementById('title').value = theSummary;
 //var n = theImpact.value+theUrgency.value;
+alert(n);
 
 }
  </script>
@@ -95,4 +90,5 @@ Please describe your issue here.
 </html>
 
  
+
 
