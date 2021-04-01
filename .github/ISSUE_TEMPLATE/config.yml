@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SSO Wiki
+    url: https://github.com/bcgov/ocp-sso/wiki
+    about: For further info...
