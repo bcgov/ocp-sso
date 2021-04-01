@@ -3,6 +3,23 @@
 <head>
 </head>
 <body>
+
+<script type="text/javascript">
+function join_ym()
+{
+var yy = document.getElementById('yy').value;
+var mm = document.getElementById('mm').value;
+document.getElementById('joint').value = yy+mm;
+alert(document.getElementById('joint').value);
+}
+</script>
+
+<input type="text" id="yy" />
+<input type="text" id="mm" />
+<input type="hidden" id="joint">
+<input type="button" value="Join!" onclick="join_ym();">
+  
+  
 <div>
 <form action="https://github.com/bcgov/ocp-sso/issues/new">
   <input type="hidden" id="labels" name="labels" value="sso,incident">
