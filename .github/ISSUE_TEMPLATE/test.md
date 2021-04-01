@@ -1,3 +1,12 @@
+---
+name: Test
+about: Create a test issue
+title: ''
+labels: task, sso
+assignees: ''
+
+---
+
 **This is a test**
 
 <div>
