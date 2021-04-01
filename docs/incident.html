@@ -3,91 +3,96 @@
 <head>
 </head>
 <body>
-  <strong>version 4</strong>
-  
-  <script type="text/javascript">
-function join_ym()
-{
-var yy = document.getElementById('yy').value;
-var mm = document.getElementById('mm').value;
-document.getElementById('joint').value = yy+mm;
-alert(document.getElementById('joint').value);
-}
-</script>
-
-<input type="text" id="yy" />
-<input type="text" id="mm" />
-<input type="hidden" id="joint">
-<input type="button" value="Join!" onclick="join_ym();">
+  <H1>Incident Submission Form</H1>
   
   
 <script type="text/javascript">
+document.getElementById("mainForm").addEventListener("click", function() {
+  createBody();
+}, false);
+
+
 function createBody()
 {
-/*
-  var theImpact = parseInt(document.getElementById('impact').value);
-  alert(theImpact);
-var theUrgency =  parseInt(document.getElementById('urgency').value);
-  alert(theUrgency);
+var theImpact = document.querySelector("input[name='impact']:checked");
+
+var theUrgency =  document.querySelector("input[name='urgency']:checked");
+
 var theUsername = document.getElementById('username').value;
-  alert(theUsername);
+var theEmail = document.getElementById('email').value;
+var theTel = document.getElementById('phone').value;
+
 var theAffApp = document.getElementById('affApp').value;
-  alert(theAffApp);
-var priorityCalc = (theImpact+theUrgency)/3;
-  alert(priorityCalc);
-var thePriority  priorityCalc.toPrecision(1); 
-  alert(thePriority);
-var theTitle = document.getElementById('title').value;
-  alert(theTitle);
-var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact+"\n\n#### Urgency: "+theUrgency+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
+
+var priorityCalc = (theImpact.value*theUrgency.value)/3;
+
+var thePriority  = priorityCalc.toPrecision(1); 
+
+var theSummary = document.getElementById('summary').value;
+
+
+
+var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+thePhone+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
   document.getElementById('body').value = n;
-  */
-  alert("test");
+  document.getElementById('title').value = theSummary;
+
+//var n = theImpact.value+theUrgency.value;
+
 }
  </script>
-  
-<form>
-  <label for="username">Your Name: </label>
-  <input type="text" id="username" name="username" value=""><br>
+  <strong>Contact Information</strong>
 
-  <label for="affApp">Affected Application: </label>
-  <input type="text" id="affApp" name="affApp" value=""><br>
+<form id=mainForm>
+  <label for="username">Your Name: </label>
+  <input type="text" id="username" name="username" value="" required onchange="createBody()"><br>
+  <label for="email">Email Address: </label>
+  <input type="email" id="email" name="email" value="" required onchange="createBody()"><br>
+  <label for="phone">Phone Number: </label>
+  <input type="tel" id="phone" name="phone" value="" required onchange="createBody()"><br><br>
+
+  <strong>Issue Summary</strong><br>
+  <label for="summary">Summary:</label>
+  <input type="text" id="summary" name="summary" value="Enter summary here" onchange="createBody()" onclick="this.value=''"><br><br>
+
+  <strong>Which application is related to the issue?</strong><br>
+  <label for="affApp">Application:</label>
+  <select name="affApp" id="affApp">
+    <option value="Realm-o-Matic">Realm-o-Matic</option>
+    <option value="Keycloak SSO" selected>Keycloack SSO</option>
+  </select><br><br>
   
   <!--Imapct-->
-  <input type="radio" id="impactHigh" name="impact" value="3"><label for="impactHigh">High Impact</label><br>
-  <input type="radio" id="impactMedium" name="impact" value="2"><label for="impactMedium">Medium Impact</label><br>
+<strong>What is the impact of the issue?</strong><br>
+  <input type="radio" id="impactHigh" name="impact" value="3"><label for="impactHigh">High Impact</label>
+  <input type="radio" id="impactMedium" name="impact" value="2"><label for="impactMedium">Medium Impact</label>
   <input type="radio" id="impactLow" name="impact" value="1" checked="true"><label for="impactLow">Low Impact</label><br><br>
   
   <!--Urgency-->
-  <input type="radio" id="urgencyHigh" name="urgency" value="3"><label for="urgencyHigh">High Impact</label><br>
-  <input type="radio" id="urgencyMedium" name="urgency" value="2"><label for="urgencyMedium">Medium Impact</label><br>
-  <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><br>
+<strong>What is the urgency of the issue?</strong><br>
+  <input type="radio" id="urgencyHigh" name="urgency" value="3"><label for="urgencyHigh">High Impact</label>
+  <input type="radio" id="urgencyMedium" name="urgency" value="2"><label for="urgencyMedium">Medium Impact</label>
+  <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><BR>
   
-  <label for="description">Description </label> <br>
-<textarea id="description" name="description" rows="4" cols="50">
+  <label for="description" style="font-weight: bold">Description </label> <br>
+<textarea id="description" name="description" rows="4" cols="50" onclick="this.value=''">
 Please describe your issue here.
 </textarea>
   
   <!--build the body of the ticket-->
   <input type="button" value="Join!" onclick="createBody();">
   </form>
-  
-<form action="https://github.com/bcgov/ocp-sso/issues/new">
+
+<div id="formSubmission></div>  
+<form action="https://github.com/bcgov/ocp-sso/issues/new" id="mainForm">
   <input type="hidden" id="labels" name="labels" value="sso,incident">
   <input type="hidden" id="template" name="template" value="test.md">
-  <label for="title">Summary:</label><br>
-  <input type="text" id="title" name="title" value="Enter summary here"><br>
-  <input type="hidden" id="body">
-  <input type="submit" value="Submit">
+  <input type="hidden" id="body" name="body">
+  <input type="hidden" id="title" name="title">
+  <input type="submit" value="Submit" >
 </form> 
-  <!--
-Service : Red Hat SSO, Realm-O-Matic, 
-Assignment group : Platform Team or SSO Team
-Configuration item : Client App Name <name>, App Url <url>, Realm Name <name>
-Assigned to: 
- 
-Short Description 
-Description
--->
+
 </body>
 </html>
+
+ 
+
