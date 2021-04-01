@@ -23,15 +23,16 @@ var priorityCalc = (theImpact.value*theUrgency.value)/3;
 
 var thePriority  = priorityCalc.toPrecision(1); 
 
-var theSummary = document.getElementById('summary').value;
+var theDesc = document.getElementById('description').value;
 
 
 
-var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+theTel+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
+var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+theTel+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Description\n\n"+theDesc+"\n\n#### TBD";
   document.getElementById('body').value = n;
-  //document.getElementById('title').value = theSummary;
+  document.getElementById('title').value = theSummary;
 //var n = theImpact.value+theUrgency.value;
-alert(n);
+
+
 
 }
  </script>
@@ -74,21 +75,19 @@ Please describe your issue here.
 </textarea>
   
   <!--build the body of the ticket-->
-  <input type="button" value="Join!" onclick="createBody();">
+  <input type="button" value="test" onclick="alert(n);">
   </form>
 
 <div id="formSubmission></div>  
-<form action="https://github.com/bcgov/ocp-sso/issues/new" id="mainForm">
-  <input type="hidden" id="labels" name="labels" value="sso,incident">
-  <input type="hidden" id="template" name="template" value="test.md">
-  <input type="hidden" id="body" name="body">
-  <input type="hidden" id="title" name="title">
-  <input type="submit" value="Submit" >
+<form action="https://github.com/bcgov/ocp-sso/issues/new" method="get">
+  <input type="text" id="labels" name="labels" value="sso,incident">
+  <input type="text" id="template" name="template" value="test.md">
+  <input type="text" id="body" name="body">
+  <input type="text" id="title" name="title">
+  <input type="submit" value="Submit">
 </form> 
 
 </body>
 </html>
 
  
-
-
