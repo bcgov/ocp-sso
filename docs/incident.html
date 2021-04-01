@@ -44,6 +44,11 @@ var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\
   <input type="radio" id="urgencyMedium" name="urgency" value="2"><label for="urgencyMedium">Medium Impact</label><br>
   <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><br>
   
+  <label for="description">Description </label> <br>
+<textarea id="description" name="description" rows="4" cols="50">
+Please describe your issue here.
+</textarea>
+  
   <!--build the body of the ticket-->
   <input type="button" value="Join!" onclick="createBody();">
   </form>
