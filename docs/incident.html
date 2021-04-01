@@ -7,6 +7,12 @@
   
   
 <script>
+/*function sForm()
+{
+document.getElementById("formSubmission").submit();
+}
+*/
+
 function createBody()
 {
 var theImpact = document.querySelector("input[name='impact']:checked");
@@ -24,15 +30,19 @@ var priorityCalc = (theImpact.value*theUrgency.value)/3;
 var thePriority  = priorityCalc.toPrecision(1); 
 
 var theDesc = document.getElementById('description').value;
+var theSummary = document.getElementById('summary').value;
 
+var linefeeder = escape('%OA');
 
-
-var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+theTel+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Description\n\n"+theDesc+"\n\n#### TBD";
+var n="#### Name "+theUsername+"\r\n#### Email: "+theEmail+"\n\n#### Phone: "+theTel+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact.value+"\n\n#### Urgency: "+theUrgency.value+"\n\n#### Priority: "+thePriority+"\n\n#### Description\n\n"+theDesc+"\n\n#### TBD";
   document.getElementById('body').value = n;
   document.getElementById('title').value = theSummary;
-//var n = theImpact.value+theUrgency.value;
 
 
+var theUrl = "https://github.com/bcgov/ocp-sso/issues/new?template="+encodeURIComponent('test.md')+"&labels="+encodeURIComponent('sso,incident')+"&body="+encodeURIComponent(n)+"&title="+encodeURIComponent(theSummary);
+//alert(theUrl);
+
+window.location.assign(theUrl);
 
 }
  </script>
@@ -40,15 +50,15 @@ var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+t
 
 <form id=mainForm>
   <label for="username">Your Name: </label>
-  <input type="text" id="username" name="username" value="" required onchange="createBody()"><br>
+  <input type="text" id="username" name="username" value="" required><br>
   <label for="email">Email Address: </label>
-  <input type="email" id="email" name="email" value="" required onchange="createBody()"><br>
+  <input type="email" id="email" name="email" value="" required><br>
   <label for="phone">Phone Number: </label>
-  <input type="tel" id="phone" name="phone" value="" required onchange="createBody()"><br><br>
+  <input type="tel" id="phone" name="phone" value="" required><br><br>
 
   <strong>Issue Summary</strong><br>
   <label for="summary">Summary:</label>
-  <input type="text" id="summary" name="summary" value="Enter summary here" onchange="createBody()" onclick="this.value=''"><br><br>
+  <input type="text" id="summary" name="summary" value="Enter summary here" onfocus="this.value=''"><br><br>
 
   <strong>Which application is related to the issue?</strong><br>
   <label for="affApp">Application:</label>
@@ -70,24 +80,24 @@ var n="#### Name: "+theUsername+"\n\n#### Email: "+theEmail+"\n\n#### Phone: "+t
   <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><BR>
   
   <label for="description" style="font-weight: bold">Description </label> <br>
-<textarea id="description" name="description" rows="4" cols="50" onclick="this.value=''">
+<textarea id="description" name="description" rows="4" cols="50" onfocus="this.value=''">
 Please describe your issue here.
 </textarea>
   
-  <!--build the body of the ticket-->
-  <input type="button" value="test" onclick="alert(n);">
   </form>
-
-<div id="formSubmission></div>  
-<form action="https://github.com/bcgov/ocp-sso/issues/new" method="get">
+ 
+<form action="https://github.com/bcgov/ocp-sso/issues/new" id="formSubmission">
   <input type="text" id="labels" name="labels" value="sso,incident">
   <input type="text" id="template" name="template" value="test.md">
   <input type="text" id="body" name="body">
   <input type="text" id="title" name="title">
-  <input type="submit" value="Submit">
+  <input type="button" value="Submity" onclick="createBody()">
 </form> 
 
 </body>
 </html>
+
+ 
+
 
  
