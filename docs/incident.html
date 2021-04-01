@@ -5,12 +5,12 @@
 <body>
 <div>
 <form action="https://github.com/bcgov/ocp-sso/issues/new">
-  <label for="lables">Labels:</label><br>
-  <input type="text" id="labels" name="labels" value="sso"><be>
-  <label for="title">Title:</label><br>
+  <input type="hidden" id="labels" name="labels" value="sso%2Cincident">
+  <input type="hidden" id="template" name="template" value="test.md">
+  <label for="title">Summary:</label><br>
   <input type="text" id="title" name="title" value="Enter summary here"><br>
-  <label for="template">Template:</label><br>
-  <input type="text" id="template" name="template" value="test.md"><br><br>
+  <label for="body">Description the issue:</label><br>
+  <textarea id="body" name="body" rows="10" cols="30">Enter something here</textarea><br><br>
   <input type="submit" value="Submit">
 </form> 
 </div>
