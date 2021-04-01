@@ -5,29 +5,69 @@
 <body>
 
 <script type="text/javascript">
-function join_ym()
+function createBody()
 {
-var yy = document.getElementById('yy').value;
-var mm = document.getElementById('mm').value;
-document.getElementById('joint').value = yy+mm;
-alert(document.getElementById('joint').value);
-}
-</script>
+var theImpact = parseInt(document.getElementById('impact').value);
+var theUrgency =  parseInt(document.getElementById('urgency').value);
+var theUsername = document.getElementById('username').value
+var theAffApp = document.getElementById('affApp').value
+var priorityCalc = (theImpact+theUrgency)/3;
+var thePriority  priorityCalc.toPrecision(1); 
+var theTitle = document.getElementById('title').value;
 
-<input type="text" id="yy" />
-<input type="text" id="mm" />
-<input type="hidden" id="joint">
-<input type="button" value="Join!" onclick="join_ym();">
+var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact+"\n\n#### Urgency: "+theUrgency+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### Screenshots:";
+
   
   
+  document.getElementById('theBody').value = n;
+  alert(document.getElementById('theBody').value);
+}
+ </script>
+
+
 <div>
 <form action="https://github.com/bcgov/ocp-sso/issues/new">
+
+  <label for="username">Your Name: </label>
+  <input type="text" id="username" name="username" value=""><br>
+
+  <label for="affApp">Affected Application: </label>
+  <input type="text" id="affApp" name="affApp" value=""><br>
+  
+  <!--Imapct-->
+  <input type="radio" id="impactHigh" name="impact" value="3"><label for="impactHigh">High Impact</label><br>
+  <input type="radio" id="impactMedium" name="impact" value="2"><label for="impactMedium">Medium Impact</label><br>
+  <input type="radio" id="impactLow" name="impact" value="1" checked="true"><label for="impactLow">Low Impact</label><br>
+  
+  <!--Urgency-->
+  <input type="radio" id="urgencyHigh" name="urgency" value="3"><label for="urgencyHigh">High Impact</label><br>
+  <input type="radio" id="urgencyMedium" name="urgency" value="2"><label for="urgencyMedium">Medium Impact</label><br>
+  <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br>
+  
+  <!--build the body of the ticket-->
+  <input type="hidden" id="theBody">
+  <input type="button" value="Join!" onclick="createBody();
+
+  
+  
+
+<!--
+Service : Red Hat SSO, Realm-O-Matic, 
+Assignment group : Platform Team or SSO Team
+Configuration item : Client App Name <name>, App Url <url>, Realm Name <name>
+Assigned to: 
+ 
+Short Description 
+Description
+-->
+  
+
   <input type="hidden" id="labels" name="labels" value="sso,incident">
   <input type="hidden" id="template" name="template" value="test.md">
   <label for="title">Summary:</label><br>
   <input type="text" id="title" name="title" value="Enter summary here"><br>
-  <label for="body">Description the issue:</label><br>
-  <textarea id="body" name="body" rows="10" cols="30">Enter something here</textarea><br><br>
+  <label for="description">Description the issue:</label><br>
+  <textarea id="description" name="description" rows="10" cols="30">Provide a short description of the issue.</textarea><br><br>
   <input type="submit" value="Submit">
 </form> 
 </div>
