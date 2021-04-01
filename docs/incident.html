@@ -19,15 +19,15 @@ var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\
 
   
   
-  document.getElementById('theBody').value = n;
-  alert(document.getElementById('theBody').value);
+  document.getElementById('body').value = n;
+  alert(document.getElementById('body').value);
 }
  </script>
 
 
 <div>
-<form action="https://github.com/bcgov/ocp-sso/issues/new">
-
+  
+<form>
   <label for="username">Your Name: </label>
   <input type="text" id="username" name="username" value=""><br>
 
@@ -45,18 +45,16 @@ var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\
   <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><br>
   
   <!--build the body of the ticket-->
-  <input type="hidden" id="theBody">
   <input type="button" value="Join!" onclick="createBody();">
+  </form>
+  
+<form action="https://github.com/bcgov/ocp-sso/issues/new">
   <input type="hidden" id="labels" name="labels" value="sso,incident">
   <input type="hidden" id="template" name="template" value="test.md">
   <label for="title">Summary:</label><br>
   <input type="text" id="title" name="title" value="Enter summary here"><br>
-  <label for="description">Description the issue:</label><br>
-  <textarea id="description" name="description" rows="10" cols="30">Provide a short description of the issue.</textarea><br><br>
+  <input type="hidden" id="body">
   <input type="submit" value="Submit">
-
-
-
 </form> 
 </div>
   <!--
