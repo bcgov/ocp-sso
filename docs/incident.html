@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-function validateForm() {
-  var x = document.forms["myForm"]["fname"].value;
-  if (x == "") {
-    alert("Name must be filled out");
-    return false;
-  }
-}
-</script>
 </head>
 <body>
-
-<form name="myForm" action="/action_page.php" onsubmit="return validateForm()" method="post">
-  Name: <input type="text" name="fname">
+<div>
+<form action="https://github.com/bcgov/ocp-sso/issues/new">
+  <label for="lables1">Labels:</label><br>
+  <input type="text" id="labels1" name="labels1" value="sso"><be>
+  <label for="title1">Title:</label><br>
+  <input type="text" id="title1" name="title1" value="Enter summary here"><br>
+  <label for="template1">Template:</label><br>
+  <input type="text" id="template1" name="template1" value="test.md"><br><br>
   <input type="submit" value="Submit">
-</form>
-
+</form> 
+</div>
 </body>
 </html>
