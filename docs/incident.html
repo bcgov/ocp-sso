@@ -3,29 +3,29 @@
 <head>
 </head>
 <body>
-
+  <strong>version 1</strong>
 <script type="text/javascript">
 function createBody()
 {
 var theImpact = parseInt(document.getElementById('impact').value);
+  alert(theImpact);
 var theUrgency =  parseInt(document.getElementById('urgency').value);
+  alert(theUrgency);
 var theUsername = document.getElementById('username').value;
+  alert(theUsername);
 var theAffApp = document.getElementById('affApp').value;
+  alert(theAffApp);
 var priorityCalc = (theImpact+theUrgency)/3;
+  alert(priorityCalc);
 var thePriority  priorityCalc.toPrecision(1); 
+  alert(thePriority);
 var theTitle = document.getElementById('title').value;
-
+  alert(theTitle);
 var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact+"\n\n#### Urgency: "+theUrgency+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
-
-  
-  
   document.getElementById('body').value = n;
   alert(n);
 }
  </script>
-
-
-<div>
   
 <form>
   <label for="username">Your Name: </label>
@@ -61,7 +61,6 @@ Please describe your issue here.
   <input type="hidden" id="body">
   <input type="submit" value="Submit">
 </form> 
-</div>
   <!--
 Service : Red Hat SSO, Realm-O-Matic, 
 Assignment group : Platform Team or SSO Team
