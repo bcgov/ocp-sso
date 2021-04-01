@@ -9,13 +9,13 @@ function createBody()
 {
 var theImpact = parseInt(document.getElementById('impact').value);
 var theUrgency =  parseInt(document.getElementById('urgency').value);
-var theUsername = document.getElementById('username').value
-var theAffApp = document.getElementById('affApp').value
+var theUsername = document.getElementById('username').value;
+var theAffApp = document.getElementById('affApp').value;
 var priorityCalc = (theImpact+theUrgency)/3;
 var thePriority  priorityCalc.toPrecision(1); 
 var theTitle = document.getElementById('title').value;
 
-var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact+"\n\n#### Urgency: "+theUrgency+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### Screenshots:";
+var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\n#### Impact:"+theImpact+"\n\n#### Urgency: "+theUrgency+"\n\n#### Priority: "+thePriority+"\n\n#### Impacted Service\n\n#### TBD";
 
   
   
@@ -37,21 +37,29 @@ var n="#### Name: "+theUsername+"\n\n#### Affected Application: "+theAffApp+"\n\
   <!--Imapct-->
   <input type="radio" id="impactHigh" name="impact" value="3"><label for="impactHigh">High Impact</label><br>
   <input type="radio" id="impactMedium" name="impact" value="2"><label for="impactMedium">Medium Impact</label><br>
-  <input type="radio" id="impactLow" name="impact" value="1" checked="true"><label for="impactLow">Low Impact</label><br>
+  <input type="radio" id="impactLow" name="impact" value="1" checked="true"><label for="impactLow">Low Impact</label><br><br>
   
   <!--Urgency-->
   <input type="radio" id="urgencyHigh" name="urgency" value="3"><label for="urgencyHigh">High Impact</label><br>
   <input type="radio" id="urgencyMedium" name="urgency" value="2"><label for="urgencyMedium">Medium Impact</label><br>
-  <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br>
+  <input type="radio" id="urgencyLow" name="urgency" value="1" checked="true"><label for="urgencyLow">Low Impact</label><br><br>
   
   <!--build the body of the ticket-->
   <input type="hidden" id="theBody">
-  <input type="button" value="Join!" onclick="createBody();
+  <input type="button" value="Join!" onclick="createBody();">
+  <input type="hidden" id="labels" name="labels" value="sso,incident">
+  <input type="hidden" id="template" name="template" value="test.md">
+  <label for="title">Summary:</label><br>
+  <input type="text" id="title" name="title" value="Enter summary here"><br>
+  <label for="description">Description the issue:</label><br>
+  <textarea id="description" name="description" rows="10" cols="30">Provide a short description of the issue.</textarea><br><br>
+  <input type="submit" value="Submit">
 
-  
-  
 
-<!--
+
+</form> 
+</div>
+  <!--
 Service : Red Hat SSO, Realm-O-Matic, 
 Assignment group : Platform Team or SSO Team
 Configuration item : Client App Name <name>, App Url <url>, Realm Name <name>
@@ -60,16 +68,5 @@ Assigned to:
 Short Description 
 Description
 -->
-  
-
-  <input type="hidden" id="labels" name="labels" value="sso,incident">
-  <input type="hidden" id="template" name="template" value="test.md">
-  <label for="title">Summary:</label><br>
-  <input type="text" id="title" name="title" value="Enter summary here"><br>
-  <label for="description">Description the issue:</label><br>
-  <textarea id="description" name="description" rows="10" cols="30">Provide a short description of the issue.</textarea><br><br>
-  <input type="submit" value="Submit">
-</form> 
-</div>
 </body>
 </html>
