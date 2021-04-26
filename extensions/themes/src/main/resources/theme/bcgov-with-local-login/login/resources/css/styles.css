@@ -107,3 +107,7 @@ a.zocial, #kc-login, a.zocial.keycloak-oidc, .btn-primary {
     font-size: 6vw;
   }
 }
+.subtitle{
+    margin-top: 0px;
+    float: right;
+}
