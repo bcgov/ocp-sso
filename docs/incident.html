@@ -39,7 +39,7 @@ var n="#### Name "+theUsername+"\r\n#### Email: "+theEmail+"\n\n#### Phone: "+th
   document.getElementById('title').value = theSummary;
 
 
-var theUrl = "https://github.com/bcgov/ocp-sso/issues/new?template="+encodeURIComponent('test.md')+"&labels="+encodeURIComponent('sso,incident')+"&body="+encodeURIComponent(n)+"&title="+encodeURIComponent(theSummary);
+var theUrl = "https://github.com/bcgov/ocp-sso/issues/new?template="+encodeURIComponent('incident.md')+"&labels="+encodeURIComponent('sso,incident')+"&body="+encodeURIComponent(n)+"&title="+encodeURIComponent(theSummary);
 //alert(theUrl);
 
 window.location.assign(theUrl);
