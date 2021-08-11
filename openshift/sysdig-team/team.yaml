@@ -21,3 +21,7 @@ spec:
       role: ROLE_TEAM_EDIT 
     - name: zorin.samji@gov.bc.ca
       role: ROLE_TEAM_MANAGER
+    - name: jon@button.is
+      role: ROLE_TEAM_MANAGER
+    - name: junmin@button.is
+      role: ROLE_TEAM_MANAGER
