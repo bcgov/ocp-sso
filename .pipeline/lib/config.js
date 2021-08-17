@@ -7,7 +7,7 @@ const sandboxNamespace = '3d5c3f-prod';
 
 const phases = {
   build: {
-    namespace: '6d70e7-tools',
+    namespace: '3d5c3f-tools',
     name: `${name}`,
     phase: 'build',
     changeId: changeId,
@@ -17,15 +17,15 @@ const phases = {
     tag: `${version}-${changeId}`,
   },
   sbox: {
-    namespace: '3d5c3f-dev',
+    namespace: '3d5c3f-prod',
     name: `${name}`,
     phase: 'sbox',
     changeId: changeId,
-    suffix: `-dev`,
-    instance: `${name}-dev`,
+    suffix: `-prod`,
+    instance: `${name}-prod`,
     version: `${version}-${changeId}`,
-    tag: `dev-${version}`,
-    host: `sso-dev-3d5c3f-dev.apps.silver.devops.gov.bc.ca`,
+    tag: `prod-${version}`,
+    host: `sso-prod-3d5c3f-prod.apps.silver.devops.gov.bc.ca`,
   },
   dev: {
     namespace: '6d70e7-dev',
