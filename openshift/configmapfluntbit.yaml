@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: sso-fluent-bit-sidecar
+data:
+    fluent-bit.conf: |
+      [SERVICE]
+         Flush        1
+         Daemon       Off
+         Log_Level    debug
+         HTTP_Server   On
+         HTTP_Listen   0.0.0.0
+         HTTP_Port     514
+         Parsers_File parsers.conf
+      [INPUT]
+         Name   tail
+         Path   /mnt/log/*
+         Exclude_Path *.gz,*.zip
+         Parser docker
+         Mem_Buf_Limit 20MB
+      [OUTPUT]
+         Name   stdout
+         Match  *
+      [OUTPUT]
+         Name  splunk
+         Match *
+         Host  142.34.251.87
+         Port  514
+         TLS         On
+         TLS.Verify  Off
+         Message_Key bcgov-sso
+    parsers.conf: |
+      [PARSER]
+         Name        docker
+         Format      json

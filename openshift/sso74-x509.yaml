@@ -243,7 +243,7 @@ objects:
               cpu: ${CPU_LIMIT}
           readinessProbe:
               tcpSocket:
-                port: 2020
+                port: 514
               initialDelaySeconds: 10
               timeoutSeconds: 5
               periodSeconds: 30
@@ -254,7 +254,7 @@ objects:
           livenessProbe:
             httpGet:
               path: /
-              port: 2020
+              port: 514
               scheme: HTTP
             initialDelaySeconds: 10
             timeoutSeconds: 5
@@ -263,7 +263,7 @@ objects:
             failureThreshold: 5
           ports:
             - name: metrics
-              containerPort: 2020
+              containerPort: 514
               protocol: TCP
           imagePullPolicy: Always
           volumeMounts:
