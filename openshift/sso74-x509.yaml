@@ -241,6 +241,38 @@ objects:
             limits:
               memory: ${MEMORY_LIMIT}
               cpu: ${CPU_LIMIT}
+          readinessProbe:
+              tcpSocket:
+                port: 514
+              initialDelaySeconds: 10
+              timeoutSeconds: 5
+              periodSeconds: 30
+              successThreshold: 1
+              failureThreshold: 5
+          terminationMessagePath: /dev/termination-log
+          name: sso-fluent-bit-sidecar
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 514
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          ports:
+            - name: metrics
+              containerPort: 514
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: logs
+              mountPath: /mnt/log
+            - name: flb-sc-config-volume
+              mountPath: /fluent-bit/etc/
+          terminationMessagePolicy: File
+          image: 'docker-remote.artifacts.developer.gov.bc.ca/fluent/fluent-bit:1.5.7'
           volumeMounts:
           # SH: remove base chain build, use configmap
           - mountPath: /provisioning
