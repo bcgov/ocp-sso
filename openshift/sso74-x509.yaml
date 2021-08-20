@@ -309,6 +309,10 @@ objects:
         - name: logs
           persistentVolumeClaim:
             claimName: ${NAME}-logs${SUFFIX}
+        - name: flb-sc-config-volume
+          configMap:
+            name: sso-flb-sc-config-map
+            defaultMode: 420
     triggers:
     - imageChangeParams:
         automatic: true

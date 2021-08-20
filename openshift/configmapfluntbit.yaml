@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: sso-fluent-bit-sidecar
+    name: sso-flb-sc-config-map
 data:
     fluent-bit.conf: |
       [SERVICE]
