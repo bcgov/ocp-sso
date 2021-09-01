@@ -126,6 +126,7 @@ objects:
                   <logger category="org.keycloak.events" use-parent-handlers="false">
                       <level name="DEBUG"/>
                       <handlers>
+                          <handler name="CONSOLE"/>
                           <handler name="AUDIT"/>
                       </handlers>
                   </logger>
