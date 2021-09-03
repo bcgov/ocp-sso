@@ -250,7 +250,7 @@ parameters:
   value: sso74-openshift-rhel8
 - name: RH_SSO_IMAGE_TAG
   required: true
-  value: '7.4'
+  value: '7.4-36'
 - name: VERSION
   decription: The output tag name created by the build config
   required: true
