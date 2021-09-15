@@ -17,22 +17,48 @@ const reduceDataFromFiles = async (dirname, transformFileContents) => {
   try {
     const files = await fs.readdir(dirname);
     const contents = await Promise.all(files.map(file => fs.readFile(dirname + file, 'utf-8')));
-    return contents.map(transformFileContents).reduce((a,b) => a+b)
+    return contents.map(transformFileContents)
   } catch (e) {
     console.error('error reading files:', e)
   }
 }
 
 const getLoginEvents = (content) => {
+  const realmLogins = {};
   const logs = content.split('\n').filter(str => str !== '').map(JSON.parse);
-  return logs.filter(log => log.message.includes('type=LOGIN')).length;
+  const loginLogs = logs.filter(log => log.message.includes('type=LOGIN'))
+  loginLogs.forEach(log => {
+    const realm = log.message.match(/realmId=(.+?),/)[1];
+    if (realmLogins[realm]) realmLogins[realm] += 1;
+    else realmLogins[realm] = 1;
+  });
+
+  return realmLogins;
+}
+
+const mergeObjects = (allObjects) => {
+  const totals = {};
+  allObjects.forEach(object => {
+    Object.entries(object).forEach(([key, val]) => {
+      if (totals[key]) totals[key] += val;
+      else {
+        totals[key] = val;
+      }
+    })
+  })
+  return totals;
 }
 
 const main = async () => {
   const [,,podName, date] = process.argv;
   await getLogs(podName, date);
   const logins = await reduceDataFromFiles('./tmp/extracts/', getLoginEvents);
-  console.log(logins);
+  const mergedLogins = mergeObjects(logins);
+  const total = Object.values(mergedLogins).reduce((a,b) => a+b)
+  console.log(`TOTAL LOGINS: ${total}`);
+  Object.entries(mergedLogins).forEach(([realm, logins]) => {
+    console.log(`Realm: ${realm}, total logins: ${logins}`)
+  })
 }
 
 main()
