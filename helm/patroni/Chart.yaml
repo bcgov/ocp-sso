@@ -1,0 +1,8 @@
+apiVersion: v1
+name: patroni
+description: "Helm chart for Patroni: PostgreSQL HA."
+version: 0.1.0
+home: https://github.com/zalando/patroni
+maintainers:
+  - name: Junmin Ahn
+    email: junmin@button.is
