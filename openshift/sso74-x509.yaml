@@ -323,11 +323,11 @@ parameters:
 - description: Container memory limit.
   displayName: Container Memory Limit
   name: MEMORY_LIMIT
-  value: 2Gi
+  value: 4Gi
 - description: Container memory request.
   displayName: Container Memory Request
   name: MEMORY_REQUEST
-  value: 2Gi
+  value: 4Gi
 - description: Container CPU limit.
   displayName: Container CPU Limit
   name: CPU_LIMIT
