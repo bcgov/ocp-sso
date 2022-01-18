@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: sso-flb-sc-config-map
+data:
+    fluent-bit.conf: |
+      [INPUT]
+         Name   tail
+         Path   /mnt/log/*
+         Exclude_Path *.gz,*.zip
+         Mem_Buf_Limit 20MB
+      [OUTPUT]
+         name                 syslog
+         match                *
+         host                 142.34.148.176
+         port                 1514
+         mode                 tcp
+         syslog_format        rfc5424
+         syslog_appname_key   BCgov-SSO
+         syslog_message_key   message

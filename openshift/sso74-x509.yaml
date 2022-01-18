@@ -254,6 +254,45 @@ objects:
             readOnly: true
           - mountPath: /var/log/eap
             name: logs
+        - resources:
+            limits:
+              cpu: 30m
+              memory: 100Mi
+            requests:
+              cpu: 15m
+              memory: 50Mi
+          readinessProbe:
+            tcpSocket:
+              port: 514
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          terminationMessagePath: /dev/termination-log
+          name: sso-fluent-bit-sidecar
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 514
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          ports:
+            - name: metrics
+              containerPort: 514
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: logs
+              mountPath: /mnt/log
+            - name: flb-sc-config-volume
+              mountPath: /fluent-bit/etc/
+          terminationMessagePolicy: File
+          image: 'docker-remote.artifacts.developer.gov.bc.ca/fluent/fluent-bit:1.5.7'
         terminationGracePeriodSeconds: 75
         volumes:
         # SH: remove base chain build, use configmap
@@ -270,6 +309,10 @@ objects:
         - name: logs
           persistentVolumeClaim:
             claimName: ${NAME}-logs${SUFFIX}
+        - name: flb-sc-config-volume
+          configMap:
+            name: sso-flb-sc-config-map
+            defaultMode: 420
     triggers:
     - imageChangeParams:
         automatic: true
